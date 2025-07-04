@@ -20,6 +20,8 @@
 
 # Ignore large video files
 public/videos/preview.mp4
+public/videos/exvd.mp4
+public/videos/background-login.mp4
 
 # Node.js
 node_modules/
