@@ -1,0 +1,348 @@
+@import url('https://fonts.googleapis.com/css?family=Inter:400,600,700&display=swap');
+
+.attendance-container {
+  padding: 20px;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 64px);
+  font-family: 'Inter', sans-serif;
+}
+
+.attendance-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.attendance-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.attendance-tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.attendance-tab.active {
+  border-bottom: 2px solid #2ecc7a;
+  color: #2ecc7a;
+}
+
+.attendance-content {
+  min-height: 300px;
+}
+
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.qr-code {
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.scan-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.scanner-container {
+  width: 100%;
+  margin: 0 auto;
+  max-width: 500px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.03);
+  padding: 10px;
+}
+
+.scanner {
+  width: 100% !important; /* Override HTML5QrcodeScanner's inline styles */
+  height: auto !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.scanner video {
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Override html5-qrcode library styles */
+#qr-reader__scan_region {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+#qr-reader__scan_region img {
+  display: none !important; /* Hide the default QR frame image */
+}
+
+#qr-reader {
+  width: 100% !important;
+  min-height: 300px !important;
+  position: relative !important;
+}
+
+#qr-reader__dashboard {
+  padding: 0 !important;
+  margin-top: 10px !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+#qr-reader__dashboard button {
+  background-color: #2ecc7a !important;
+  border: none !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  margin-right: 10px !important;
+}
+
+#qr-reader video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 8px !important;
+}
+
+#qr-reader__status_span {
+  display: none !important;
+}
+
+.scan-instructions {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}
+
+.staff-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.staff-form input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.staff-form button,
+.action-button {
+  padding: 10px 15px;
+  background-color: #2ecc7a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.staff-form button:hover,
+.action-button:hover {
+  background-color: #27b368;
+}
+
+.message {
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Animation for the loading spinner */
+.icon-spin {
+  animation: icon-spin 2s infinite linear;
+}
+
+@keyframes icon-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Attendance Report Styles */
+.attendance-report-container {
+  padding: 20px;
+  background-color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+}
+
+.attendance-report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.attendance-report-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.attendance-report-filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background-color: white;
+  min-width: 100px;
+  font-size: 14px;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #2ecc7a;
+  box-shadow: 0 0 0 3px rgba(46, 204, 122, 0.15);
+}
+
+.filter-btn {
+  background-color: #2ecc7a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.filter-btn:hover {
+  background-color: #27b368;
+}
+
+/* Table styles */
+.attendance-table-container {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.attendance-table th,
+.attendance-table td {
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.attendance-table th {
+  background-color: #f8f9fa;
+  color: #333;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.attendance-table tr:last-child td {
+  border-bottom: none;
+}
+
+.attendance-table tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.page-info {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Highlighting styles */
+.highlight-late {
+  background-color: #fef9c3 !important; /* Yellow background */
+}
+
+.highlight-absent {
+  background-color: #fee2e2 !important; /* Red background */
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px 0;
+  color: #64748b;
+  font-size: 16px;
+}
+
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #64748b;
+  font-size: 16px;
+} 

@@ -1,0 +1,285 @@
+@import url('https://fonts.googleapis.com/css?family=Inter:400,600,700&display=swap');
+
+.signup-background {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.signup-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Logo cố định góc trên trái */
+.hero-logo-fixed {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  height: 150px;
+  width: 150px;
+  z-index: 2;
+}
+
+/* Layout chính chia 2 cột */
+.signup-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8%;
+}
+
+/* Bên trái: chữ nằm giữa chiều dọc */
+.signup-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 40px;
+  max-width: 500px;
+}
+
+.signup-left h1 {
+  font-size: 3.5rem;
+  text-align: left;
+  position: fixed;
+  margin: 0;
+  color: #0b1657;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+}
+
+/* Form signup bên phải */
+.signup-panel {
+  width: 100%;
+  max-width: 450px;
+  background-color: transparent;
+  backdrop-filter: none;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  padding: 2rem;
+  z-index: 2;
+}
+
+.signup-panel-title {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.signup-panel-title h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #1e293b;
+}
+
+.account-prompt {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-top: 0;
+}
+
+.account-prompt a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.account-prompt a:hover {
+  text-decoration: underline;
+}
+
+.social-signup {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.social-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.social-btn:hover {
+  background-color: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #e2e8f0;
+}
+
+.divider span {
+  position: relative;
+  padding: 0 15px;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #64748b;
+  font-size: 14px;
+}
+
+.signup-form {
+  width: 100%;
+}
+
+.input-group {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #1e293b;
+  outline: none;
+  transition: 0.3s ease;
+}
+
+.input-group input::placeholder {
+  color: #94a3b8;
+}
+
+.input-group input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.password-group {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 38px;
+  right: 12px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  user-select: none;
+}
+
+.terms-container {
+  margin: 20px 0;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.checkbox-container input[type="checkbox"] {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  accent-color: #3b82f6;
+}
+
+.checkbox-container label {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.checkbox-container a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.checkbox-container a:hover {
+  text-decoration: underline;
+}
+
+.error-text {
+  color: #dc2626;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 10px 0;
+  padding: 8px;
+  background-color: rgba(220, 38, 38, 0.1);
+  border-radius: 6px;
+}
+
+.create-account-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+  margin-top: 10px;
+}
+
+.create-account-btn:hover {
+  background-color: #2563eb;
+}
+
+.create-account-btn:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .signup-container {
+    flex-direction: column;
+    padding: 0 20px;
+  }
+  
+  .signup-left {
+    display: none;
+  }
+  
+  .signup-panel {
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+}

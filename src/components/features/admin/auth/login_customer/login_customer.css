@@ -1,0 +1,371 @@
+@import url('https://fonts.googleapis.com/css?family=Inter:400,600,700&display=swap');
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-background {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.login-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Logo cố định góc trên trái */
+.hero-logo-fixed {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  height: 150px;
+  width: 150px;
+  z-index: 2;
+}
+
+/* Layout chính chia 2 cột */
+.login-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8%;
+}
+
+/* Bên trái: chữ nằm giữa chiều dọc */
+.login-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 40px;
+  max-width: 500px;
+}
+
+.login-left h1 {
+  font-size: 3.5rem;
+  text-align: left;
+  position: fixed;
+  margin: 0;
+  color: #0b1657;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+}
+
+
+/* Form login bên phải */
+.login-panel {
+  width: 100%;
+  max-width: 450px;
+  background-color: transparent;
+  backdrop-filter: none;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  padding: 2rem;
+  z-index: 2;
+}
+
+.login-panel-title {
+  margin-bottom: 20px;
+}
+
+.login-panel-title h1 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #1e293b;
+  text-align: center;
+}
+
+.login-form {
+  width: 100%;
+}
+
+.input-group {
+  margin-bottom: 1.2rem;
+  position: relative;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(197, 197, 197, 0.425);
+  border: 1px solid rgba(255, 255, 255, 0.5); /* viền trắng mờ */
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #000000; /* trắng tinh khôi */
+  backdrop-filter: blur(4px);
+  outline: none;
+  transition: 0.3s ease;
+}
+
+.input-group input::placeholder {
+  color: #d1d5db; /* xám nhạt rõ ràng */
+}
+
+.input-group input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  background: rgba(197, 197, 197, 0.61);
+}
+
+.password-group {
+  position: relative;
+}
+
+.password-group .toggle-password {
+  position: absolute;
+  top: 43px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  user-select: none;
+}
+
+.options-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.options-row a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.error-text {
+  color: #dc2626;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: rgba(59, 130, 246, 0.85);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: rgba(59, 130, 246, 1);
+}
+
+
+button[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spinner {
+  height: 24px;
+  vertical-align: middle;
+}
+
+/* Nhân vật hoạt hình (nếu dùng) */
+.character-container {
+  position: absolute;
+  left: 5%;
+  bottom: 5%;
+  z-index: 1;
+}
+
+.pizza-character {
+  height: 380px;
+  max-height: 80vh;
+}
+
+/* User Type Toggle Styles - Moved to bottom */
+.user-type-toggle-bottom {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.toggle-container {
+  display: flex;
+  background-color: #f1f5f9;
+  border-radius: 30px;
+  position: relative;
+  width: 240px;
+  height: 40px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.toggle-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.3s ease;
+  user-select: none;
+}
+
+.toggle-option.active {
+  color: #ffffff;
+}
+
+.slider {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  background-color: #3b82f6;
+  border-radius: 30px;
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+.toggle-container.admin .slider {
+  transform: translateX(100%);
+}
+
+.toggle-container.customer .slider {
+  transform: translateX(0);
+}
+
+/* Customer login specific styles */
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.remember-me input[type="checkbox"] {
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  accent-color: #3b82f6;
+}
+
+.remember-me label {
+  font-size: 14px;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.social-login {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.social-login p {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.social-login p::before,
+.social-login p::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 30%;
+  height: 1px;
+  background-color: #e2e8f0;
+}
+
+.social-login p::before {
+  left: 0;
+}
+
+.social-login p::after {
+  right: 0;
+}
+
+.social-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.social-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.social-btn:hover {
+  background-color: #f8fafc;
+  transform: translateY(-2px);
+}
+
+.social-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.signup-prompt {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.signup-prompt a {
+  color: #3b82f6;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.signup-prompt a:hover {
+  text-decoration: underline;
+}
+
+.info-msg {
+  padding: 10px;
+  border-radius: 8px;
+  background-color: rgba(46, 204, 122, 0.1);
+  margin-bottom: 15px;
+}
+
+.resend-btn:hover {
+  text-decoration: underline;
+}
