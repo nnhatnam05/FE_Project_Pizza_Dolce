@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MdQrCode, MdQrCodeScanner, MdAssessment } from 'react-icons/md';
-import { AttendanceQR, AttendanceScan } from './qr';
+import { AttendanceScan } from './qr';
 import AttendanceReport from './reports/AttendanceReport';
 import './Attendance.css';
 
@@ -9,8 +9,6 @@ const AttendanceManagement = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'generate':
-        return <AttendanceQR />;
       case 'scan':
         return <AttendanceScan />;
       case 'report':
@@ -31,16 +29,10 @@ const AttendanceManagement = () => {
           <MdAssessment style={{ marginRight: '5px' }} /> Attendance Reports
         </div>
         <div 
-          className={`attendance-tab ${activeTab === 'generate' ? 'active' : ''}`}
-          onClick={() => setActiveTab('generate')}
-        >
-          <MdQrCode style={{ marginRight: '5px' }} /> Generate QR Code
-        </div>
-        <div 
           className={`attendance-tab ${activeTab === 'scan' ? 'active' : ''}`}
           onClick={() => setActiveTab('scan')}
         >
-          <MdQrCodeScanner style={{ marginRight: '5px' }} /> Scan QR Code
+          <MdQrCodeScanner style={{ marginRight: '5px' }} /> Scan Face
         </div>
       </div>
       

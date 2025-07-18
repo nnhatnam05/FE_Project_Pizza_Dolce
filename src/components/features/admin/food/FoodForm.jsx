@@ -8,7 +8,8 @@ export default function FoodForm() {
     name: '', 
     price: '', 
     description: '', 
-    status: 'AVAILABLE' 
+    status: 'AVAILABLE',
+    type: 'PIZZA'
   });
   const [originalName, setOriginalName] = useState('');
   const [image, setImage] = useState(null);
@@ -156,6 +157,7 @@ export default function FoodForm() {
     formData.append("price", form.price);
     formData.append("description", form.description);
     formData.append("status", form.status);
+    formData.append("type", form.type);
     if (image) formData.append("image", image);
 
     const token = localStorage.getItem('token');
@@ -170,7 +172,7 @@ export default function FoodForm() {
         });
         setMessage("Food updated successfully!");
       } else {
-        await axios.post('http://localhost:8080/api/foods', formData, {
+        await axios.post('http://localhost:8080/api/foods/create', formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
@@ -335,6 +337,24 @@ export default function FoodForm() {
                   <option value="UNAVAILABLE">UNAVAILABLE</option>
                 </select>
                 {errors.status && <p className="error-message">{errors.status}</p>}
+              </div>
+
+              <div className="form-group">
+                <label>Type</label>
+                <select 
+                  name="type" 
+                  value={form.type} 
+                  onChange={handleChange}
+                  className={errors.type ? 'error' : ''}
+                >
+                  <option value="PIZZA">PIZZA</option>
+                  <option value="APPERTIZER">APPERTIZER</option>
+                  <option value="SALAD">SALAD</option>
+                  <option value="DRINK">DRINK</option>
+                  <option value="PASTA/MAIN">PASTA/MAIN</option>
+                  <option value="OTHER">OTHER</option>
+                </select>
+                {errors.type && <p className="error-message">{errors.type}</p>}
               </div>
               
               <div className="form-group">

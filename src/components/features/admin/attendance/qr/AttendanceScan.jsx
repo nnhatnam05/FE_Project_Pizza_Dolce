@@ -1,264 +1,553 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
-import axios from 'axios';
-import {
-  MdQrCodeScanner,
-  MdPerson,
-  MdOutlineRefresh,
-  MdClose,
-  MdCheckCircle,
-  MdError
-} from 'react-icons/md';
-import '../Attendance.css';
+import React, { useRef, useState, useEffect } from "react";
+import axios from "axios";
 
-const AttendanceScan = () => {
-  const [scanning, setScanning] = useState(false);
-  const [scannerStarted, setScannerStarted] = useState(false);
-  const [message, setMessage] = useState({ text: '', type: '' });
+const WIDTH = 400;
+const HEIGHT = 350;
+const BRIGHTNESS_MIN = 70;
+const MAX_FAILS = 5;
+const LOCK_TIME = 60 * 1000;
+const STABLE_FRAME = 30;
+
+const AttendanceFaceScan = () => {
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const cameraRef = useRef(null);
+  const isProcessingRef = useRef(false);
+
+  const [staffCode, setStaffCode] = useState("");
+  const [message, setMessage] = useState("Enter staff code then click Turn on camera to start");
   const [loading, setLoading] = useState(false);
-  const [staffCode, setStaffCode] = useState('');
   const [result, setResult] = useState(null);
-  const html5QrCodeRef = useRef(null);
-  const cameraId = useRef(null);
-  const scannerContainerId = "qr-reader";
-  // Add references for debounce control
-  const lastScannedCode = useRef(null);
-  const lastScanTimestamp = useRef(0);
-  const processingCode = useRef(false);
-  const MIN_SCAN_INTERVAL = 3000; // 3 seconds between scans
+  const [scanning, setScanning] = useState(false);
 
-  const api = axios.create({
-    baseURL: 'http://localhost:8080/api',
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-      'Content-Type': 'application/json',
-    },
-  });
+  const [stableCount, setStableCount] = useState(0);
+  const [failCount, setFailCount] = useState(0);
+  const [locked, setLocked] = useState(false);
+  const [lockUntil, setLockUntil] = useState(0);
 
   useEffect(() => {
-    if (scanning) {
-      // Reset scanning state variables
-      lastScannedCode.current = null;
-      lastScanTimestamp.current = 0;
-      processingCode.current = false;
-      
-      html5QrCodeRef.current = new Html5Qrcode(scannerContainerId);
-
-      Html5Qrcode.getCameras()
-        .then(devices => {
-          if (devices?.length) {
-            cameraId.current = devices[0].id;
-            // Reduce frame rate to minimize CPU usage and unnecessary scans
-            const config = { 
-              fps: 5, // Slower frame rate
-              qrbox: { width: 250, height: 250 },
-              experimentalFeatures: { useBarCodeDetectorIfSupported: true }
-            };
-
-            html5QrCodeRef.current.start(
-              { deviceId: { exact: cameraId.current } },
-              config,
-              handleScan,
-              handleError
-            ).then(() => {
-              setScannerStarted(true);
-              setMessage({ text: "Camera active. Position QR code in view.", type: "success" });
-            }).catch(err => {
-              setMessage({ text: `Camera init failed: ${err.message}`, type: 'error' });
-              setScanning(false);
-            });
-          } else {
-            setMessage({ text: "No camera found", type: 'error' });
-            setScanning(false);
-          }
-        })
-        .catch(err => {
-          setMessage({ text: "Unable to access camera", type: 'error' });
-          setScanning(false);
-        });
-    }
-
-    return () => {
-      if (scannerStarted && html5QrCodeRef.current) {
-        html5QrCodeRef.current.stop()
-          .catch(err => console.warn('Stop scanner error:', err));
-        setScannerStarted(false);
+    if (!locked) return;
+    const timer = setInterval(() => {
+      if (Date.now() >= lockUntil) {
+        setLocked(false);
+        setMessage("You can try again.");
+        setFailCount(0);
+      } else {
+        const left = Math.ceil((lockUntil - Date.now()) / 1000);
+        setMessage(`You have tried too many times. Wait ${left}s to try again.`);
       }
-    };
-  }, [scanning]);
+    }, 500);
+    return () => clearInterval(timer);
+  }, [locked, lockUntil]);
 
-  const handleScan = async (decodedText) => {
-    // Skip if we're already processing a code or loading
-    if (loading || processingCode.current) {
-      return;
-    }
-    
-    if (decodedText) {
-      const uuid = decodedText.trim();
-      
-      // Skip empty codes
-      if (!uuid) {
-        return;
-      }
-      
-      // Implement debounce - check if this is the same code as last time
-      // and make sure enough time has passed between scans
-      const now = Date.now();
-      if (
-        uuid === lastScannedCode.current && 
-        (now - lastScanTimestamp.current) < MIN_SCAN_INTERVAL
-      ) {
-        // Ignore repeated scans of the same code within debounce period
-        return;
-      }
-      
-      // Update scan tracking
-      lastScannedCode.current = uuid;
-      lastScanTimestamp.current = now;
-      processingCode.current = true;
-      
-      // Show loading state
-      setLoading(true);
-      
-      try {
-        // Immediately pause scanning to prevent multiple API calls
-        if (html5QrCodeRef.current) {
-          await html5QrCodeRef.current.pause();
-        }
-        
-        const resp = await api.post('/attendance/scan', { qrToken: uuid });
-        setResult(resp.data);
-        setMessage({ text: 'Attendance recorded successfully!', type: 'success' });
-
-        // Stop scanner on success
-        if (scannerStarted && html5QrCodeRef.current) {
-          await html5QrCodeRef.current.stop();
-          setScannerStarted(false);
-        }
-        setScanning(false);
-      } catch (err) {
-        console.error('Scan processing error:', err);
-        setMessage({ text: err.response?.data?.message || 'Failed to process QR', type: 'error' });
-        
-        // Resume scanning after error (with a delay)
-        setTimeout(() => {
-          if (html5QrCodeRef.current && scannerStarted) {
-            html5QrCodeRef.current.resume();
-          }
-          processingCode.current = false;
-          setLoading(false);
-        }, 2000);
-        return;
-      }
-      
-      processingCode.current = false;
-      setLoading(false);
-    }
-  };
-
-  const handleError = (err) => {
-    if (typeof err === 'string' && err.includes('NotFoundException')) return;
-    let errMsg = 'Could not detect QR code';
-    if (err.includes("NotAllowedError")) errMsg = "Camera access denied.";
-    else if (err.includes("NotReadableError")) errMsg = "Camera in use by another app.";
-    setMessage({ text: errMsg, type: 'error' });
-    if (/NotAllowedError|NotReadableError|NotSupportedError/.test(err.toString())) {
-      setScanning(false);
-    }
-  };
-
-  const handleManualEntry = async (e) => {
-    e.preventDefault();
-    if (!staffCode.trim()) {
-      setMessage({ text: 'Enter a staff code', type: 'error' });
-      return;
-    }
-    setLoading(true);
+  const getBrightness = (ctx, x, y, w, h) => {
     try {
-      const resp = await api.post('/attendance/scan', { staffCode });
-      setResult(resp.data);
-      setMessage({ text: 'Attendance recorded successfully!', type: 'success' });
-    } catch (err) {
-      console.error('Manual scan error:', err);
-      setMessage({ text: err.response?.data?.message || 'Failed to record attendance', type: 'error' });
-    } finally {
-      setLoading(false);
+      const data = ctx.getImageData(x + w / 4, y + h / 4, w / 2, h / 2).data;
+      let sum = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        sum += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+      }
+      return sum / (data.length / 4);
+    } catch {
+      return 255;
     }
   };
 
-  const stopScanning = () => {
-    // Reset all scanning-related state
-    processingCode.current = false;
-    lastScannedCode.current = null;
-    
-    if (scannerStarted && html5QrCodeRef.current) {
-      html5QrCodeRef.current.stop()
-        .then(() => {
-          console.log("Scanner stopped successfully");
-          setScanning(false);
-        })
-        .catch(err => {
-          console.warn('Error stopping scanner:', err);
-          setScanning(false);
-        });
-      setScannerStarted(false);
-    } else {
-      setScanning(false);
+  const detectMaskOrGlasses = () => ({ mask: false, glasses: false });
+
+  const drawBox = (ctx, x, y, w, h, color) => {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 4;
+    ctx.strokeRect(x, y, w, h);
+    ctx.restore();
+  };
+
+  const captureMultipleFrames = async (numFrames = 10, delay = 150) => {
+    const frames = [];
+    if (!canvasRef.current || !videoRef.current) return frames;
+    const ctx = canvasRef.current.getContext("2d");
+    for (let i = 0; i < numFrames; i++) {
+      ctx.drawImage(videoRef.current, 0, 0, WIDTH, HEIGHT);
+      const blob = await new Promise(res => canvasRef.current.toBlob(res, "image/jpeg", 0.8));
+      frames.push(blob);
+      await new Promise(res => setTimeout(res, delay));
     }
+    return frames;
+  };
+
+  const onResults = (results) => {
+    if (!videoRef.current || !canvasRef.current) return;
+    const ctx = canvasRef.current.getContext("2d");
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    ctx.drawImage(videoRef.current, 0, 0, WIDTH, HEIGHT);
+
+    const boxX = 60, boxY = 30, boxW = 280, boxH = 280;
+
+    if (result && result.status === "ON_TIME") {
+      drawBox(ctx, boxX, boxY, boxW, boxH, "#22c55e");
+      return;
+    }
+
+    if (!results.detections || results.detections.length === 0) {
+      setMessage("No face detected. Place your face in the frame.");
+      setStableCount(0);
+      drawBox(ctx, boxX, boxY, boxW, boxH, "#e11d48");
+      isProcessingRef.current = false;
+      return;
+    }
+
+    let mainFace = results.detections.reduce((maxDet, det) =>
+      det.score[0] > maxDet.score[0] ? det : maxDet
+    );
+    const bbox = mainFace.boundingBox;
+    if (!bbox) {
+      setMessage("Could not detect face region.");
+      setStableCount(0);
+      drawBox(ctx, boxX, boxY, boxW, boxH, "#e11d48");
+      isProcessingRef.current = false;
+      return;
+    }
+    const x = bbox.xMin * WIDTH, y = bbox.yMin * HEIGHT;
+    const w = bbox.width * WIDTH, h = bbox.height * HEIGHT;
+
+    if (
+      x < boxX + 10 ||
+      y < boxY + 10 ||
+      x + w > boxX + boxW - 10 ||
+      y + h > boxY + boxH - 10
+    ) {
+      setMessage("Place your face in the center of the frame.");
+      setStableCount(0);
+      drawBox(ctx, boxX, boxY, boxW, boxH, "#facc15");
+      isProcessingRef.current = false;
+      return;
+    }
+
+    const brightness = getBrightness(ctx, x, y, w, h);
+    if (brightness < BRIGHTNESS_MIN) {
+      setMessage("Not enough light, please move to a brighter location.");
+      setStableCount(0);
+      drawBox(ctx, boxX, boxY, boxW, boxH, "#e11d48");
+      isProcessingRef.current = false;
+      return;
+    }
+
+    const { mask, glasses } = detectMaskOrGlasses();
+    if (mask) {
+      setMessage("Please remove your mask to continue.");
+      setStableCount(0);
+      drawBox(ctx, boxX, boxY, boxW, boxH, "#e11d48");
+      isProcessingRef.current = false;
+      return;
+    }
+    if (glasses) {
+      setMessage("Please remove thick glasses to continue.");
+      setStableCount(0);
+      drawBox(ctx, boxX, boxY, boxW, boxH, "#e11d48");
+      isProcessingRef.current = false;
+      return;
+    }
+
+    setStableCount((prev) => {
+      const next = prev + 1;
+      if (next >= STABLE_FRAME) {
+        drawBox(ctx, boxX, boxY, boxW, boxH, "#22c55e");
+        setMessage("Hold your face still for 3s to confirm...");
+        if (!isProcessingRef.current && !loading && !locked) {
+          isProcessingRef.current = true;
+          setTimeout(async () => {
+            if (!loading && !locked) {
+              await captureAndSend();
+            }
+          }, 200);
+        }
+      } else {
+        drawBox(ctx, boxX, boxY, boxW, boxH, "#22d3ee");
+        setMessage(`Valid face! Checking stability (${Math.round(next / 10)}s/3s)...`);
+      }
+      return next >= STABLE_FRAME ? STABLE_FRAME : next;
+    });
+  };
+
+  // Sửa phần này: Luôn show message trả về từ BE (dù liveness=false, matched=false hay message custom)
+  const captureAndSend = async () => {
+    setLoading(true);
+    setMessage("Capturing and sending frames to server...");
+    try {
+      const frames = await captureMultipleFrames(10, 120);
+      const formData = new FormData();
+      frames.forEach((blob, idx) => formData.append("frames", blob, `frame${idx}.jpg`));
+      formData.append("staffCode", staffCode.trim());
+
+      const token = localStorage.getItem("token");
+
+      const resp = await axios.post(
+        "http://localhost:8080/api/attendance/face-scan",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setResult(resp.data);
+
+      // Ưu tiên message từ BE (liveness/message/matched)
+      if (resp.data && resp.data.message) {
+        setMessage(resp.data.message);
+      } else if (resp.data.liveness === false) {
+        setMessage("Liveness check failed. Please move your head or try again.");
+      } else if (resp.data.matched === false) {
+        setMessage("Face not matched!");
+      } else if (resp.data.status === "ON_TIME") {
+        setMessage("Attendance successful!");
+      } else {
+        setMessage("Attendance submission result.");
+      }
+
+      setFailCount(0);
+      stopCamera();
+      setStableCount(0);
+      setFailCount(0);
+    } catch (err) {
+      setMessage("Error! " + (err?.response?.data?.message || err.message || "Attendance submission failed!"));
+      setLoading(false);
+      isProcessingRef.current = false;
+    }
+  };
+
+  const startCamera = () => {
+    if (!staffCode || staffCode.trim() === "") {
+      setMessage("Please enter staff code before turning on the camera.");
+      return;
+    }
+    setResult(null);
+    setMessage("Starting camera...");
+    isProcessingRef.current = false;
+    setLoading(false);
+    setScanning(true);
+    setStableCount(0);
+
+    if (!window.FaceDetection || !window.Camera) {
+      setMessage("Browser does not support face detection.");
+      return;
+    }
+
+    const faceDetection = new window.FaceDetection({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
+    });
+
+    faceDetection.setOptions({
+      model: "short",
+      minDetectionConfidence: 0.5,
+    });
+
+    faceDetection.onResults(onResults);
+
+    if (videoRef.current) {
+      videoRef.current.style.display = "block";
+      cameraRef.current = new window.Camera(videoRef.current, {
+        onFrame: async () => {
+          await faceDetection.send({ image: videoRef.current });
+        },
+        width: WIDTH,
+        height: HEIGHT,
+      });
+      cameraRef.current.start();
+    }
+  };
+
+  const stopCamera = () => {
+    setScanning(false);
+    setLoading(false);
+    isProcessingRef.current = false;
+    setStableCount(0);
+    if (cameraRef.current) {
+      cameraRef.current.stop();
+      cameraRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.style.display = "none";
+    }
+  };
+
+  const resetAll = () => {
+    setResult(null);
+    setLoading(false);
+    setStableCount(0);
+    setFailCount(0);
+    isProcessingRef.current = false;
+    setMessage("Enter staff code then click Turn on camera to start");
+  };
+
+  // --- UI không đổi ---
+  const buttonStyle = {
+    padding: "10px 24px",
+    fontSize: "16px",
+    fontWeight: "500",
+    borderRadius: "8px",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    border: "none",
+    outline: "none",
+    margin: "16px 0",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+  };
+
+  const primaryButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: "#4f46e5",
+    color: "white",
+  };
+
+  const dangerButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: "#e11d48",
+    color: "white",
+  };
+
+  const secondaryButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: "#f3f4f6",
+    color: "#111827",
+    border: "1px solid #d1d5db"
   };
 
   return (
-    <div className="scan-container">
-      <div className="attendance-card">
-        <h2>Scan Attendance QR Code</h2>
-        {!scanning ? (
-          <button className="action-button" onClick={() => { setScanning(true); setMessage({ text: '', type: '' }); }}>
-            <MdQrCodeScanner style={{ marginRight: '5px' }} /> Start Scanning
-          </button>
-        ) : (
-          <>
-            <div className="scanner-container">
-              <div id="qr-reader" className="scanner" />
-              <p className="scan-instructions">Position the QR code within the scanning area</p>
-            </div>
-            <button className="action-button" onClick={stopScanning} style={{ marginTop: '10px' }}>
-              <MdClose style={{ marginRight: '5px' }} /> Cancel Scan
-            </button>
-          </>
-        )}
+    <div style={{ maxWidth: 500, margin: "30px auto" }}>
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: 16,
+          padding: 24,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+        }}
+      >
+        <h2 style={{
+          textAlign: "center",
+          marginBottom: 24,
+          color: "#111827",
+          fontSize: "1.75rem",
+          fontWeight: "600"
+        }}>
+          Face Scan Attendance
+        </h2>
 
-        <div style={{ marginTop: '20px' }}>
-          <h3>Manual Entry</h3>
-          <form className="staff-form" onSubmit={handleManualEntry}>
-            <input type="text" placeholder="Enter Staff Code" value={staffCode} onChange={e => setStaffCode(e.target.value)} />
-            <button type="submit" disabled={loading}>
-              {loading ? <MdOutlineRefresh className="icon-spin" /> : <><MdPerson style={{ marginRight: '5px' }} /> Record Attendance</>}
-            </button>
-          </form>
+        <div style={{ marginBottom: 20 }}>
+          <label
+            htmlFor="staffCodeInput"
+            style={{
+              display: "block",
+              marginBottom: 8,
+              fontWeight: 500,
+              color: "#374151"
+            }}
+          >
+            Staff Code:
+          </label>
+          <input
+            id="staffCodeInput"
+            type="text"
+            value={staffCode}
+            onChange={(e) => setStaffCode(e.target.value)}
+            style={{
+              width: "100%",
+              fontSize: 16,
+              padding: "12px 16px",
+              borderRadius: 8,
+              border: "1px solid #d1d5db",
+              boxSizing: "border-box",
+              transition: "border-color 0.2s ease",
+              outline: "none",
+              boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
+            }}
+            placeholder="Enter staff code"
+            disabled={scanning || locked}
+          />
         </div>
 
-        {message.text && (
-          <div className={`message ${message.type}`}>
-            {message.type === 'success' ? <MdCheckCircle style={{ marginRight: '5px' }} /> : <MdError style={{ marginRight: '5px' }} />}
-            {message.text}
+        <div style={{
+          textAlign: "center",
+          position: "relative"
+        }}>
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            width={WIDTH}
+            height={HEIGHT}
+            style={{
+              borderRadius: 12,
+              border: "3px solid #4f46e5",
+              background: "#111827",
+              display: scanning ? "block" : "none",
+              margin: "0 auto",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+            }}
+          />
+          <canvas
+            ref={canvasRef}
+            width={WIDTH}
+            height={HEIGHT}
+            style={{ position: "absolute", left: "-9999px", top: "-9999px" }}
+          />
+
+          <div style={{ marginTop: 20 }}>
+            {!scanning && !result && (
+              <button
+                onClick={startCamera}
+                style={{
+                  ...primaryButtonStyle,
+                  opacity: (!staffCode.trim() || locked) ? 0.6 : 1
+                }}
+                disabled={!staffCode.trim() || locked}
+              >
+                Turn on camera
+              </button>
+            )}
+
+            {scanning && (
+              <button
+                onClick={stopCamera}
+                style={{
+                  ...dangerButtonStyle,
+                  opacity: loading ? 0.6 : 1
+                }}
+                disabled={loading}
+              >
+                Stop camera
+              </button>
+            )}
+
+            {result && (
+              <button
+                onClick={resetAll}
+                style={secondaryButtonStyle}
+              >
+                Scan again
+              </button>
+            )}
           </div>
-        )}
+        </div>
+
+        <div
+          style={{
+            minHeight: 34,
+            margin: "16px 0",
+            padding: "8px 12px",
+            color: loading ? "#4f46e5" : "#e11d48",
+            textAlign: "center",
+            fontWeight: "500",
+            borderRadius: 8,
+            backgroundColor: message && message.length > 0 ? "#f9fafb" : "transparent"
+          }}
+        >
+          {result && result.status === "ON_TIME"
+            ? ""
+            : message}
+        </div>
 
         {result && (
-          <div className="attendance-result">
-            <h3>Attendance Result</h3>
-            <p><MdPerson style={{ marginRight: '5px' }} /> Staff: {result.staffName || result.staffCode}</p>
-            <p>Status: {result.status}</p>
-            <p>Time: {result.timestamp && !isNaN(new Date(result.timestamp))
-              ? new Date(result.timestamp).toLocaleString()
-              : 'Invalid or missing timestamp'}
-            </p>
-            {result.message && <p>Message: {result.message}</p>}
+          <div
+            style={{
+              background: "#f8fafc",
+              borderRadius: 12,
+              padding: 20,
+              marginTop: 20,
+              border: "1px solid #e2e8f0",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+            }}
+          >
+            <h3 style={{
+              marginTop: 0,
+              marginBottom: 16,
+              color: "#111827",
+              fontSize: "1.25rem"
+            }}>
+              Result
+            </h3>
+
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 20 }}>
+              {result.imageUrl && (
+                <img
+                  src={result.imageUrl}
+                  alt="avatar"
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    border: "3px solid #4f46e5",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                  }}
+                />
+              )}
+
+              <div style={{ flex: 1 }}>
+                <div style={{ marginBottom: 8 }}>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Full name:</strong>
+                  <span>{result.staffName || "N/A"}</span>
+                </div>
+                <div style={{ marginBottom: 8 }}>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Staff Code:</strong>
+                  <span>{result.staffCode || "N/A"}</span>
+                </div>
+                <div style={{ marginBottom: 8 }}>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Position:</strong>
+                  <span>{result.position || "N/A"}</span>
+                </div>
+                <div style={{ marginBottom: 8 }}>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Work Location:</strong>
+                  <span>{result.workLocation || "N/A"}</span>
+                </div>
+                <div style={{ marginBottom: 8 }}>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Status:</strong>
+                  <span style={{
+                    color: result.status === "ON_TIME" ? "#16a34a" : "#e11d48",
+                    fontWeight: "500"
+                  }}>
+                    {result.status || "N/A"}
+                  </span>
+                </div>
+                <div style={{ marginBottom: 8 }}>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Check-in time:</strong>
+                  <span>{result.timestamp ? new Date(result.timestamp).toLocaleString() : ""}</span>
+                </div>
+                {result.checkOut && (
+                  <div style={{ marginBottom: 8 }}>
+                    <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Check-out time:</strong>
+                    <span>{new Date(result.checkOut).toLocaleTimeString()}</span>
+                  </div>
+                )}
+                <div style={{ marginBottom: 0 }}>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Note:</strong>
+                  <span>{result.message}</span>
+                </div>
+              </div>
+            </div>
           </div>
         )}
+      </div>
+
+      <div style={{
+        marginTop: 24,
+        color: "#6b7280",
+        fontSize: 14,
+        padding: "12px 16px",
+        background: "#f9fafb",
+        borderRadius: 8,
+        border: "1px solid #e5e7eb"
+      }}>
+        <strong>Note:</strong> Ensure your face is within the frame, with sufficient light, and
+        without masks or thick glasses. The app will automatically capture when conditions are
+        valid. If face recognition fails more than 5 times, your account will be locked for 1 minute
+        for protection.
       </div>
     </div>
   );
 };
 
-export default AttendanceScan;
+export default AttendanceFaceScan;

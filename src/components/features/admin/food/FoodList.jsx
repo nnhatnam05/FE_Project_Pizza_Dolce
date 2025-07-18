@@ -7,6 +7,7 @@ export default function FoodList() {
   const [foods, setFoods] = useState([]);
   const [filter, setFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [typeFilter, setTypeFilter] = useState('ALL');
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -49,9 +50,11 @@ export default function FoodList() {
     fetchFoods();
   }, [filter]);
 
-  // Filter foods based on status
+  // Filter foods based on status and type
   const filteredFoods = foods.filter(food => {
-    return statusFilter === 'ALL' || food.status === statusFilter;
+    const statusMatch = statusFilter === 'ALL' || food.status === statusFilter;
+    const typeMatch = typeFilter === 'ALL' || food.type === typeFilter;
+    return statusMatch && typeMatch;
   });
 
   // Calculate pagination
@@ -121,9 +124,27 @@ export default function FoodList() {
             }}
             className="status-filter"
           >
-            <option value="ALL">All status</option>
-            <option value="AVAILABLE">AVAILABLE</option>
-            <option value="UNAVAILABLE">UNAVAILABLE</option>
+            <option value="ALL">All Status</option>
+            <option value="AVAILABLE">Available</option>
+            <option value="UNAVAILABLE">Unavailable</option>
+          </select>
+        </div>
+        <div className="filter-container">
+          <select
+            value={typeFilter}
+            onChange={(e) => {
+              setTypeFilter(e.target.value);
+              setCurrentPage(1); // Reset to first page on filter change
+            }}
+            className="status-filter"
+          >
+            <option value="ALL">All Types</option>
+            <option value="PIZZA">Pizza</option>
+            <option value="APPERTIZER">Appetizer</option>
+            <option value="SALAD">Salad</option>
+            <option value="DRINK">Drink</option>
+            <option value="PASTA/MAIN">Pasta/Main</option>
+            <option value="OTHER">Other</option>
           </select>
         </div>
       </div>
@@ -143,25 +164,53 @@ export default function FoodList() {
                   <th>Price</th>
                   <th>Description</th>
                   <th>Status</th>
+                  <th>Type</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {currentFoods.map((food, idx) => {
                   const actualIndex = indexOfFirstFood + idx + 1;
+                  console.log(`Food ${food.name} - Status: ${food.status}, Type: ${food.type}`);
                   
                   return (
                     <tr key={food.id}>
                       <td>{actualIndex}</td>
-                      {/* <td>{food.id}</td> */}
                       <td>{food.name}</td>
                       <td>{renderFoodImage(food)}</td>
                       <td>{food.price}$</td>
-                      <td className="description-cell">{food.description}</td>
+                      <td className="description-cell">
+                        <div className="description-wrapper">
+                          <div className="description-text">{food.description}</div>
+                          {food.description && food.description.length > 50 && (
+                            <button 
+                              className="description-read-more"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const parent = e.target.closest('.description-wrapper');
+                                parent.classList.toggle('expanded');
+                                e.target.textContent = parent.classList.contains('expanded') ? 'Thu gọn' : 'Xem thêm';
+                              }}
+                            >
+                              Xem thêm
+                            </button>
+                          )}
+                        </div>
+                      </td>
                       <td>
-                        <span className={`status-badge status-${food.status.toLowerCase()}`}>
-                          {food.status}
-                        </span>
+                        <div className="food-status-badge">
+                          {food.status === 'AVAILABLE' ? 'Available' : 'Unavailable'}
+                        </div>
+                      </td>
+                      <td>
+                        <div className={`food-type-badge food-type-${food.type.toLowerCase().replace('/', '-')}`}>
+                          {food.type === 'PIZZA' ? 'Pizza' :
+                           food.type === 'APPERTIZER' ? 'Appetizer' :
+                           food.type === 'SALAD' ? 'Salad' :
+                           food.type === 'DRINK' ? 'Drink' :
+                           food.type === 'PASTA/MAIN' ? 'Pasta/Main' :
+                           food.type === 'OTHER' ? 'Other' : food.type}
+                        </div>
                       </td>
                       <td className="actions-cell">
                         <div className="action-buttons">
