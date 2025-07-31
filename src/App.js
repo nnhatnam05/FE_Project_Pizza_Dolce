@@ -5,6 +5,7 @@ import './App.css';
 import HomePage from './components/pages/Home/HomePage';
 import AdminLayout from './components/common/Layout/admin_layout/AdminLayout';
 import StaffLayout from './components/common/Layout/staff_layout/StaffLayout';
+import CustomerLayout from './components/common/Layout/customer_layout';
 
 import FoodList from './components/features/admin/food/FoodList';
 import FoodForm from './components/features/admin/food/FoodForm';
@@ -27,19 +28,156 @@ import ForgotPassword from './components/common/UI/forgot_password/ForgotPasswor
 import SignUp from './components/features/admin/auth/signup/SignUp';
 import Monkey404 from './components/pages/Admin/404';
 import AttendanceManagement from './components/features/admin/attendance/AttendanceManagement';
-import AttendanceQR from './components/features/admin/attendance/qr/AttendanceQR';
 import AttendanceScan from './components/features/admin/attendance/qr/AttendanceScan';
 import AttendanceReport from './components/features/admin/attendance/reports/AttendanceReport';
 import DetailUser from './components/features/admin/user/user_list/Detail_user';
 import Loading from './components/features/admin/load/Loading';
+import FormRequest from "./components/features/staff/request/Form_Request";
+import HistoryRequest from "./components/features/staff/request/History_Request";
+import RequestManagement from "./components/features/staff/request/Request_Management";
+import RequestList from "./components/features/admin/request/Request_List";
+import RequestManagementAdmin from "./components/features/admin/request/Request_Management";
+import RequestPendingConfirmation from "./components/features/admin/request/Request_Pending_Confirmation";
+import Main from "./components/pages/Home/Main";
+import List_Pizza from "./components/pages/Home/Menu/Pizza/List_Pizza";
+import List_Appetizers from "./components/pages/Home/Menu/Apperizers/List_Appetizers";
+import List_Salads from "./components/pages/Home/Menu/Salads/List_Salads";
+import List_Drinks from "./components/pages/Home/Menu/Drinks/List_Drinks";
+import List_Pasta from "./components/pages/Home/Menu/Pasta-Main/List_Pasta-Main";
+import List_Other from "./components/pages/Home/Menu/Other/List_Other";
+import Detail_Pizza from "./components/pages/Home/Menu/Pizza/Detail_Pizza";
+import Detail_Appetizers from "./components/pages/Home/Menu/Apperizers/Detail_Appetizers";
+import Detail_Salad from "./components/pages/Home/Menu/Salads/Detail_Salad";
+import Detail_Drinks from "./components/pages/Home/Menu/Drinks/Detail_Drinks";
+import Detail_Pasta from "./components/pages/Home/Menu/Pasta-Main/Detail_Pasta-Main";
+import Detail_Other from "./components/pages/Home/Menu/Other/Detail_Other";
+import Cart from "./components/pages/Home/Cart/Cart";
+import List_Payment from "./components/features/admin/payment/List_Payment";
+import Form_Payment from "./components/features/admin/payment/Form_Payment";
+import OrderManagement from "./components/features/admin/order/Order_Management";
+import OrderWaitingConfirmation from "./components/features/admin/order/Order_WaitingConfirm";
+import OrderDeliveryStatus from "./components/features/admin/order/Order_DeliveryStatus";
+import Delivery_Status from "./components/features/staff/delivery-status/Delivery_Status";
+import ForgotPasswordCustomer from "./components/features/admin/auth/login_customer/forgot_password_cus";
+import PaymentDetails from "./components/pages/Home/Cart/payment/payment";
+import EditCart from "./components/pages/Home/Cart/payment/editCart";
+import OrderHistory from "./components/pages/Home/OrderHistory";
+import DetailDelivery from "./components/pages/Home/Cart/detail_delivery/detail_delivery";
+import PaymentSuccess from "./components/pages/Home/PaymentSuccess/PaymentSuccess";
+
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        {/* Main customer page */}
+        <Route path="/" element={
+          <CustomerLayout>
+            <Main />
+          </CustomerLayout>
+        } />
+        <Route path="/pizza" element={
+          <CustomerLayout>
+            <List_Pizza />
+          </CustomerLayout>
+        } />
+        <Route path="/pizza/:id" element={
+          <CustomerLayout>
+            <Detail_Pizza />
+          </CustomerLayout>
+        } />
+        <Route path="/appetizers" element={
+          <CustomerLayout>
+            <List_Appetizers />
+          </CustomerLayout>
+        } />
+        <Route path="/appetizers/:id" element={
+          <CustomerLayout>
+            <Detail_Appetizers />
+          </CustomerLayout>
+        } />
+        <Route path="/salads" element={
+          <CustomerLayout>
+            <List_Salads />
+          </CustomerLayout>
+        } />
+        <Route path="/salads/:id" element={
+          <CustomerLayout>
+            <Detail_Salad />
+          </CustomerLayout>
+        } />
+        <Route path="/drinks" element={
+          <CustomerLayout>
+            <List_Drinks />
+          </CustomerLayout>
+        } />
+        <Route path="/drinks/:id" element={
+          <CustomerLayout>
+            <Detail_Drinks />
+          </CustomerLayout>
+        } />
+        <Route path="/pasta" element={
+          <CustomerLayout>
+            <List_Pasta />
+          </CustomerLayout>
+        } />
+        <Route path="/pasta/:id" element={
+          <CustomerLayout>
+            <Detail_Pasta />
+          </CustomerLayout>
+        } />
+        <Route path="/other" element={
+          <CustomerLayout>
+            <List_Other />
+          </CustomerLayout>
+        } />
+        <Route path="/other/:id" element={
+          <CustomerLayout>
+            <Detail_Other />
+          </CustomerLayout>
+        } />
+        <Route path="/cart" element={
+          <CustomerLayout>
+            <Cart />
+          </CustomerLayout>
+        } />
+        
+        <Route path="/payment-details/:orderId" element={
+          <CustomerLayout>
+            <PaymentDetails />
+          </CustomerLayout>
+        } />
+        
+        <Route path="/order/edit/:orderId" element={
+          <CustomerLayout>
+            <EditCart />
+          </CustomerLayout>
+        } />
+        
+        <Route path="/order-history" element={
+          <CustomerLayout>
+            <OrderHistory />
+          </CustomerLayout>
+        } />
+
+
+        <Route path="/detail-delivery/:orderId" element={
+          <CustomerLayout>
+            <DetailDelivery />
+          </CustomerLayout>
+        } />
+
+        <Route path="/payment-success" element={
+          <CustomerLayout>
+            <PaymentSuccess />
+          </CustomerLayout>
+        } />
+        
+
+        {/* <Route path="/main" element={<HomePage />} /> */}
         <Route path="/login/admin" element={<Login />} />
         <Route path="/login/customer" element={<LoginCustomer />} />
+        <Route path="/forgot_password_customer" element={<ForgotPasswordCustomer />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgot_password" element={<ForgotPassword />} />
 
@@ -55,9 +193,16 @@ function App() {
             <Route path="tables/create" element={<TableForm />} />
             <Route path="tables/edit/:id" element={<TableForm />} />
 
-            <Route path="orders" element={<OrderList />} />
+            <Route path="orders" element={<OrderManagement />} />
+            <Route path="orders/waiting" element={<OrderWaitingConfirmation />} />
+            <Route path="orders/delivery" element={<OrderDeliveryStatus />} />
+            <Route path="orders/completed" element={<OrderList />} />
             <Route path="orders/create" element={<OrderForm />} />
             <Route path="orders/edit/:id" element={<OrderForm />} />
+
+            <Route path="payment-methods" element={<List_Payment />} />
+            <Route path="payment-methods/create" element={<Form_Payment />} />
+            <Route path="payment-methods/edit/:id" element={<Form_Payment />} />
 
             <Route path="users" element={<UserList />} />
             <Route path="register" element={<Register />} />
@@ -65,20 +210,28 @@ function App() {
             <Route path="users/details/:id" element={<DetailUser />} />
 
             <Route path="attendance" element={<AttendanceManagement />} />
-            <Route path="attendance/qr" element={<AttendanceQR />} />
             <Route path="attendance/scan" element={<AttendanceScan />} />
             <Route path="attendance/reports" element={<AttendanceReport />} />
+
+            <Route path="request" element={<RequestManagementAdmin />} />
+            <Route path="request/pending" element={<RequestPendingConfirmation />} />
+            <Route path="request/list" element={<RequestList />} />
           </Route>
         </Route>
-        
+
         {/* Staff Routes */}
         <Route path="/staff" element={<StaffRoute />}>
           <Route element={<StaffLayout />}>
             <Route index element={<Dashboard />} />
-            
+
             <Route path="foods" element={<FoodList />} />
             <Route path="tables" element={<TableList />} />
             <Route path="orders" element={<OrderList />} />
+            <Route path="delivery-status" element={<Delivery_Status />} />
+
+            <Route path="request" element={<RequestManagement />} />
+            <Route path="request/form" element={<FormRequest />} />
+            <Route path="request/history" element={<HistoryRequest />} />
           </Route>
         </Route>
 

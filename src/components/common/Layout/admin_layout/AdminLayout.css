@@ -1,0 +1,69 @@
+/* Notification Animation */
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Badge Animation */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Apply animation to new notifications */
+.MuiBadge-badge {
+  animation: pulse 1s infinite;
+}
+
+/* Notification dropdown animation */
+.MuiPaper-root.notification-dropdown {
+  animation: slideIn 0.3s ease;
+}
+
+/* Improve scrollbar styling in notification list */
+.notification-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.notification-list::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Notification highlight effect when new */
+.notification-item-new {
+  position: relative;
+  overflow: hidden;
+}
+
+.notification-item-new::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background-color: #2ecc7a;
+}

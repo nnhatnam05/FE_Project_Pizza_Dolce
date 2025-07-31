@@ -146,6 +146,10 @@
   background-color: #f1f5f9;
 }
 
+.food-table tbody tr td {
+  vertical-align: middle;
+}
+
 /* Food image */
 .food-img-container {
   position: relative;
@@ -188,33 +192,199 @@
   border: 1px dashed #cbd5e1;
 }
 
-/* Status badges */
 .status-badge {
-  padding: 6px 10px;
+  padding: 6px 14px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
+  display: inline-block !important;
+  min-width: 100px;
   text-align: center;
-  display: inline-block;
-  min-width: 90px;
+  background: #f2f2f2;
+  letter-spacing: 0.5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  height: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  width: auto;
+  color: #333;
 }
 
-.status-available {
-  background-color: #dcfce7;
-  color: #166534;
+.status-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.status-unavailable {
-  background-color: #fee2e2;
-  color: #b91c1c;
+/* Status badges */
+.status-badge.status-available {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+  border: 1px solid #86efac !important;
 }
+
+.status-badge.status-unavailable {
+  background-color: #fee2e2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fca5a5 !important;
+}
+
+.status-badge.status-onhold {
+  background-color: #f9cfcf !important;
+  color: #bb0000 !important;
+  border: 1px solid #f9a8a8 !important;
+}
+
+.status-badge.status-open {
+  background-color: #ffeeba !important;
+  color: #856404 !important;
+  border: 1px solid #ffd970 !important;
+}
+
+/* Type badges */
+.status-badge.type-pizza {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+  border: 1px solid #7dd3fc !important;
+}
+
+.status-badge.type-appertizer {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  border: 1px solid #fcd34d !important;
+}
+
+.status-badge.type-salad {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+  border: 1px solid #6ee7b7 !important;
+}
+
+.status-badge.type-drink {
+  background-color: #dbeafe !important;
+  color: #1e40af !important;
+  border: 1px solid #93c5fd !important;
+}
+
+.status-badge.type-pasta-main {
+  background-color: #fae8ff !important;
+  color: #86198f !important;
+  border: 1px solid #e879f9 !important;
+}
+
+.status-badge.type-other {
+  background-color: #f3f4f6 !important;
+  color: #4b5563 !important;
+  border: 1px solid #d1d5db !important;
+}
+
 
 /* Description cell */
 .description-cell {
-  max-width: 200px;
-  white-space: nowrap;
+  max-width: 250px;
+  position: relative;
+}
+
+.description-wrapper {
+  position: relative;
+}
+
+.description-text {
+  max-height: 40px;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  transition: max-height 0.3s ease;
+}
+
+.description-wrapper.expanded .description-text {
+  max-height: 500px;
+  -webkit-line-clamp: unset;
+}
+
+.description-read-more {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 12px;
+  padding: 2px 0;
+  cursor: pointer;
+  margin-top: 4px;
+  font-weight: 600;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.description-read-more:hover {
+  color: #1d4ed8;
+}
+
+/* New Food Status Badge */
+.food-status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+  display: inline-block;
+  min-width: 100px;
+}
+
+/* New Food Type Badge */
+.food-type-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+  min-width: 100px;
+}
+
+/* Type colors */
+.food-type-pizza {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.food-type-appetizer {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.food-type-salad {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+.food-type-drink {
+  background-color: #ede9fe;
+  color: #5b21b6;
+  border: 1px solid #c4b5fd;
+}
+
+.food-type-pasta-main {
+  background-color: #fae8ff;
+  color: #86198f;
+  border: 1px solid #e879f9;
+}
+
+.food-type-other {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
 }
 
 /* Actions */
@@ -736,30 +906,7 @@ textarea.error {
     border-radius: 4px;
   }
   
-  .status-badge {
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    text-align: center;
-    display: inline-block;
-    min-width: 70px;
-  }
   
-  .status-available {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .status-onhold {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .status-open {
-    background-color: #ffc107;
-    color: black;
-  }
   
   .action-icons {
     display: flex;

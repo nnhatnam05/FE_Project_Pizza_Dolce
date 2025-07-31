@@ -1,0 +1,1532 @@
+.pizza4ps-root {
+  background: #ece6d7;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #222;
+}
+
+.p4-header {
+  background: #232f54;
+  color: #fff;
+  padding: 12px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.p4-logo {
+  font-size: 1.7rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.p4-search input {
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  width: 300px;
+  background: #fff url('/public/images/youtube-1.jpg') no-repeat 12px center;
+  background-size: 16px;
+  padding-left: 35px;
+}
+
+.p4-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.p4-language {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.p4-lang-icon {
+  width: 24px;
+  height: 24px;
+  background: url('/public/images/youtube-1.jpg') no-repeat center;
+  background-size: contain;
+  margin-right: 5px;
+}
+
+.p4-profile {
+  position: relative;
+  cursor: pointer;
+}
+
+.p4-profile-icon {
+  width: 32px; 
+  height: 32px;
+  background: #fff;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* Profile dropdown styles */
+.p4-profile-dropdown {
+  position: absolute;
+  right: 0;
+  top: 45px;
+  background: #fff;
+  color: #232f54;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  padding: 18px 26px;
+  min-width: 230px;
+  z-index: 100;
+  display: none;
+  transition: all 0.3s ease;
+}
+
+/* Customer welcome styles */
+.p4-profile-dropdown > span {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.p4-profile-dropdown > span b {
+  color: #c3893a;
+}
+
+/* Divider line for customer info */
+.p4-profile-list {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #ece6d7;
+}
+
+/* Style the logout button */
+.p4-btn-main {
+  background: #c3893a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.p4-btn-main:hover {
+  background: #b07830;
+}
+
+.p4-btn-secondary {
+  background: #ede7db;
+  color: #666;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.p4-btn-secondary:hover {
+  background: #e0d7c7;
+}
+
+.p4-profile-list {
+  margin-top: 15px;
+}
+
+/* Profile avatar styles */
+.p4-profile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid #fff;
+}
+
+/* Add cursor pointer to all elements in profile list */
+.p4-profile-list span {
+  display: block;
+  margin: 10px 0;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.p4-profile-list span:hover {
+  color: #c3893a;
+}
+
+.p4-cart {
+  position: relative;
+  cursor: pointer;
+}
+
+.p4-cart-icon {
+  width: 32px; 
+  height: 32px;
+  background: url('/public/images/youtube-1.jpg') no-repeat center;
+  background-size: 24px;
+  display: inline-block;
+}
+
+.p4-cart-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #e53935;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* Navigation links */
+.p4-nav-links {
+  display: flex;
+  justify-content: space-around;
+  background: #fff;
+  padding: 10px 0;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.p4-nav-links span {
+  cursor: pointer;
+  color: #333;
+}
+
+/* Main layout container */
+.p4-main-container {
+  display: flex;
+  margin: 20px auto;
+  max-width: 1200px;
+  position: relative;
+  background-color: transparent;
+}
+
+.p4-left-sidebar {
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.p4-sidebar-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+.p4-sidebar-dot.active {
+  background-color: #232f54;
+}
+
+.p4-slider {
+  flex: 1;
+  margin: 0 15px;
+  position: relative;
+  height: 300px; /* Fixed height for slider */
+  overflow: hidden; /* Ensure content doesn't overflow */
+}
+
+.p4-slide {
+  transition: opacity 0.5s ease;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  background-image: url('/public/images/youtube-1.jpg');
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.p4-slide:not(.active) {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Prevent interaction with inactive slides */
+}
+
+.p4-slide.active {
+  opacity: 1;
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure the slide-content covers the entire slide */
+.p4-slide-content {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  color: white;
+}
+
+.p4-summer-text {
+  max-width: 400px;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.p4-summer-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  font-family: 'Arial', sans-serif;
+}
+
+.p4-summer-logo span:first-child {
+  font-size: 2rem;
+  font-style: italic;
+  transform: rotate(-10deg) translateY(5px);
+}
+
+.p4-summer-logo span:last-child {
+  font-size: 1.8rem;
+  transform: translateY(-5px);
+}
+
+.p4-summer-desc {
+  font-size: 1.5rem;
+  line-height: 1.3;
+  font-weight: 300;
+  margin-bottom: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+.p4-order-btn {
+  background-color: white;
+  color: #232f54;
+  border: none;
+  padding: 8px 30px;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: absolute;
+  right: 30px;
+  bottom: 30px;
+}
+
+.p4-order-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.p4-right-sidebar {
+  width: 320px;
+}
+
+/* Update welcome card to match the screenshot */
+.p4-welcome-card {
+  background-color: #fff8ed;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.p4-welcome-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  text-align: center;
+  color: #232f54;
+  font-weight: bold;
+}
+
+.p4-welcome-quote {
+  color: #86632b;
+  font-style: italic;
+  line-height: 1.4;
+  margin-bottom: 10px;
+  text-align: center;
+  flex-grow: 1;
+  font-size: 0.95rem;
+}
+
+.p4-welcome-author {
+  color: #86632b;
+  text-align: right;
+  margin-bottom: 15px;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.p4-shop-info {
+  border-top: 1px solid #ece6d7;
+  padding-top: 15px;
+  font-size: 0.9rem;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: auto;
+}
+
+.p4-shop-location {
+  margin-bottom: 8px;
+  color: #666;
+}
+
+.p4-shop-location strong {
+  display: block;
+  color: #000;
+}
+
+.p4-shop-hours {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.p4-shop-hours strong {
+  color: #000;
+  font-weight: bold;
+}
+
+/* Slider dots */
+.p4-slider-dots {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0;
+  gap: 8px;
+  position: absolute;
+  bottom: -30px;
+  left: 0;
+  right: 0;
+}
+
+.p4-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+.p4-dot.active {
+  background-color: #232f54;
+}
+
+/* Notice section not needed anymore as it's been replaced */
+.p4-notice {
+  display: none;
+}
+
+.p4-notice-title,
+.p4-notice-quote,
+.p4-notice-author,
+.p4-notice-mini {
+  display: none;
+}
+
+/* Section title */
+.p4-section-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 60px 0 15px;
+}
+
+/* Menu */
+.p4-menu {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin: 20px 0 40px;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.p4-menu-item {
+  background: #fff;
+  border-radius: 10px;
+  width: 110px;
+  text-align: center;
+  padding: 12px 5px;
+  cursor: pointer;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.p4-menu-item:hover {
+  transform: translateY(-3px);
+}
+
+.p4-menu-thumb {
+  width: 65px; 
+  height: 65px;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  background-color: #f5f5f5;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.p4-menu-thumb.delivery-combo {
+  background-image: url('/public/images/main/Pizza.png');
+}
+
+.p4-menu-thumb.banh-pizza {
+  background-image: url('/public/images/main/Appetizers.png');
+}
+
+.p4-menu-thumb.khai-vi {
+  background-image: url('/public/images/main/Salad.png');
+}
+
+.p4-menu-thumb.salad {
+  background-image: url('/public/images/main/Drink.png');
+}
+
+.p4-menu-thumb.mon-chinh {
+  background-image: url('/public/images/main/Pasta-Main.png');
+}
+
+.p4-menu-thumb.trang-mieng {
+  background-image: url('/public/images/main/Other.png');
+}
+
+
+
+.p4-menu-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Popular section */
+.p4-popular {
+  max-width: 1100px;
+  margin: 0 auto 40px;
+  padding: 0 20px;
+}
+
+.p4-popular-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.p4-popular-header h2 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.p4-link {
+  color: #c3893a;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.p4-food-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.p4-food-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 200px;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.p4-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255,255,255,0.9);
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border-radius: 10px;
+  z-index: 2;
+}
+
+.p4-pizza-type {
+  position: absolute;
+  bottom: 120px;
+  right: 10px;
+  background: #c3893a;
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border-radius: 10px;
+  z-index: 2;
+}
+
+.p4-food-thumb {
+  width: 100%;
+  height: 130px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 14px 14px 0 0;
+}
+
+.p4-food-thumb.mi-y {
+  background-image: url('/public/images/youtube-1.jpg');
+}
+
+.p4-food-thumb.pizza-3-loai {
+  background-image: url('/public/images/youtube-1.jpg');
+}
+
+.p4-food-thumb.ga-ran {
+  background-image: url('/public/images/youtube-1.jpg');
+}
+
+.p4-food-thumb.pizza-4-loai {
+  background-image: url('/public/images/youtube-1.jpg');
+}
+
+.p4-food-thumb.mi-y-bo {
+  background-image: url('/public/images/youtube-1.jpg');
+}
+
+.p4-food-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 10px 15px;
+  text-align: center;
+  min-height: 40px;
+  line-height: 1.3;
+}
+
+.p4-food-price {
+  color: #ad7c3d;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.p4-food-add {
+  background: #c3893a;
+  color: #fff;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Feedback */
+.p4-feedback {
+  background: #fff;
+  border-radius: 14px;
+  max-width: 500px;
+  margin: 30px auto 50px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.p4-feedback-icons {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.p4-emoji {
+  font-size: 2rem;
+  margin: 0 12px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.p4-emoji:hover {
+  transform: scale(1.2);
+}
+
+/* Footer */
+.p4-footer {
+  background: #223053;
+  color: #fff;
+  padding: 40px 50px 20px;
+  margin-top: 50px;
+}
+
+.p4-footer-main {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.p4-footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.p4-footer-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+}
+
+.p4-footer-title {
+  font-weight: bold;
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
+
+.p4-footer-text {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+.p4-footer-link {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.p4-footer-link:hover {
+  opacity: 1;
+}
+
+.p4-footer-subscribe {
+  display: flex;
+  margin: 10px 0;
+}
+
+.p4-footer-subscribe input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+  outline: none;
+}
+
+.p4-footer-subscribe button {
+  background: #c3893a;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  padding: 0 15px;
+  cursor: pointer;
+}
+
+.p4-social-icons {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.p4-social {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #fff;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.p4-social.facebook {
+  background: #fff url('/public/images/youtube-1.jpg') no-repeat center;
+  background-size: cover;
+}
+
+.p4-social.instagram {
+  background: #fff url('/public/images/youtube-1.jpg') no-repeat center;
+  background-size: cover;
+}
+
+.p4-social.youtube {
+  background: #fff url('/public/images/youtube-1.jpg') no-repeat center;
+  background-size: cover;
+}
+
+.p4-trusted-badge {
+  width: 80px;
+  height: 40px;
+  background: url('/public/images/youtube-1.jpg') no-repeat center;
+  background-size: contain;
+  margin-left: 20px;
+}
+
+.p4-footer-bottom {
+  text-align: center;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Media queries */
+@media (max-width: 1024px) {
+  .p4-footer-main {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .p4-header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+  }
+  
+  .p4-nav-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .p4-menu {
+    gap: 10px;
+  }
+  
+  .p4-footer-main {
+    grid-template-columns: 1fr;
+  }
+
+  .p4-summer-logo {
+    font-size: 2rem;
+  }
+  
+  .p4-summer-desc {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .p4-search input {
+    width: 200px;
+  }
+  
+  .p4-banner-title {
+    font-size: 1.4rem;
+  }
+  
+  .p4-banner-voucher {
+    font-size: 1.8rem;
+  }
+}
+
+/* Mobile responsiveness for the main container */
+@media (max-width: 1024px) {
+  .p4-main-container {
+    flex-direction: column;
+  }
+  
+  .p4-left-sidebar {
+    display: none;
+  }
+  
+  .p4-right-sidebar {
+    width: 100%;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .p4-summer-logo {
+    font-size: 2rem;
+  }
+  
+  .p4-summer-desc {
+    font-size: 1.2rem;
+  }
+}
+
+/* Adjust dot transitions */
+.p4-dot, .p4-sidebar-dot {
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.p4-dot:hover, .p4-sidebar-dot:hover {
+  background-color: #232f54;
+  opacity: 0.7;
+}
+
+.p4-profile-btns {
+  margin: 12px 0;
+  display: flex;
+  gap: 8px;
+}
+
+.p4-profile-dropdown.show {
+  display: block;
+}
+  
+/* Modal styles */
+.p4-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.p4-modal {
+  background-color: #fff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.p4-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #ece6d7;
+}
+
+.p4-modal-header h2 {
+  margin: 0;
+  color: #232f54;
+  font-size: 1.5rem;
+}
+
+.p4-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+}
+
+.p4-modal-body {
+  padding: 20px;
+}
+
+.p4-modal-message {
+  padding: 10px 20px;
+  margin: 0 20px;
+  border-radius: 5px;
+}
+
+.p4-modal-message.success {
+  background-color: #e6f7e6;
+  color: #2e7d32;
+}
+
+.p4-modal-message.error {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.p4-customer-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.p4-customer-avatar {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 50%;
+  margin-bottom: 20px;
+}
+
+.p4-customer-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.p4-customer-details {
+  flex: 1;
+  min-width: 300px;
+}
+
+.p4-form-group {
+  margin-bottom: 15px;
+}
+
+.p4-form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.p4-form-group p {
+  margin: 0;
+  padding: 8px 0;
+  color: #333;
+}
+
+.p4-form-group p.readonly {
+  color: #666;
+  font-style: italic;
+}
+
+.p4-form-group input,
+.p4-form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.p4-form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.p4-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #ece6d7;
+}
+
+.p4-btn-danger {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 20px;
+  cursor: pointer;
+}
+
+.p4-btn-danger:hover {
+  background: #c62828;
+}
+
+.p4-btn-password {
+  background: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 20px;
+  cursor: pointer;
+}
+
+.p4-btn-password:hover {
+  background: #1976d2;
+}
+
+.p4-delete-confirm {
+  text-align: center;
+  padding: 20px;
+}
+
+.p4-delete-confirm h3 {
+  color: #c62828;
+  margin-top: 0;
+}
+
+.p4-change-password h3 {
+  color: #1976d2;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .p4-modal {
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  .p4-customer-info {
+    flex-direction: column;
+  }
+  
+  .p4-customer-avatar {
+    margin: 0 auto 20px;
+  }
+  
+  .p4-modal-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .p4-modal-actions button {
+    margin-bottom: 10px;
+  }
+}
+  
+/* Avatar upload styling */
+.p4-avatar-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.p4-avatar-preview {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #f0f0f0;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.p4-avatar-select-btn {
+  background: #232f54;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  width: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.p4-avatar-select-btn:hover {
+  background: #374c80;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Profile list styling enhancements */
+.p4-profile-list span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.p4-profile-list span:hover {
+  background-color: #f5f0e5;
+  color: #c3893a;
+  transform: translateX(3px);
+}
+
+/* Change password modal enhancements */
+.p4-change-password {
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f6f0;
+  border-radius: 12px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+}
+
+.p4-form-group input[type="password"] {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.p4-form-group input[type="password"]:focus {
+  border-color: #c3893a;
+  box-shadow: 0 0 0 2px rgba(195, 137, 58, 0.2);
+  outline: none;
+}
+
+/* Improved button styles */
+.p4-btn-main, .p4-btn-secondary, .p4-btn-danger, .p4-btn-password {
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  min-width: 110px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.p4-btn-main:hover, .p4-btn-secondary:hover, .p4-btn-danger:hover, .p4-btn-password:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Enhanced modal styling */
+.p4-modal {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  max-width: 700px;
+  background: linear-gradient(to bottom, #ffffff 0%, #f9f6f0 100%);
+}
+
+.p4-modal-header {
+  background-color: #232f54;
+  color: white;
+  padding: 15px 25px;
+}
+
+.p4-modal-header h2 {
+  color: white;
+  font-weight: 600;
+}
+
+.p4-modal-close {
+  color: white;
+  font-size: 24px;
+  opacity: 0.8;
+  transition: all 0.2s;
+}
+
+.p4-modal-close:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.p4-modal-body {
+  padding: 25px;
+}
+
+.p4-modal-message {
+  padding: 12px 20px;
+  margin: 0 0 20px 0;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.p4-customer-info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 30px;
+}
+
+@media (max-width: 600px) {
+  .p4-customer-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .p4-customer-avatar {
+    margin: 0 auto;
+  }
+}
+
+/* Enhanced form inputs */
+.p4-form-group input[type="text"],
+.p4-form-group textarea {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  width: 100%;
+  background-color: #fff;
+}
+
+.p4-form-group input[type="text"]:focus,
+.p4-form-group textarea:focus {
+  border-color: #c3893a;
+  box-shadow: 0 0 0 2px rgba(195, 137, 58, 0.2);
+  outline: none;
+}
+
+/* Profile dropdown enhancements */
+.p4-profile-dropdown {
+  position: absolute;
+  right: 0;
+  top: 45px;
+  background: #fff;
+  color: #232f54;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+  padding: 18px 26px;
+  min-width: 250px;
+  z-index: 100;
+  display: none;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.p4-profile-dropdown.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Customer avatar display improvements */
+.p4-customer-avatar {
+  width: 180px;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  border: 5px solid white;
+}
+
+.p4-customer-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+/* Enhanced Food List Styles */
+.p4-food-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+  justify-content: center;
+}
+
+.p4-food-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  overflow: hidden;
+  position: relative;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.p4-food-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.p4-food-thumb {
+  width: 100%;
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+}
+
+.p4-food-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  border-radius: 14px 14px 0 0;
+}
+
+.p4-food-card:hover .p4-food-thumb img {
+  transform: scale(1.05);
+}
+
+.p4-food-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  position: relative;
+}
+
+.p4-food-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+  text-align: center;
+  line-height: 1.4;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.p4-food-price {
+  color: #e74c3c;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.p4-food-add {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0 auto;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+.p4-food-add:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
+.p4-food-add:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Sold Out Styling */
+.p4-sold-out .p4-food-thumb::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.p4-sold-out .p4-food-thumb img {
+  filter: grayscale(80%);
+}
+
+.p4-soldout-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-12deg);
+  background-color: #e74c3c;
+  color: white;
+  padding: 6px 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  z-index: 2;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Loading, Error and Empty States */
+.p4-loading, .p4-error, .p4-empty {
+  width: 100%;
+  text-align: center;
+  padding: 40px 0;
+  background-color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.p4-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.p4-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #e74c3c;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.p4-error {
+  color: #e74c3c;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.p4-retry-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.p4-retry-btn:hover {
+  background: #c0392b;
+}
+
+.p4-empty {
+  color: #666;
+  font-style: italic;
+}
+  

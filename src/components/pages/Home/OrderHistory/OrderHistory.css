@@ -1,0 +1,439 @@
+.order-history-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    min-height: calc(100vh - 220px);
+    background-color: #f9f5ec;
+    border-radius: 10px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+}
+
+/* 面包屑导航 */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e6e0d1;
+}
+
+.breadcrumb span {
+    font-size: 15px;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.breadcrumb span:hover {
+    color: #e74c3c;
+}
+
+.breadcrumb span:last-child {
+    font-weight: 600;
+    color: #194f85;
+    cursor: default;
+}
+
+/* 页面标题 */
+.order-history-container h1 {
+    color: #233876;
+    font-size: 32px;
+    margin: 15px 0 30px 0;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #d8d3c5;
+    position: relative;
+}
+
+.order-history-container h1:after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 80px;
+    height: 4px;
+    background-color: #233876;
+}
+
+/* 登录提示 */
+.login-required {
+    text-align: center;
+    padding: 60px 30px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.login-required h2 {
+    color: #233876;
+    margin-bottom: 25px;
+    font-size: 24px;
+}
+
+.login-btn {
+    background-color: #233876;
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.login-btn:hover {
+    background-color: #182a62;
+    transform: translateY(-2px);
+}
+
+/* 错误消息 */
+.error-message {
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border-radius: 6px;
+    text-align: center;
+}
+
+/* 过滤器样式 */
+.order-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.status-filters {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    border: none;
+    background-color: #f0f0f0;
+    color: #555;
+    padding: 10px 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.filter-btn:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+.filter-btn.active {
+    background-color: #233876;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(35, 56, 118, 0.2);
+}
+
+.refresh-btn {
+    background-color: transparent;
+    border: 2px solid #233876;
+    color: #233876;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.refresh-btn:hover {
+    background-color: #233876;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.refresh-btn::before {
+    content: "↻";
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* 加载和空状态 */
+.loading-message, .empty-orders {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: white;
+    border-radius: 10px;
+    color: #555;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    font-size: 18px;
+}
+
+.loading-message::before {
+    content: "";
+    display: block;
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 20px;
+    border: 4px solid #f0f0f0;
+    border-top: 4px solid #233876;
+    border-radius: 50%;
+}
+
+/* 订单列表 */
+.orders-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 30px;
+}
+
+.order-card {
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    position: relative;
+    border: 1px solid #eee;
+}
+
+/* 添加左侧状态颜色条 */
+.order-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background-color: #ccc;
+}
+
+.order-card.waiting::before {
+    background-color: #ffc107; /* 黄色 - 等待确认 */
+}
+
+.order-card.confirmed::before {
+    background-color: #17a2b8; /* 蓝色 - 已确认 */
+}
+
+.order-card.paid::before {
+    background-color: #20c997; /* 青色 - 已支付 */
+}
+
+.order-card.preparing::before, .order-card.waiting-shipper::before {
+    background-color: #6610f2; /* 紫色 - 准备中/等待配送员 */
+}
+
+.order-card.delivering::before {
+    background-color: #28a745; /* 绿色 - 配送中 */
+}
+
+.order-card.completed::before {
+    background-color: #20c997; /* 青色 - 已完成 */
+}
+
+.order-card.cancelled::before {
+    background-color: #dc3545; /* 红色 - 已取消 */
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    position: relative;
+}
+
+/* 添加订单编号标记 */
+.order-id {
+    font-weight: 600;
+    color: #233876;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+}
+
+.order-id::before {
+    content: "#";
+    display: inline-block;
+    margin-right: 4px;
+    font-weight: 700;
+    color: #0056b3;
+}
+
+.order-status {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.order-date {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 15px;
+    color: #666;
+    background-color: #fafafa;
+}
+
+.label {
+    font-weight: 600;
+    color: #444;
+    margin-right: 8px;
+}
+
+.value {
+    color: #333;
+}
+
+.order-items-preview {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    background-color: white;
+}
+
+.items-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.items-list li {
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #333;
+    padding: 8px 0 8px 25px;
+    position: relative;
+    border-bottom: 1px dashed #f0f0f0;
+}
+
+.items-list li:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.items-list li::before {
+    content: "•";
+    position: absolute;
+    left: 8px;
+    color: #233876;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.more-items {
+    color: #777;
+    font-style: italic;
+    text-align: center;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.more-items::before {
+    content: "+";
+    font-style: normal;
+}
+
+.order-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #fefefe;
+    border-top: 1px solid #f0f0f0;
+}
+
+.order-total {
+    display: flex;
+    flex-direction: column;
+}
+
+.order-total .label {
+    font-size: 14px;
+    color: #666;
+}
+
+.order-total .value {
+    font-weight: 700;
+    color: #233876;
+    font-size: 20px;
+}
+
+.view-details-btn {
+    background-color: #233876;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(35, 56, 118, 0.2);
+}
+
+.view-details-btn:hover {
+    background-color: #182a62;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(35, 56, 118, 0.3);
+}
+
+/* 响应式样式 */
+@media (max-width: 768px) {
+    .order-filters {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .status-filters {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .refresh-btn {
+        align-self: flex-end;
+    }
+    
+    .orders-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .order-header, .order-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .order-status, .view-details-btn {
+        align-self: flex-start;
+    }
+    
+    .view-details-btn {
+        width: 100%;
+        text-align: center;
+    }
+} 

@@ -1,0 +1,590 @@
+/* Admin Request Management Container */
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 25px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+}
+
+.admin-container h1 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 28px;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.admin-container h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #4a90e2, #63b3ed);
+  border-radius: 2px;
+}
+
+/* Tab Navigation */
+.admin-tabs {
+  display: flex;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #e0e0e0;
+  justify-content: center;
+  gap: 10px;
+}
+
+.admin-tab {
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: 8px 8px 0 0;
+  background-color: #f9f9f9;
+}
+
+.admin-tab.active {
+  color: #4a90e2;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-bottom: none;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  z-index: 1;
+}
+
+.admin-tab svg {
+  margin-right: 8px;
+  font-size: 20px;
+}
+
+.admin-tab:hover:not(.active) {
+  background-color: rgba(74, 144, 226, 0.05);
+  color: #4a90e2;
+}
+
+.admin-content {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+/* Common Header for Both Lists */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-header h2 {
+  font-size: 22px;
+  color: #333;
+  margin: 0;
+  padding-bottom: 5px;
+  position: relative;
+}
+
+.admin-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background-color: #4a90e2;
+}
+
+.admin-filter {
+  display: flex;
+  align-items: center;
+}
+
+.admin-filter label {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  color: #555;
+}
+
+.admin-filter select {
+  margin-left: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: #f9fafc;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.admin-filter select:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+/* Table Styles */
+.admin-table-container {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-top: 10px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.admin-table th, 
+.admin-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.admin-table th {
+  background-color: #f5f7fa;
+  color: #333;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  box-shadow: 0 1px 0 0 #eee;
+  z-index: 1;
+}
+
+.admin-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.admin-table tr.pending {
+  border-left: 4px solid #ffc107;
+}
+
+.admin-table tr.approved {
+  border-left: 4px solid #28a745;
+}
+
+.admin-table tr.denied {
+  border-left: 4px solid #dc3545;
+}
+
+/* Staff Info */
+.staff-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.staff-code {
+  font-weight: 600;
+  color: #444;
+}
+
+.staff-name {
+  color: #666;
+  font-size: 13px;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 50px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.status-badge.approved {
+  background-color: rgba(40, 167, 69, 0.15);
+  color: #155724;
+}
+
+.status-badge.denied {
+  background-color: rgba(220, 53, 69, 0.15);
+  color: #721c24;
+}
+
+.status-badge .status-icon {
+  margin-right: 5px;
+}
+
+/* Admin Note */
+.admin-note {
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 250px;
+  overflow-wrap: break-word;
+}
+
+.admin-note-input {
+  width: 100%;
+  min-width: 150px;
+  max-width: 250px;
+  height: 80px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.admin-note-input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.denied-note {
+  background-color: #fff2f2;
+  border: 1px solid #ffcccc;
+  color: #721c24;
+}
+
+.no-note {
+  color: #999;
+  font-style: italic;
+}
+
+.reason-cell {
+  max-width: 250px;
+  word-break: break-word;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.approve-button,
+.deny-button,
+.retry-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  font-size: 14px;
+}
+
+.approve-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.approve-button:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+}
+
+.deny-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.deny-button:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.retry-button {
+  background-color: #4a90e2;
+  color: white;
+  margin: 10px auto;
+  padding: 10px 20px;
+}
+
+.retry-button:hover {
+  background-color: #3a7bc8;
+}
+
+.action-buttons button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Loading and Error States */
+.admin-loading,
+.admin-error,
+.admin-empty {
+  text-align: center;
+  padding: 30px;
+  margin: 20px 0;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.admin-loading {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+.admin-error-container {
+  text-align: center;
+}
+
+.admin-error {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+
+.admin-empty {
+  color: #856404;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+}
+
+/* Confirmation Dialog */
+.admin-confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.admin-confirmation-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.admin-confirmation-modal h4 {
+  text-align: center;
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 22px;
+  position: relative;
+  padding-bottom: 15px;
+  font-weight: 600;
+}
+
+.admin-confirmation-modal h4::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background-color: #4a90e2;
+}
+
+.admin-confirmation-content {
+  margin-bottom: 25px;
+}
+
+.admin-confirmation-content p {
+  margin: 0 0 20px 0;
+  text-align: center;
+  font-size: 16px;
+  color: #555;
+}
+
+.admin-confirmation-details {
+  background-color: #f9fafc;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.admin-confirmation-item {
+  margin-bottom: 12px;
+  line-height: 1.5;
+  font-size: 15px;
+}
+
+.admin-confirmation-item:last-child {
+  margin-bottom: 0;
+}
+
+.admin-confirmation-item strong {
+  color: #444;
+  margin-right: 5px;
+}
+
+.admin-confirmation-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.admin-cancel-button,
+.admin-approve-button,
+.admin-deny-button {
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  flex: 1;
+  font-size: 15px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-cancel-button {
+  background-color: #f1f1f1;
+  color: #555;
+}
+
+.admin-cancel-button:hover {
+  background-color: #e1e1e1;
+}
+
+.admin-approve-button {
+  background-color: #28a745;
+  color: white;
+  box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
+}
+
+.admin-approve-button:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(40, 167, 69, 0.25);
+}
+
+.admin-deny-button {
+  background-color: #dc3545;
+  color: white;
+  box-shadow: 0 4px 6px rgba(220, 53, 69, 0.2);
+}
+
+.admin-deny-button:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(220, 53, 69, 0.25);
+}
+
+.admin-confirmation-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .admin-tabs {
+    flex-direction: column;
+    border-bottom: none;
+  }
+  
+  .admin-tab {
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border: 1px solid #e0e0e0;
+    justify-content: center;
+  }
+  
+  .admin-tab.active {
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .admin-filter {
+    width: 100%;
+  }
+
+  .admin-filter select {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 5px;
+  }
+
+  .admin-table th, 
+  .admin-table td {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+
+  .action-buttons {
+    flex-direction: row;
+    min-width: auto;
+  }
+
+  .approve-button,
+  .deny-button {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .admin-confirmation-modal {
+    padding: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .admin-confirmation-actions {
+    flex-direction: column;
+  }
+}
