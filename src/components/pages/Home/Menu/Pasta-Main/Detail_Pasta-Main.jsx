@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import CustomerLayout from '../../../../common/Layout/customer_layout';
+import { CartContext } from '../../../../common/Layout/customer_layout';
 import './Pasta-Main.css';
 
 const Detail_Pasta = () => {
@@ -11,6 +11,9 @@ const Detail_Pasta = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [quantity, setQuantity] = useState(1);
+    
+
+    const { handleAddToCart } = useContext(CartContext);
     
     // API URL - replace with your actual API endpoint
     const API_URL = 'http://localhost:8080/api/foods';
@@ -44,13 +47,19 @@ const Detail_Pasta = () => {
         }
     };
 
-    const handleAddToCart = () => {
-        // Add to cart functionality would go here
-        // You can implement your API call to add to cart
+    const addToCart = () => {
         if (pasta && pasta.status !== 'UNAVAILABLE') {
-            alert(`Added ${quantity} ${pasta.name} to cart`);
-        } else {
-            alert('This item is currently unavailable');
+
+            let formattedImageUrl = pasta.imageUrl;
+            
+
+            handleAddToCart({
+                id: pasta.id,
+                name: pasta.name,
+                price: pasta.price,
+                quantity: quantity,
+                imageUrl: formattedImageUrl
+            });
         }
     };
 
@@ -60,115 +69,121 @@ const Detail_Pasta = () => {
 
     if (loading) {
         return (
-            <CustomerLayout>
-                <div className="detail-container">
-                    <div className="detail-loading">
-                        <div className="loading-spinner"></div>
-                        <p>Loading pasta/main details...</p>
-                    </div>
+            <div className="detail-container">
+                <div className="detail-loading">
+                    <div className="loading-spinner"></div>
+                    <p>Loading pasta/main details...</p>
                 </div>
-            </CustomerLayout>
+            </div>
         );
     }
 
     if (error || !pasta) {
         return (
-            <CustomerLayout>
-                <div className="detail-container">
-                    <div className="detail-error">
-                        <h2>Error</h2>
-                        <p>{error || 'Pasta/Main not found'}</p>
-                        <button className="back-button" onClick={handleGoBack}>
-                            Back to Pasta/Main Menu
-                        </button>
-                    </div>
+            <div className="detail-container">
+                <div className="detail-error">
+                    <h2>Error</h2>
+                    <p>{error || 'Pasta/Main not found'}</p>
+                    <button className="back-button" onClick={handleGoBack}>
+                        Back to Pasta/Main Menu
+                    </button>
                 </div>
-            </CustomerLayout>
+            </div>
         );
     }
 
+ 
+    const getImageUrl = () => {
+        if (!pasta.imageUrl) return null;
+        return pasta.imageUrl.startsWith('http')
+            ? pasta.imageUrl
+            : `${API_URL.split('/api')[0]}${pasta.imageUrl}`;
+    };
+
     return (
-        <CustomerLayout>
-            <div className="detail-container">
-                <div className="breadcrumb">
-                    <span onClick={() => navigate('/')}>Home</span>
-                    <span> • </span>
-                    <span onClick={() => navigate('/pasta')}>Pasta/Main</span>
-                    <span> • </span>
-                    <span>{pasta.name}</span>
+        <div className="detail-container">
+            <div className="breadcrumb">
+                <span onClick={() => navigate('/')}>Home</span>
+                <span> • </span>
+                <span onClick={() => navigate('/pasta')}>Pasta/Main</span>
+                <span> • </span>
+                <span>{pasta.name}</span>
+            </div>
+            
+            <div className="detail-content">
+                <div className="detail-left">
+                    <div className="detail-image">
+                        {pasta.imageUrl && (
+                            <img
+                                src={getImageUrl()}
+                                alt={pasta.name}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = 'https://via.placeholder.com/300?text=No+Image';
+                                }}
+                            />
+                        )}
+                        {pasta.status === 'UNAVAILABLE' && (
+                            <div className="sold-out-badge">Temporarily Out of Stock</div>
+                        )}
+                    </div>
                 </div>
                 
-                <div className="detail-content">
-                    <div className="detail-left">
-                        <div className="detail-image">
-                            {pasta.imageUrl && (
-                                <img
-                                    src={pasta.imageUrl.startsWith('http') ? pasta.imageUrl : `${API_URL.split('/api')[0]}${pasta.imageUrl}`}
-                                    alt={pasta.name}
-                                />
-                            )}
-                            {pasta.status === 'UNAVAILABLE' && (
-                                <div className="sold-out-badge">Temporarily Out of Stock</div>
-                            )}
-                        </div>
+                <div className="detail-right">
+                    <h1 className="detail-title">{pasta.name}</h1>
+                    
+                    <div className="detail-price">
+                        {pasta.price ? `${Number(pasta.price).toLocaleString()} $` : 'Contact for Price'}
                     </div>
                     
-                    <div className="detail-right">
-                        <h1 className="detail-title">{pasta.name}</h1>
-                        
-                        <div className="detail-price">
-                            {pasta.price ? `$${Number(pasta.price).toLocaleString()}` : 'Contact for Price'}
+                    <div className="detail-description">
+                        <h3>Description</h3>
+                        <p>{pasta.description || 'No description available.'}</p>
+                    </div>
+                    
+                    {pasta.ingredients && (
+                        <div className="detail-ingredients">
+                            <h3>Ingredients</h3>
+                            <p>{pasta.ingredients}</p>
                         </div>
-                        
-                        <div className="detail-description">
-                            <h3>Description</h3>
-                            <p>{pasta.description || 'No description available.'}</p>
-                        </div>
-                        
-                        {pasta.ingredients && (
-                            <div className="detail-ingredients">
-                                <h3>Ingredients</h3>
-                                <p>{pasta.ingredients}</p>
-                            </div>
-                        )}
-                        
-                        <div className="detail-actions">
-                            <div className="quantity-control">
-                                <button 
-                                    className="quantity-btn" 
-                                    onClick={() => handleQuantityChange(-1)}
-                                    disabled={pasta.status === 'UNAVAILABLE'}
-                                >
-                                    -
-                                </button>
-                                <span className="quantity-value">{quantity}</span>
-                                <button 
-                                    className="quantity-btn" 
-                                    onClick={() => handleQuantityChange(1)}
-                                    disabled={pasta.status === 'UNAVAILABLE'}
-                                >
-                                    +
-                                </button>
-                            </div>
-                            
+                    )}
+                    
+                    <div className="detail-actions">
+                        <div className="quantity-control">
                             <button 
-                                className={`add-cart-btn ${pasta.status === 'UNAVAILABLE' ? 'disabled' : ''}`}
-                                onClick={handleAddToCart}
+                                className="quantity-btn" 
+                                onClick={() => handleQuantityChange(-1)}
                                 disabled={pasta.status === 'UNAVAILABLE'}
                             >
-                                {pasta.status === 'UNAVAILABLE' ? 'Out of Stock' : 'Add to Cart'}
+                                -
+                            </button>
+                            <span className="quantity-value">{quantity}</span>
+                            <button 
+                                className="quantity-btn" 
+                                onClick={() => handleQuantityChange(1)}
+                                disabled={pasta.status === 'UNAVAILABLE'}
+                            >
+                                +
                             </button>
                         </div>
                         
-                        <div className="back-section">
-                            <button className="back-btn" onClick={handleGoBack}>
-                                &larr; Back to Pasta/Main Menu
-                            </button>
-                        </div>
+                        <button 
+                            className={`add-cart-btn ${pasta.status === 'UNAVAILABLE' ? 'disabled' : ''}`}
+                            onClick={addToCart}
+                            disabled={pasta.status === 'UNAVAILABLE'}
+                        >
+                            {pasta.status === 'UNAVAILABLE' ? 'Out of Stock' : 'Add to Cart'}
+                        </button>
+                    </div>
+                    
+                    <div className="back-section">
+                        <button className="back-btn" onClick={handleGoBack}>
+                            &larr; Back to Pasta/Main Menu
+                        </button>
                     </div>
                 </div>
             </div>
-        </CustomerLayout>
+        </div>
     );
 };
 

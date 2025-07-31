@@ -37,34 +37,19 @@ export default function Delivery_Status() {
     const fetchOrders = async (showLoading = true) => {
         if (showLoading) setLoading(true);
         try {
-            // Lấy các đơn theo deliveryStatus (KHÔNG phải status!)
-            const responses = await Promise.all([
-                axios.get("http://localhost:8080/api/orders/filter?deliveryStatus=PREPARING", {
-                    headers: { Authorization: `Bearer ${token}` }
-                }),
-                axios.get("http://localhost:8080/api/orders/filter?deliveryStatus=WAITING_FOR_SHIPPER", {
-                    headers: { Authorization: `Bearer ${token}` }
-                }),
-                axios.get("http://localhost:8080/api/orders/filter?deliveryStatus=DELIVERING", {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
-            ]);
-            const allOrdersRaw = [
-                ...responses[0].data,
-                ...responses[1].data,
-                ...responses[2].data
-            ];
-
-            // Loại bỏ đơn trùng theo id (chỉ lấy đơn đầu tiên xuất hiện)
-            const seenIds = new Set();
-            const allOrders = allOrdersRaw.filter(order => {
-                if (seenIds.has(order.id)) return false;
-                seenIds.add(order.id);
-                return true;
-            }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            // Lấy tất cả đơn hàng
+            const response = await axios.get("http://localhost:8080/api/orders", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            
+            // Lọc các đơn hàng có deliveryStatus thuộc 3 trạng thái giao hàng
+            const allOrders = response.data.filter(order => 
+                order.deliveryStatus === "PREPARING" || 
+                order.deliveryStatus === "WAITING_FOR_SHIPPER" || 
+                order.deliveryStatus === "DELIVERING"
+            ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
             setOrders(allOrders);
-
 
             if (selectedOrder && !allOrders.some(order => order.id === selectedOrder.id)) {
                 setSelectedOrder(null);
@@ -115,6 +100,7 @@ export default function Delivery_Status() {
                 }
                 params.cancelReason = cancelReason;
             }
+            
             await axios.put(
                 `http://localhost:8080/api/orders/${selectedOrder.id}/delivery-status`,
                 {},
@@ -127,22 +113,8 @@ export default function Delivery_Status() {
             setShowConfirmation(false);
             setActionToConfirm(null);
 
-            if (actionToConfirm === "DELIVERED" || actionToConfirm === "CANCELLED") {
-                setOrders(orders.filter(order => order.id !== selectedOrder.id));
-                setSelectedOrder(null);
-            } else {
-                setOrders(orders.map(order =>
-                    order.id === selectedOrder.id
-                        ? { ...order, status: actionToConfirm, deliveryStatus: actionToConfirm, deliveryNote }
-                        : order
-                ));
-                setSelectedOrder({
-                    ...selectedOrder,
-                    status: actionToConfirm,
-                    deliveryStatus: actionToConfirm,
-                    deliveryNote
-                });
-            }
+            // Refresh danh sách đơn hàng sau khi cập nhật
+            await fetchOrders(false);
 
             alert(`Đã cập nhật trạng thái đơn hàng thành ${getStatusLabel(actionToConfirm)}!`);
         } catch (error) {
@@ -198,7 +170,7 @@ export default function Delivery_Status() {
                 return (
                     <button
                         className="action-btn"
-                        title="Chờ shipper đến lấy hàng"
+                        title="Chuyển sang trạng thái chờ shipper"
                         onClick={(e) => {
                             e.stopPropagation();
                             confirmAction("WAITING_FOR_SHIPPER", order);
@@ -343,21 +315,27 @@ export default function Delivery_Status() {
     const ALLOWED_STATUS = ["PREPARING", "WAITING_FOR_SHIPPER", "DELIVERING"];
 
     const filteredOrders = orders.filter(order => {
-        // Chỉ show các đơn có deliveryStatus thuộc 3 trạng thái đang giao hàng
+        // Lọc theo trạng thái giao hàng
+        let statusMatch = false;
         if (filter === "all") {
-            if (!ALLOWED_STATUS.includes(order.deliveryStatus)) return false;
+            // Hiển thị tất cả đơn hàng có deliveryStatus thuộc 3 trạng thái giao hàng
+            statusMatch = ALLOWED_STATUS.includes(order.deliveryStatus);
         } else {
-            if (order.deliveryStatus !== filter) return false;
+            // Lọc theo trạng thái cụ thể
+            statusMatch = order.deliveryStatus === filter;
         }
+        
+        if (!statusMatch) return false;
 
         // Lọc theo từ khóa tìm kiếm (nếu có)
         if (searchTerm.trim()) {
             const searchLower = searchTerm.toLowerCase();
-            return (
-                order.orderNumber.toLowerCase().includes(searchLower) ||
+            const searchMatch = (
+                order.orderNumber?.toLowerCase().includes(searchLower) ||
                 order.customer?.fullName?.toLowerCase().includes(searchLower) ||
                 order.customer?.email?.toLowerCase().includes(searchLower)
             );
+            return searchMatch;
         }
 
         return true;
@@ -368,7 +346,10 @@ export default function Delivery_Status() {
     return (
         <div className="delivery-container">
             <div className="delivery-header">
-                <h2>Quản lý giao hàng</h2>
+                <h2>Quản lý trạng thái giao hàng</h2>
+                <p style={{color: '#666', margin: '5px 0 0 0', fontSize: '14px'}}>
+                    Cập nhật trạng thái giao hàng cho khách hàng
+                </p>
 
                 <div className="delivery-controls">
                     <div className="search-box">
@@ -386,6 +367,7 @@ export default function Delivery_Status() {
                         <button className="refresh-btn" onClick={handleManualRefresh} title="Làm mới dữ liệu">
                             <FaSync className={loading ? "spinning" : ""} /> Làm mới
                         </button>
+
                         <div className="refresh-interval">
                             <span>Tự động làm mới:</span>
                             <select
@@ -406,7 +388,7 @@ export default function Delivery_Status() {
                         className={`filter-btn ${filter === "all" ? "active" : ""}`}
                         onClick={() => setFilter("all")}
                     >
-                        Tất cả 
+                        Tất cả ({orders.length})
                     </button>
                     <button
                         className={`filter-btn ${filter === "PREPARING" ? "active" : ""}`}
@@ -431,73 +413,80 @@ export default function Delivery_Status() {
 
             <div className="delivery-content">
                 <div className="orders-list">
-                    {loading ? (
-                        <div className="loading-state">
-                            <div className="spinner"></div>
-                            <div>Đang tải dữ liệu...</div>
-                        </div>
-                    ) : filteredOrders.length === 0 ? (
-                        <div className="empty-state">
-                            <div className="empty-state-icon">🚚</div>
-                            <div className="empty-state-text">
-                                {searchTerm ? "Không tìm thấy đơn hàng nào phù hợp" : "Không có đơn hàng nào"}
+                    <div className="table-container">
+                        {loading ? (
+                            <div className="loading-state">
+                                <div className="spinner"></div>
+                                <div>Đang tải dữ liệu...</div>
                             </div>
-                        </div>
-                    ) : (
-                        <table className="delivery-table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Mã đơn</th>
-                                    <th>Khách hàng</th>
-                                    <th>Sản phẩm</th>
-                                    <th>Tổng tiền</th>
-                                    <th>Trạng thái</th>
-                                    <th>Thời gian</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredOrders.map((order, idx) => (
-                                    <tr
-                                        key={order.id}
-                                        className={selectedOrder && selectedOrder.id === order.id ? "selected-row" : ""}
-                                        onClick={() => handleSelectOrder(order)}
-                                    >
-                                        <td>{idx + 1}</td>
-                                        <td>#{order.orderNumber}</td>
-                                        <td>
-                                            {order.customer?.fullName}
-                                            <br />
-                                            <span className="customer-email">{order.customer?.email}</span>
-                                        </td>
-                                        <td>
-                                            <ul className="food-list">
-                                                {order.foodList?.map((food) => (
-                                                    <li key={food.id}>
-                                                        {food.name} <span className="food-price">${food.price}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </td>
-                                        <td className="price-column">${order.totalPrice}</td>
-                                        <td>
-                                            <span
-                                                className="status-badge"
-                                                style={{ backgroundColor: getStatusColor(order.deliveryStatus) }}
-                                            >
-                                                {getStatusIcon(order.deliveryStatus)} {getStatusLabel(order.deliveryStatus)}
-                                            </span>
-                                        </td>
-                                        <td className="date-column">{formatDate(order.createdAt)}</td>
-                                        <td className="actions-column">
-                                            {renderActions(order)}
-                                        </td>
+                        ) : filteredOrders.length === 0 ? (
+                            <div className="empty-state">
+                                <div className="empty-state-icon">🚚</div>
+                                <div className="empty-state-text">
+                                    {searchTerm ? "Không tìm thấy đơn hàng nào phù hợp" : "Không có đơn hàng nào"}
+                                </div>
+                            </div>
+                        ) : (
+                            <table className="delivery-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Mã đơn</th>
+                                        <th>Khách hàng</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thời gian</th>
+                                        <th>Thao tác</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
+                                </thead>
+                                <tbody>
+                                    {filteredOrders.map((order, idx) => (
+                                        <tr
+                                            key={order.id}
+                                            className={selectedOrder && selectedOrder.id === order.id ? "selected-row" : ""}
+                                            onClick={() => handleSelectOrder(order)}
+                                        >
+                                            <td>{idx + 1}</td>
+                                            <td>#{order.orderNumber}</td>
+                                            <td>
+                                                <div className="customer-info">
+                                                    <div className="customer-name">{order.customer?.fullName || 'Không có tên'}</div>
+                                                    <div className="customer-email">{order.customer?.email || 'Không có email'}</div>
+                                                    {order.customer?.phoneNumber && (
+                                                        <div className="customer-phone">{order.customer.phoneNumber}</div>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <ul className="food-list">
+                                                    {order.foodList?.map(food => (
+                                                        <li key={food.id}>
+                                                            {food.name} <b>x{food.quantity}</b>
+                                                            <span className="food-price"> ({Number(food.price).toLocaleString()} $)</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </td>
+                                            <td className="price-column">${Number(order.totalPrice).toFixed(2)}</td>
+                                            <td>
+                                                <span
+                                                    className="status-badge"
+                                                    style={{ backgroundColor: getStatusColor(order.deliveryStatus) }}
+                                                >
+                                                    {getStatusIcon(order.deliveryStatus)} {getStatusLabel(order.deliveryStatus)}
+                                                </span>
+                                            </td>
+                                            <td className="date-column">{formatDate(order.createdAt)}</td>
+                                            <td className="actions-column">
+                                                {renderActions(order)}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
                 </div>
 
                 {selectedOrder && (
@@ -508,23 +497,32 @@ export default function Delivery_Status() {
                         <div className="order-detail-content">
                             <div className="customer-info">
                                 <h4>Thông tin khách hàng</h4>
-                                <div className="info-row"><span>Họ tên:</span> {selectedOrder.customer?.fullName}</div>
-                                <div className="info-row"><span>Email:</span> {selectedOrder.customer?.email}</div>
-                                <div className="info-row"><span>Điện thoại:</span> {selectedOrder.customer?.phoneNumber || "-"}</div>
-                                <div className="info-row"><span>Địa chỉ:</span> {selectedOrder.customer?.address || "-"}</div>
+                                <div className="info-row"><span>Họ tên:</span> {selectedOrder.customer?.fullName || "Không có tên"}</div>
+                                <div className="info-row"><span>Email:</span> {selectedOrder.customer?.email || "Không có email"}</div>
+                                <div className="info-row"><span>Điện thoại:</span> {selectedOrder.customer?.phoneNumber || "Không có số điện thoại"}</div>
+                                <div className="info-row"><span>Địa chỉ:</span> {selectedOrder.customer?.address || "Không có địa chỉ"}</div>
                             </div>
                             <div className="order-info">
                                 <h4>Thông tin đơn hàng</h4>
                                 <div className="info-row"><span>Mã đơn:</span> #{selectedOrder.orderNumber}</div>
-                                <div className="info-row"><span>Tổng tiền:</span> ${selectedOrder.totalPrice}</div>
-                                <div className="info-row"><span>Thanh toán:</span> {selectedOrder.paymentMethod?.name || "-"}</div>
+                                <div className="info-row"><span>Tổng tiền:</span> ${Number(selectedOrder.totalPrice).toFixed(2)}</div>
+                                <div className="info-row"><span>Thanh toán:</span> {selectedOrder.paymentMethod?.name || "Chưa chọn phương thức"}</div>
                                 <div className="info-row">
-                                    <span>Trạng thái:</span>
+                                    <span>Trạng thái giao hàng:</span>
                                     <span
                                         className="status-badge-small"
                                         style={{ backgroundColor: getStatusColor(selectedOrder.deliveryStatus) }}
                                     >
                                         {getStatusIcon(selectedOrder.deliveryStatus)} {getStatusLabel(selectedOrder.deliveryStatus)}
+                                    </span>
+                                </div>
+                                <div className="info-row">
+                                    <span>Trạng thái thanh toán:</span>
+                                    <span
+                                        className="status-badge-small"
+                                        style={{ backgroundColor: selectedOrder.status === 'PAID' ? '#4caf50' : '#ff9800' }}
+                                    >
+                                        {selectedOrder.status === 'PAID' ? 'Đã thanh toán' : 'Chờ thanh toán'}
                                     </span>
                                 </div>
                                 <div className="info-row"><span>Thời gian:</span> {formatDate(selectedOrder.createdAt)}</div>

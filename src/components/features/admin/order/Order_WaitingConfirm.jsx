@@ -18,7 +18,7 @@ export default function Order_WaitingConfirm() {
     const interval = setInterval(() => {
       fetchOrders(false);
     }, 30000);
-    
+
     return () => clearInterval(interval);
     // eslint-disable-next-line
   }, []);
@@ -50,9 +50,9 @@ export default function Order_WaitingConfirm() {
       await axios.put(
         `http://localhost:8080/api/orders/${orderId}/admin-confirm`,
         {},
-        { 
+        {
           params: { action: 'confirm' },
-          headers: { Authorization: `Bearer ${token}` } 
+          headers: { Authorization: `Bearer ${token}` }
         }
       );
       await fetchOrders();
@@ -81,12 +81,12 @@ export default function Order_WaitingConfirm() {
       await axios.put(
         `http://localhost:8080/api/orders/${selectedOrder.id}/admin-confirm`,
         {},
-        { 
-          params: { 
+        {
+          params: {
             action: 'reject',
             reason: rejectReason
           },
-          headers: { Authorization: `Bearer ${token}` } 
+          headers: { Authorization: `Bearer ${token}` }
         }
       );
       setShowRejectModal(false);
@@ -118,7 +118,7 @@ export default function Order_WaitingConfirm() {
     <div className="order-confirm-main">
       <div className="order-waiting-confirm-container">
         <h2>Đơn hàng chờ xác nhận</h2>
-        
+
         {loading ? (
           <div className="loading-state">
             <div className="spinner"></div>
@@ -161,9 +161,11 @@ export default function Order_WaitingConfirm() {
                     <ul className="food-list">
                       {order.foodList?.map(food => (
                         <li key={food.id}>
-                          {food.name} <span className="food-price">${food.price}</span>
+                          {food.name} <b>x{food.quantity}</b>
+                          <span className="food-price"> ({Number(food.price).toLocaleString()} $)</span>
                         </li>
                       ))}
+
                     </ul>
                   </td>
                   <td className="price-column">${order.totalPrice}</td>
@@ -202,7 +204,7 @@ export default function Order_WaitingConfirm() {
               <div className="confirmation-dialog-title">Từ chối đơn hàng</div>
               <div className="confirmation-dialog-content">
                 <p>Bạn có chắc chắn muốn từ chối đơn hàng <strong>#{selectedOrder?.orderNumber}</strong>?</p>
-                
+
                 <div className="form-group mt-15">
                   <label htmlFor="rejectReason">Lý do từ chối:</label>
                   <textarea
@@ -248,7 +250,7 @@ export default function Order_WaitingConfirm() {
             <div className="info-row"><span>Email:</span> {selectedOrder.customer.email}</div>
             <div className="info-row"><span>Điện thoại:</span> {selectedOrder.customer.phoneNumber || "-"}</div>
             <div className="info-row"><span>Địa chỉ:</span> {selectedOrder.customer.address || "-"}</div>
-            
+
             {selectedOrder.customer.imageUrl && (
               <div className="customer-image">
                 <img
@@ -257,9 +259,9 @@ export default function Order_WaitingConfirm() {
                 />
               </div>
             )}
-            
+
             <div className="info-row"><span>Điểm tích lũy:</span> {selectedOrder.customer.point || 0}</div>
-            
+
             <div className="order-summary">
               <h4>Tóm tắt đơn hàng</h4>
               <div className="info-row"><span>Mã đơn:</span> #{selectedOrder.orderNumber}</div>
@@ -271,19 +273,19 @@ export default function Order_WaitingConfirm() {
                 <span>Thời gian:</span> {formatDate(selectedOrder.createdAt)}
               </div>
             </div>
-            
+
             <div className="action-section">
-              <button 
+              <button
                 className="btn-track"
                 onClick={() => handleConfirm(selectedOrder.id)}
                 disabled={confirming === selectedOrder.id}
               >
-                {confirming === selectedOrder.id ? 
-                  <><div className="spinner-small"></div> Đang xử lý...</> : 
+                {confirming === selectedOrder.id ?
+                  <><div className="spinner-small"></div> Đang xử lý...</> :
                   <><FaCheck /> Đã nhận được tiền</>
                 }
               </button>
-              <button 
+              <button
                 className="btn-contact"
                 onClick={() => handleRejectClick(selectedOrder)}
                 disabled={confirming === selectedOrder.id}

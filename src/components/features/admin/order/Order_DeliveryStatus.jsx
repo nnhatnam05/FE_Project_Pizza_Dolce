@@ -41,19 +41,19 @@ export default function Order_DeliveryStatus() {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
-  
+
       // Gộp kết quả
       const allOrders = [
         ...responses[0].data,
         ...responses[1].data,
         ...responses[2].data
       ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  
+
       // Loại trùng theo id
       const uniqueOrders = Array.from(
         new Map(allOrders.map(order => [order.id, order])).values()
       );
-  
+
       setOrders(uniqueOrders);
     } catch (error) {
       console.error("Failed to fetch orders:", error);
@@ -64,7 +64,7 @@ export default function Order_DeliveryStatus() {
       if (showLoading) setLoading(false);
     }
   };
-  
+
 
   const handleSelectOrder = (order) => {
     setSelectedOrder(order);
@@ -106,26 +106,26 @@ export default function Order_DeliveryStatus() {
 
   const ALLOWED_STATUS = ["PREPARING", "WAITING_FOR_SHIPPER", "DELIVERING"];
 
-const filteredOrders = orders.filter(order => {
-  // Chỉ show các đơn có deliveryStatus thuộc 3 trạng thái đang giao hàng
-  if (filter === "all") {
-    if (!ALLOWED_STATUS.includes(order.deliveryStatus)) return false;
-  } else {
-    if (order.deliveryStatus !== filter) return false;
-  }
+  const filteredOrders = orders.filter(order => {
+    // Chỉ show các đơn có deliveryStatus thuộc 3 trạng thái đang giao hàng
+    if (filter === "all") {
+      if (!ALLOWED_STATUS.includes(order.deliveryStatus)) return false;
+    } else {
+      if (order.deliveryStatus !== filter) return false;
+    }
 
-  // Lọc theo từ khóa tìm kiếm (nếu có)
-  if (searchTerm.trim()) {
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      order.orderNumber.toLowerCase().includes(searchLower) ||
-      order.customer?.fullName?.toLowerCase().includes(searchLower) ||
-      order.customer?.email?.toLowerCase().includes(searchLower)
-    );
-  }
+    // Lọc theo từ khóa tìm kiếm (nếu có)
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase();
+      return (
+        order.orderNumber.toLowerCase().includes(searchLower) ||
+        order.customer?.fullName?.toLowerCase().includes(searchLower) ||
+        order.customer?.email?.toLowerCase().includes(searchLower)
+      );
+    }
 
-  return true;
-});
+    return true;
+  });
 
 
   return (
@@ -150,7 +150,7 @@ const filteredOrders = orders.filter(order => {
               </button>
               <div className="refresh-interval">
                 <span>Tự động làm mới:</span>
-                <select 
+                <select
                   value={refreshInterval}
                   onChange={(e) => handleRefreshIntervalChange(parseInt(e.target.value))}
                 >
@@ -163,25 +163,25 @@ const filteredOrders = orders.filter(order => {
             </div>
           </div>
           <div className="delivery-filters">
-            <button 
+            <button
               className={`filter-btn ${filter === "all" ? "active" : ""}`}
               onClick={() => setFilter("all")}
             >
               Tất cả
             </button>
-            <button 
+            <button
               className={`filter-btn ${filter === "PREPARING" ? "active" : ""}`}
               onClick={() => setFilter("PREPARING")}
             >
               Đang chuẩn bị ({orders.filter(o => o.deliveryStatus === "PREPARING").length})
             </button>
-            <button 
+            <button
               className={`filter-btn ${filter === "WAITING_FOR_SHIPPER" ? "active" : ""}`}
               onClick={() => setFilter("WAITING_FOR_SHIPPER")}
             >
               Chờ shipper ({orders.filter(o => o.deliveryStatus === "WAITING_FOR_SHIPPER").length})
             </button>
-            <button 
+            <button
               className={`filter-btn ${filter === "DELIVERING" ? "active" : ""}`}
               onClick={() => setFilter("DELIVERING")}
             >
@@ -229,18 +229,20 @@ const filteredOrders = orders.filter(order => {
                   </td>
                   <td>
                     <ul className="food-list">
-                      {order.foodList?.map((food) => (
+                      {order.foodList?.map(food => (
                         <li key={food.id}>
-                          {food.name} <span className="food-price">${food.price}</span>
+                          {food.name} <b>x{food.quantity}</b>
+                          <span className="food-price"> ({Number(food.price).toLocaleString()} $)</span>
                         </li>
                       ))}
+
                     </ul>
                   </td>
                   <td className="price-column">${order.totalPrice}</td>
                   <td>
-                    <span 
-                      className="status-badge" 
-                      style={{backgroundColor: getStatusColor(order.deliveryStatus)}}
+                    <span
+                      className="status-badge"
+                      style={{ backgroundColor: getStatusColor(order.deliveryStatus) }}
                     >
                       {getStatusLabel(order.deliveryStatus)}
                     </span>
@@ -262,7 +264,7 @@ const filteredOrders = orders.filter(order => {
             <div className="info-row"><span>Email:</span> {selectedOrder.customer?.email}</div>
             <div className="info-row"><span>Điện thoại:</span> {selectedOrder.customer?.phoneNumber || "-"}</div>
             <div className="info-row"><span>Địa chỉ:</span> {selectedOrder.customer?.address || "-"}</div>
-            
+
             {selectedOrder.customer?.imageUrl && (
               <div className="customer-image">
                 <img
@@ -271,9 +273,9 @@ const filteredOrders = orders.filter(order => {
                 />
               </div>
             )}
-            
+
             <div className="info-row"><span>Điểm tích lũy:</span> {selectedOrder.customer?.point || 0}</div>
-            
+
             <div className="order-summary">
               <h4>Tóm tắt đơn hàng</h4>
               <div className="info-row"><span>Mã đơn:</span> #{selectedOrder.orderNumber}</div>
@@ -282,10 +284,10 @@ const filteredOrders = orders.filter(order => {
                 <span>Thanh toán:</span> {selectedOrder.paymentMethod?.name || "Chưa thanh toán"}
               </div>
               <div className="info-row">
-                <span>Trạng thái:</span> 
-                <span 
-                  className="status-badge-small" 
-                  style={{backgroundColor: getStatusColor(selectedOrder.deliveryStatus)}}
+                <span>Trạng thái:</span>
+                <span
+                  className="status-badge-small"
+                  style={{ backgroundColor: getStatusColor(selectedOrder.deliveryStatus) }}
                 >
                   {getStatusLabel(selectedOrder.deliveryStatus)}
                 </span>
@@ -293,7 +295,7 @@ const filteredOrders = orders.filter(order => {
               <div className="info-row">
                 <span>Thời gian:</span> {formatDate(selectedOrder.createdAt)}
               </div>
-              
+
               {selectedOrder.deliveryNote && (
                 <div className="mt-15">
                   <span>Ghi chú giao hàng:</span>
@@ -301,7 +303,7 @@ const filteredOrders = orders.filter(order => {
                 </div>
               )}
             </div>
-            
+
             {/* Hiển thị lịch sử trạng thái */}
             {selectedOrder.statusHistory && selectedOrder.statusHistory.length > 0 && (
               <div className="order-history mt-15">

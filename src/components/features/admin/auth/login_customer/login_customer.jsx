@@ -78,7 +78,7 @@ const LoginCustomer = () => {
     setShowLoadingForgot(true);
     setTimeout(() => {
       setShowLoadingForgot(false);
-      navigate('/forgot_password');
+      navigate('/forgot_password_customer');
     }, 1500);
   };
 

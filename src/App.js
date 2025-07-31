@@ -5,6 +5,7 @@ import './App.css';
 import HomePage from './components/pages/Home/HomePage';
 import AdminLayout from './components/common/Layout/admin_layout/AdminLayout';
 import StaffLayout from './components/common/Layout/staff_layout/StaffLayout';
+import CustomerLayout from './components/common/Layout/customer_layout';
 
 import FoodList from './components/features/admin/food/FoodList';
 import FoodForm from './components/features/admin/food/FoodForm';
@@ -50,35 +51,133 @@ import Detail_Salad from "./components/pages/Home/Menu/Salads/Detail_Salad";
 import Detail_Drinks from "./components/pages/Home/Menu/Drinks/Detail_Drinks";
 import Detail_Pasta from "./components/pages/Home/Menu/Pasta-Main/Detail_Pasta-Main";
 import Detail_Other from "./components/pages/Home/Menu/Other/Detail_Other";
+import Cart from "./components/pages/Home/Cart/Cart";
 import List_Payment from "./components/features/admin/payment/List_Payment";
 import Form_Payment from "./components/features/admin/payment/Form_Payment";
 import OrderManagement from "./components/features/admin/order/Order_Management";
 import OrderWaitingConfirmation from "./components/features/admin/order/Order_WaitingConfirm";
 import OrderDeliveryStatus from "./components/features/admin/order/Order_DeliveryStatus";
 import Delivery_Status from "./components/features/staff/delivery-status/Delivery_Status";
+import ForgotPasswordCustomer from "./components/features/admin/auth/login_customer/forgot_password_cus";
+import PaymentDetails from "./components/pages/Home/Cart/payment/payment";
+import EditCart from "./components/pages/Home/Cart/payment/editCart";
+import OrderHistory from "./components/pages/Home/OrderHistory";
+import DetailDelivery from "./components/pages/Home/Cart/detail_delivery/detail_delivery";
+import PaymentSuccess from "./components/pages/Home/PaymentSuccess/PaymentSuccess";
+
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* Main customer page */}
-        <Route path="/" element={<Main />} />
-        <Route path="/pizza" element={<List_Pizza />} />
-        <Route path="/pizza/:id" element={<Detail_Pizza />} />
-        <Route path="/appetizers" element={<List_Appetizers />} />
-        <Route path="/appetizers/:id" element={<Detail_Appetizers />} />
-        <Route path="/salads" element={<List_Salads />} />
-        <Route path="/salads/:id" element={<Detail_Salad />} />
-        <Route path="/drinks" element={<List_Drinks />} />
-        <Route path="/drinks/:id" element={<Detail_Drinks />} />
-        <Route path="/pasta" element={<List_Pasta />} />
-        <Route path="/pasta/:id" element={<Detail_Pasta />} />
-        <Route path="/other" element={<List_Other />} />
-        <Route path="/other/:id" element={<Detail_Other />} />
+        <Route path="/" element={
+          <CustomerLayout>
+            <Main />
+          </CustomerLayout>
+        } />
+        <Route path="/pizza" element={
+          <CustomerLayout>
+            <List_Pizza />
+          </CustomerLayout>
+        } />
+        <Route path="/pizza/:id" element={
+          <CustomerLayout>
+            <Detail_Pizza />
+          </CustomerLayout>
+        } />
+        <Route path="/appetizers" element={
+          <CustomerLayout>
+            <List_Appetizers />
+          </CustomerLayout>
+        } />
+        <Route path="/appetizers/:id" element={
+          <CustomerLayout>
+            <Detail_Appetizers />
+          </CustomerLayout>
+        } />
+        <Route path="/salads" element={
+          <CustomerLayout>
+            <List_Salads />
+          </CustomerLayout>
+        } />
+        <Route path="/salads/:id" element={
+          <CustomerLayout>
+            <Detail_Salad />
+          </CustomerLayout>
+        } />
+        <Route path="/drinks" element={
+          <CustomerLayout>
+            <List_Drinks />
+          </CustomerLayout>
+        } />
+        <Route path="/drinks/:id" element={
+          <CustomerLayout>
+            <Detail_Drinks />
+          </CustomerLayout>
+        } />
+        <Route path="/pasta" element={
+          <CustomerLayout>
+            <List_Pasta />
+          </CustomerLayout>
+        } />
+        <Route path="/pasta/:id" element={
+          <CustomerLayout>
+            <Detail_Pasta />
+          </CustomerLayout>
+        } />
+        <Route path="/other" element={
+          <CustomerLayout>
+            <List_Other />
+          </CustomerLayout>
+        } />
+        <Route path="/other/:id" element={
+          <CustomerLayout>
+            <Detail_Other />
+          </CustomerLayout>
+        } />
+        <Route path="/cart" element={
+          <CustomerLayout>
+            <Cart />
+          </CustomerLayout>
+        } />
+        
+        <Route path="/payment-details/:orderId" element={
+          <CustomerLayout>
+            <PaymentDetails />
+          </CustomerLayout>
+        } />
+        
+        <Route path="/order/edit/:orderId" element={
+          <CustomerLayout>
+            <EditCart />
+          </CustomerLayout>
+        } />
+        
+        <Route path="/order-history" element={
+          <CustomerLayout>
+            <OrderHistory />
+          </CustomerLayout>
+        } />
+
+
+        <Route path="/detail-delivery/:orderId" element={
+          <CustomerLayout>
+            <DetailDelivery />
+          </CustomerLayout>
+        } />
+
+        <Route path="/payment-success" element={
+          <CustomerLayout>
+            <PaymentSuccess />
+          </CustomerLayout>
+        } />
+        
 
         {/* <Route path="/main" element={<HomePage />} /> */}
         <Route path="/login/admin" element={<Login />} />
         <Route path="/login/customer" element={<LoginCustomer />} />
+        <Route path="/forgot_password_customer" element={<ForgotPasswordCustomer />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgot_password" element={<ForgotPassword />} />
 

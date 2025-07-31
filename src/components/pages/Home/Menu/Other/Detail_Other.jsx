@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import CustomerLayout from '../../../../common/Layout/customer_layout';
+import { CartContext } from '../../../../common/Layout/customer_layout';
 import './Other.css';
 
 const Detail_Other = () => {
@@ -11,6 +11,9 @@ const Detail_Other = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [quantity, setQuantity] = useState(1);
+    
+    // 使用CartContext
+    const { handleAddToCart } = useContext(CartContext);
     
     // API URL - replace with your actual API endpoint
     const API_URL = 'http://localhost:8080/api/foods';
@@ -44,13 +47,16 @@ const Detail_Other = () => {
         }
     };
 
-    const handleAddToCart = () => {
-        // Add to cart functionality would go here
-        // You can implement your API call to add to cart
+    const addToCart = () => {
+        // 使用CartContext中的handleAddToCart函数
         if (other && other.status !== 'UNAVAILABLE') {
-            alert(`Added ${quantity} ${other.name} to cart`);
-        } else {
-            alert('This item is currently unavailable');
+            handleAddToCart({
+                id: other.id,
+                name: other.name,
+                price: other.price,
+                quantity: quantity,
+                imageUrl: other.imageUrl
+            });
         }
     };
 
@@ -60,115 +66,109 @@ const Detail_Other = () => {
 
     if (loading) {
         return (
-            <CustomerLayout>
-                <div className="detail-container">
-                    <div className="detail-loading">
-                        <div className="loading-spinner"></div>
-                        <p>Loading other details...</p>
-                    </div>
+            <div className="detail-container">
+                <div className="detail-loading">
+                    <div className="loading-spinner"></div>
+                    <p>Loading other details...</p>
                 </div>
-            </CustomerLayout>
+            </div>
         );
     }
 
     if (error || !other) {
         return (
-            <CustomerLayout>
-                <div className="detail-container">
-                    <div className="detail-error">
-                        <h2>Error</h2>
-                        <p>{error || 'Other not found'}</p>
-                        <button className="back-button" onClick={handleGoBack}>
-                            Back to Other Menu
-                        </button>
-                    </div>
+            <div className="detail-container">
+                <div className="detail-error">
+                    <h2>Error</h2>
+                    <p>{error || 'Other not found'}</p>
+                    <button className="back-button" onClick={handleGoBack}>
+                        Back to Other Menu
+                    </button>
                 </div>
-            </CustomerLayout>
+            </div>
         );
     }
 
     return (
-        <CustomerLayout>
-            <div className="detail-container">
-                <div className="breadcrumb">
-                    <span onClick={() => navigate('/')}>Home</span>
-                    <span> • </span>
-                    <span onClick={() => navigate('/other')}>Other</span>
-                    <span> • </span>
-                    <span>{other.name}</span>
+        <div className="detail-container">
+            <div className="breadcrumb">
+                <span onClick={() => navigate('/')}>Home</span>
+                <span> • </span>
+                <span onClick={() => navigate('/other')}>Other</span>
+                <span> • </span>
+                <span>{other.name}</span>
+            </div>
+            
+            <div className="detail-content">
+                <div className="detail-left">
+                    <div className="detail-image">
+                        {other.imageUrl && (
+                            <img
+                                src={other.imageUrl.startsWith('http') ? other.imageUrl : `${API_URL.split('/api')[0]}${other.imageUrl}`}
+                                alt={other.name}
+                            />
+                        )}
+                        {other.status === 'UNAVAILABLE' && (
+                            <div className="sold-out-badge">Temporarily Out of Stock</div>
+                        )}
+                    </div>
                 </div>
                 
-                <div className="detail-content">
-                    <div className="detail-left">
-                        <div className="detail-image">
-                            {other.imageUrl && (
-                                <img
-                                    src={other.imageUrl.startsWith('http') ? other.imageUrl : `${API_URL.split('/api')[0]}${other.imageUrl}`}
-                                    alt={other.name}
-                                />
-                            )}
-                            {other.status === 'UNAVAILABLE' && (
-                                <div className="sold-out-badge">Temporarily Out of Stock</div>
-                            )}
-                        </div>
+                <div className="detail-right">
+                    <h1 className="detail-title">{other.name}</h1>
+                    
+                    <div className="detail-price">
+                        {other.price ? `$${Number(other.price).toLocaleString()}` : 'Contact for Price'}
                     </div>
                     
-                    <div className="detail-right">
-                        <h1 className="detail-title">{other.name}</h1>
-                        
-                        <div className="detail-price">
-                            {other.price ? `$${Number(other.price).toLocaleString()}` : 'Contact for Price'}
+                    <div className="detail-description">
+                        <h3>Description</h3>
+                        <p>{other.description || 'No description available.'}</p>
+                    </div>
+                    
+                    {other.ingredients && (
+                        <div className="detail-ingredients">
+                            <h3>Ingredients</h3>
+                            <p>{other.ingredients}</p>
                         </div>
-                        
-                        <div className="detail-description">
-                            <h3>Description</h3>
-                            <p>{other.description || 'No description available.'}</p>
-                        </div>
-                        
-                        {other.ingredients && (
-                            <div className="detail-ingredients">
-                                <h3>Ingredients</h3>
-                                <p>{other.ingredients}</p>
-                            </div>
-                        )}
-                        
-                        <div className="detail-actions">
-                            <div className="quantity-control">
-                                <button 
-                                    className="quantity-btn" 
-                                    onClick={() => handleQuantityChange(-1)}
-                                    disabled={other.status === 'UNAVAILABLE'}
-                                >
-                                    -
-                                </button>
-                                <span className="quantity-value">{quantity}</span>
-                                <button 
-                                    className="quantity-btn" 
-                                    onClick={() => handleQuantityChange(1)}
-                                    disabled={other.status === 'UNAVAILABLE'}
-                                >
-                                    +
-                                </button>
-                            </div>
-                            
+                    )}
+                    
+                    <div className="detail-actions">
+                        <div className="quantity-control">
                             <button 
-                                className={`add-cart-btn ${other.status === 'UNAVAILABLE' ? 'disabled' : ''}`}
-                                onClick={handleAddToCart}
+                                className="quantity-btn" 
+                                onClick={() => handleQuantityChange(-1)}
                                 disabled={other.status === 'UNAVAILABLE'}
                             >
-                                {other.status === 'UNAVAILABLE' ? 'Out of Stock' : 'Add to Cart'}
+                                -
+                            </button>
+                            <span className="quantity-value">{quantity}</span>
+                            <button 
+                                className="quantity-btn" 
+                                onClick={() => handleQuantityChange(1)}
+                                disabled={other.status === 'UNAVAILABLE'}
+                            >
+                                +
                             </button>
                         </div>
                         
-                        <div className="back-section">
-                            <button className="back-btn" onClick={handleGoBack}>
-                                &larr; Back to Other
-                            </button>
-                        </div>
+                        <button 
+                            className={`add-cart-btn ${other.status === 'UNAVAILABLE' ? 'disabled' : ''}`}
+                            onClick={addToCart}
+                            disabled={other.status === 'UNAVAILABLE'}
+                        >
+                            {other.status === 'UNAVAILABLE' ? 'Out of Stock' : 'Add to Cart'}
+                        </button>
+                    </div>
+                    
+                    <div className="back-section">
+                        <button className="back-btn" onClick={handleGoBack}>
+                            &larr; Back to Other
+                        </button>
                     </div>
                 </div>
             </div>
-        </CustomerLayout>
+        </div>
     );
 };
 

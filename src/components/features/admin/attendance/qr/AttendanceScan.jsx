@@ -14,8 +14,14 @@ const AttendanceFaceScan = () => {
   const cameraRef = useRef(null);
   const isProcessingRef = useRef(false);
 
-  const [staffCode, setStaffCode] = useState("");
-  const [message, setMessage] = useState("Enter staff code then click Turn on camera to start");
+  // Staff code is no longer input from user; get from user context, or leave empty for auto
+  // Example: getStaffCode() from user profile or authentication
+  // const staffCode = getStaffCodeFromContextOrUser() || ""; // Uncomment if available
+  const staffCode = ""; // Always empty for auto face recognition
+
+  const [message, setMessage] = useState(
+    "Click 'Turn on camera' to start face scan attendance"
+  );
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [scanning, setScanning] = useState(false);
@@ -34,7 +40,9 @@ const AttendanceFaceScan = () => {
         setFailCount(0);
       } else {
         const left = Math.ceil((lockUntil - Date.now()) / 1000);
-        setMessage(`You have tried too many times. Wait ${left}s to try again.`);
+        setMessage(
+          `You have tried too many times. Wait ${left}s to try again.`
+        );
       }
     }, 500);
     return () => clearInterval(timer);
@@ -69,9 +77,11 @@ const AttendanceFaceScan = () => {
     const ctx = canvasRef.current.getContext("2d");
     for (let i = 0; i < numFrames; i++) {
       ctx.drawImage(videoRef.current, 0, 0, WIDTH, HEIGHT);
-      const blob = await new Promise(res => canvasRef.current.toBlob(res, "image/jpeg", 0.8));
+      const blob = await new Promise((res) =>
+        canvasRef.current.toBlob(res, "image/jpeg", 0.8)
+      );
       frames.push(blob);
-      await new Promise(res => setTimeout(res, delay));
+      await new Promise((res) => setTimeout(res, delay));
     }
     return frames;
   };
@@ -82,7 +92,10 @@ const AttendanceFaceScan = () => {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
     ctx.drawImage(videoRef.current, 0, 0, WIDTH, HEIGHT);
 
-    const boxX = 60, boxY = 30, boxW = 280, boxH = 280;
+    const boxX = 60,
+      boxY = 30,
+      boxW = 280,
+      boxH = 280;
 
     if (result && result.status === "ON_TIME") {
       drawBox(ctx, boxX, boxY, boxW, boxH, "#22c55e");
@@ -90,7 +103,7 @@ const AttendanceFaceScan = () => {
     }
 
     if (!results.detections || results.detections.length === 0) {
-      setMessage("No face detected. Place your face in the frame.");
+      setMessage("No face detected. Please keep your face in the frame.");
       setStableCount(0);
       drawBox(ctx, boxX, boxY, boxW, boxH, "#e11d48");
       isProcessingRef.current = false;
@@ -108,8 +121,10 @@ const AttendanceFaceScan = () => {
       isProcessingRef.current = false;
       return;
     }
-    const x = bbox.xMin * WIDTH, y = bbox.yMin * HEIGHT;
-    const w = bbox.width * WIDTH, h = bbox.height * HEIGHT;
+    const x = bbox.xMin * WIDTH,
+      y = bbox.yMin * HEIGHT;
+    const w = bbox.width * WIDTH,
+      h = bbox.height * HEIGHT;
 
     if (
       x < boxX + 10 ||
@@ -117,7 +132,7 @@ const AttendanceFaceScan = () => {
       x + w > boxX + boxW - 10 ||
       y + h > boxY + boxH - 10
     ) {
-      setMessage("Place your face in the center of the frame.");
+      setMessage("Keep your face in the center of the frame.");
       setStableCount(0);
       drawBox(ctx, boxX, boxY, boxW, boxH, "#facc15");
       isProcessingRef.current = false;
@@ -126,7 +141,7 @@ const AttendanceFaceScan = () => {
 
     const brightness = getBrightness(ctx, x, y, w, h);
     if (brightness < BRIGHTNESS_MIN) {
-      setMessage("Not enough light, please move to a brighter location.");
+      setMessage("Not enough light, please move to a brighter place.");
       setStableCount(0);
       drawBox(ctx, boxX, boxY, boxW, boxH, "#e11d48");
       isProcessingRef.current = false;
@@ -164,21 +179,26 @@ const AttendanceFaceScan = () => {
         }
       } else {
         drawBox(ctx, boxX, boxY, boxW, boxH, "#22d3ee");
-        setMessage(`Valid face! Checking stability (${Math.round(next / 10)}s/3s)...`);
+        setMessage(
+          `Valid face! Checking stability (${Math.round(next / 10)}s/3s)...`
+        );
       }
       return next >= STABLE_FRAME ? STABLE_FRAME : next;
     });
   };
 
-  // Sửa phần này: Luôn show message trả về từ BE (dù liveness=false, matched=false hay message custom)
+  // Always show message from BE, no matter liveness/matched/custom
   const captureAndSend = async () => {
     setLoading(true);
     setMessage("Capturing and sending frames to server...");
     try {
       const frames = await captureMultipleFrames(10, 120);
       const formData = new FormData();
-      frames.forEach((blob, idx) => formData.append("frames", blob, `frame${idx}.jpg`));
-      formData.append("staffCode", staffCode.trim());
+      frames.forEach((blob, idx) =>
+        formData.append("frames", blob, `frame${idx}.jpg`)
+      );
+      // **Do not send staffCode** for auto mode
+      // formData.append("staffCode", staffCode.trim()); // REMOVE for auto face
 
       const token = localStorage.getItem("token");
 
@@ -195,7 +215,7 @@ const AttendanceFaceScan = () => {
 
       setResult(resp.data);
 
-      // Ưu tiên message từ BE (liveness/message/matched)
+      // Always show backend message, even if error, liveness or matched false
       if (resp.data && resp.data.message) {
         setMessage(resp.data.message);
       } else if (resp.data.liveness === false) {
@@ -213,17 +233,19 @@ const AttendanceFaceScan = () => {
       setStableCount(0);
       setFailCount(0);
     } catch (err) {
-      setMessage("Error! " + (err?.response?.data?.message || err.message || "Attendance submission failed!"));
+      setMessage(
+        "Error! " +
+        (err?.response?.data?.message ||
+          err.message ||
+          "Attendance submission failed!")
+      );
       setLoading(false);
       isProcessingRef.current = false;
     }
   };
 
   const startCamera = () => {
-    if (!staffCode || staffCode.trim() === "") {
-      setMessage("Please enter staff code before turning on the camera.");
-      return;
-    }
+    // No need to check staffCode, just start
     setResult(null);
     setMessage("Starting camera...");
     isProcessingRef.current = false;
@@ -237,7 +259,8 @@ const AttendanceFaceScan = () => {
     }
 
     const faceDetection = new window.FaceDetection({
-      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
     });
 
     faceDetection.setOptions({
@@ -280,21 +303,21 @@ const AttendanceFaceScan = () => {
     setStableCount(0);
     setFailCount(0);
     isProcessingRef.current = false;
-    setMessage("Enter staff code then click Turn on camera to start");
+    setMessage("Click 'Turn on camera' to start face scan attendance");
   };
 
-  // --- UI không đổi ---
   const buttonStyle = {
     padding: "10px 24px",
     fontSize: "16px",
     fontWeight: "500",
     borderRadius: "8px",
-    cursor: "pointer",
+    cursor: loading || scanning || locked ? "not-allowed" : "pointer",
     transition: "all 0.2s ease",
     border: "none",
     outline: "none",
     margin: "16px 0",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    opacity: loading || scanning || locked ? 0.6 : 1,
   };
 
   const primaryButtonStyle = {
@@ -313,7 +336,7 @@ const AttendanceFaceScan = () => {
     ...buttonStyle,
     backgroundColor: "#f3f4f6",
     color: "#111827",
-    border: "1px solid #d1d5db"
+    border: "1px solid #d1d5db",
   };
 
   return (
@@ -326,53 +349,26 @@ const AttendanceFaceScan = () => {
           boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
         }}
       >
-        <h2 style={{
-          textAlign: "center",
-          marginBottom: 24,
-          color: "#111827",
-          fontSize: "1.75rem",
-          fontWeight: "600"
-        }}>
+        <h2
+          style={{
+            textAlign: "center",
+            marginBottom: 24,
+            color: "#111827",
+            fontSize: "1.75rem",
+            fontWeight: "600",
+          }}
+        >
           Face Scan Attendance
         </h2>
 
-        <div style={{ marginBottom: 20 }}>
-          <label
-            htmlFor="staffCodeInput"
-            style={{
-              display: "block",
-              marginBottom: 8,
-              fontWeight: 500,
-              color: "#374151"
-            }}
-          >
-            Staff Code:
-          </label>
-          <input
-            id="staffCodeInput"
-            type="text"
-            value={staffCode}
-            onChange={(e) => setStaffCode(e.target.value)}
-            style={{
-              width: "100%",
-              fontSize: 16,
-              padding: "12px 16px",
-              borderRadius: 8,
-              border: "1px solid #d1d5db",
-              boxSizing: "border-box",
-              transition: "border-color 0.2s ease",
-              outline: "none",
-              boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
-            }}
-            placeholder="Enter staff code"
-            disabled={scanning || locked}
-          />
-        </div>
+        {/* Staff code input is removed for auto mode */}
 
-        <div style={{
-          textAlign: "center",
-          position: "relative"
-        }}>
+        <div
+          style={{
+            textAlign: "center",
+            position: "relative",
+          }}
+        >
           <video
             ref={videoRef}
             autoPlay
@@ -385,7 +381,7 @@ const AttendanceFaceScan = () => {
               background: "#111827",
               display: scanning ? "block" : "none",
               margin: "0 auto",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
             }}
           />
           <canvas
@@ -399,11 +395,8 @@ const AttendanceFaceScan = () => {
             {!scanning && !result && (
               <button
                 onClick={startCamera}
-                style={{
-                  ...primaryButtonStyle,
-                  opacity: (!staffCode.trim() || locked) ? 0.6 : 1
-                }}
-                disabled={!staffCode.trim() || locked}
+                style={primaryButtonStyle}
+                disabled={loading || scanning || locked}
               >
                 Turn on camera
               </button>
@@ -412,21 +405,15 @@ const AttendanceFaceScan = () => {
             {scanning && (
               <button
                 onClick={stopCamera}
-                style={{
-                  ...dangerButtonStyle,
-                  opacity: loading ? 0.6 : 1
-                }}
-                disabled={loading}
+                style={dangerButtonStyle}
+                disabled={loading || locked}
               >
                 Stop camera
               </button>
             )}
 
             {result && (
-              <button
-                onClick={resetAll}
-                style={secondaryButtonStyle}
-              >
+              <button onClick={resetAll} style={secondaryButtonStyle}>
                 Scan again
               </button>
             )}
@@ -442,12 +429,10 @@ const AttendanceFaceScan = () => {
             textAlign: "center",
             fontWeight: "500",
             borderRadius: 8,
-            backgroundColor: message && message.length > 0 ? "#f9fafb" : "transparent"
+            backgroundColor: message && message.length > 0 ? "#f9fafb" : "transparent",
           }}
         >
-          {result && result.status === "ON_TIME"
-            ? ""
-            : message}
+          {result && result.status === "ON_TIME" ? "" : message}
         </div>
 
         {result && (
@@ -458,15 +443,17 @@ const AttendanceFaceScan = () => {
               padding: 20,
               marginTop: 20,
               border: "1px solid #e2e8f0",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
             }}
           >
-            <h3 style={{
-              marginTop: 0,
-              marginBottom: 16,
-              color: "#111827",
-              fontSize: "1.25rem"
-            }}>
+            <h3
+              style={{
+                marginTop: 0,
+                marginBottom: 16,
+                color: "#111827",
+                fontSize: "1.25rem",
+              }}
+            >
               Result
             </h3>
 
@@ -481,69 +468,98 @@ const AttendanceFaceScan = () => {
                     borderRadius: "50%",
                     objectFit: "cover",
                     border: "3px solid #4f46e5",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                   }}
                 />
               )}
 
               <div style={{ flex: 1 }}>
                 <div style={{ marginBottom: 8 }}>
-                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Full name:</strong>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>
+                    Full name:
+                  </strong>
                   <span>{result.staffName || "N/A"}</span>
                 </div>
                 <div style={{ marginBottom: 8 }}>
-                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Staff Code:</strong>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>
+                    Staff Code:
+                  </strong>
                   <span>{result.staffCode || "N/A"}</span>
                 </div>
                 <div style={{ marginBottom: 8 }}>
-                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Position:</strong>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>
+                    Position:
+                  </strong>
                   <span>{result.position || "N/A"}</span>
                 </div>
                 <div style={{ marginBottom: 8 }}>
-                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Work Location:</strong>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>
+                    Work Location:
+                  </strong>
                   <span>{result.workLocation || "N/A"}</span>
                 </div>
                 <div style={{ marginBottom: 8 }}>
-                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Status:</strong>
-                  <span style={{
-                    color: result.status === "ON_TIME" ? "#16a34a" : "#e11d48",
-                    fontWeight: "500"
-                  }}>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>
+                    Status:
+                  </strong>
+                  <span
+                    style={{
+                      color: result.status === "ON_TIME" ? "#16a34a" : "#e11d48",
+                      fontWeight: "500",
+                    }}
+                  >
                     {result.status || "N/A"}
                   </span>
                 </div>
                 <div style={{ marginBottom: 8 }}>
-                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Check-in time:</strong>
-                  <span>{result.timestamp ? new Date(result.timestamp).toLocaleString() : ""}</span>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>
+                    Check-in time:
+                  </strong>
+                  <span>
+                    {result.checkInTime ? result.checkInTime : ""}
+                    {/* Nếu muốn format lại: */}
+                    {/* {result.checkInTime ? new Date(`1970-01-01T${result.checkInTime}Z`).toLocaleTimeString() : ""} */}
+                  </span>
                 </div>
-                {result.checkOut && (
+                {result.checkOutTime && (
                   <div style={{ marginBottom: 8 }}>
-                    <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Check-out time:</strong>
-                    <span>{new Date(result.checkOut).toLocaleTimeString()}</span>
+                    <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>
+                      Check-out time:
+                    </strong>
+                    <span>
+                      {result.checkOutTime}
+                      {/* Nếu muốn format lại: */}
+                      {/* {new Date(`1970-01-01T${result.checkOutTime}Z`).toLocaleTimeString()} */}
+                    </span>
                   </div>
                 )}
-                <div style={{ marginBottom: 0 }}>
-                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>Note:</strong>
+
+                {/* <div style={{ marginBottom: 0 }}>
+                  <strong style={{ color: "#4b5563", display: "inline-block", width: 130 }}>
+                    Note:
+                  </strong>
                   <span>{result.message}</span>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
         )}
       </div>
 
-      <div style={{
-        marginTop: 24,
-        color: "#6b7280",
-        fontSize: 14,
-        padding: "12px 16px",
-        background: "#f9fafb",
-        borderRadius: 8,
-        border: "1px solid #e5e7eb"
-      }}>
-        <strong>Note:</strong> Ensure your face is within the frame, with sufficient light, and
-        without masks or thick glasses. The app will automatically capture when conditions are
-        valid. If face recognition fails more than 5 times, your account will be locked for 1 minute
+      <div
+        style={{
+          marginTop: 24,
+          color: "#6b7280",
+          fontSize: 14,
+          padding: "12px 16px",
+          background: "#f9fafb",
+          borderRadius: 8,
+          border: "1px solid #e5e7eb",
+        }}
+      >
+        <strong>Note:</strong> Please make sure your face is inside the frame, with enough light,
+        and no mask or thick glasses. The system will automatically capture when conditions are
+        valid. If attendance fails more than 5 times, your account will be locked for 1 minute
         for protection.
       </div>
     </div>

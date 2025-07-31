@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/main.css';
 import axios from 'axios';
-import CustomerLayout from '../../common/Layout/customer_layout';
 import { useNavigate } from 'react-router-dom';
 
 const Main = () => {
@@ -93,7 +92,7 @@ const Main = () => {
     ];
 
     return (
-        <CustomerLayout>
+        <>
             {/* MAIN CONTENT */}
             <div className="p4-main-container">
                 <div className="p4-left-sidebar">
@@ -253,9 +252,7 @@ const Main = () => {
                     <span className="p4-emoji p4-emoji-5">😊</span>
                 </div>
             </div>
-
-           
-        </CustomerLayout>
+        </>
     );
 };
 

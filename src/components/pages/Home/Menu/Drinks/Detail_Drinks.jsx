@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import CustomerLayout from '../../../../common/Layout/customer_layout';
+import { CartContext } from '../../../../common/Layout/customer_layout';
 import './Drink.css';
 
 const Detail_Drinks = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [drinks, setDrinks] = useState(null);
+    const [drink, setDrink] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [quantity, setQuantity] = useState(1);
+    
+    // 使用CartContext
+    const { handleAddToCart } = useContext(CartContext);
     
     // API URL - replace with your actual API endpoint
     const API_URL = 'http://localhost:8080/api/foods';
@@ -23,16 +26,16 @@ const Detail_Drinks = () => {
         axios.get(`${API_URL}/${id}`)
             .then(res => {
                 if (res.data && res.data.type === 'DRINK') {
-                    setDrinks(res.data);
+                    setDrink(res.data);
                 } else {
-                    setError('Drinks not found');
+                    setError('Drink not found');
                     setLoading(false);
                 }
                 setLoading(false);
             })
             .catch(err => {
                 console.error('Error fetching data:', err);
-                setError('Failed to load drinks details');
+                setError('Failed to load drink details');
                 setLoading(false);
             });
     }, [id]);
@@ -44,13 +47,16 @@ const Detail_Drinks = () => {
         }
     };
 
-    const handleAddToCart = () => {
-        // Add to cart functionality would go here
-        // You can implement your API call to add to cart
-        if (drinks && drinks.status !== 'UNAVAILABLE') {
-            alert(`Added ${quantity} ${drinks.name} to cart`);
-        } else {
-            alert('This item is currently unavailable');
+    const addToCart = () => {
+        // 使用CartContext中的handleAddToCart函数
+        if (drink && drink.status !== 'UNAVAILABLE') {
+            handleAddToCart({
+                id: drink.id,
+                name: drink.name,
+                price: drink.price,
+                quantity: quantity,
+                imageUrl: drink.imageUrl
+            });
         }
     };
 
@@ -60,115 +66,109 @@ const Detail_Drinks = () => {
 
     if (loading) {
         return (
-            <CustomerLayout>
-                <div className="detail-container">
-                    <div className="detail-loading">
-                        <div className="loading-spinner"></div>
-                        <p>Loading drinks details...</p>
-                    </div>
+            <div className="detail-container">
+                <div className="detail-loading">
+                    <div className="loading-spinner"></div>
+                    <p>Loading drink details...</p>
                 </div>
-            </CustomerLayout>
+            </div>
         );
     }
 
-    if (error || !drinks) {
+    if (error || !drink) {
         return (
-            <CustomerLayout>
-                <div className="detail-container">
-                    <div className="detail-error">
-                        <h2>Error</h2>
-                        <p>{error || 'Drinks not found'}</p>
-                        <button className="back-button" onClick={handleGoBack}>
-                            Back to Drinks Menu
-                        </button>
-                    </div>
+            <div className="detail-container">
+                <div className="detail-error">
+                    <h2>Error</h2>
+                    <p>{error || 'Drink not found'}</p>
+                    <button className="back-button" onClick={handleGoBack}>
+                        Back to Drinks Menu
+                    </button>
                 </div>
-            </CustomerLayout>
+            </div>
         );
     }
 
     return (
-        <CustomerLayout>
-            <div className="detail-container">
-                <div className="breadcrumb">
-                    <span onClick={() => navigate('/')}>Home</span>
-                    <span> • </span>
-                    <span onClick={() => navigate('/drinks')}>Drinks</span>
-                    <span> • </span>
-                    <span>{drinks.name}</span>
+        <div className="detail-container">
+            <div className="breadcrumb">
+                <span onClick={() => navigate('/')}>Home</span>
+                <span> • </span>
+                <span onClick={() => navigate('/drinks')}>Drinks</span>
+                <span> • </span>
+                <span>{drink.name}</span>
+            </div>
+            
+            <div className="detail-content">
+                <div className="detail-left">
+                    <div className="detail-image">
+                        {drink.imageUrl && (
+                            <img
+                                src={drink.imageUrl.startsWith('http') ? drink.imageUrl : `${API_URL.split('/api')[0]}${drink.imageUrl}`}
+                                alt={drink.name}
+                            />
+                        )}
+                        {drink.status === 'UNAVAILABLE' && (
+                            <div className="sold-out-badge">Temporarily Out of Stock</div>
+                        )}
+                    </div>
                 </div>
                 
-                <div className="detail-content">
-                    <div className="detail-left">
-                        <div className="detail-image">
-                            {drinks.imageUrl && (
-                                <img
-                                    src={drinks.imageUrl.startsWith('http') ? drinks.imageUrl : `${API_URL.split('/api')[0]}${drinks.imageUrl}`}
-                                    alt={drinks.name}
-                                />
-                            )}
-                            {drinks.status === 'UNAVAILABLE' && (
-                                <div className="sold-out-badge">Temporarily Out of Stock</div>
-                            )}
-                        </div>
+                <div className="detail-right">
+                    <h1 className="detail-title">{drink.name}</h1>
+                    
+                    <div className="detail-price">
+                        {drink.price ? `$${Number(drink.price).toLocaleString()}` : 'Contact for Price'}
                     </div>
                     
-                    <div className="detail-right">
-                        <h1 className="detail-title">{drinks.name}</h1>
-                        
-                        <div className="detail-price">
-                            {drinks.price ? `$${Number(drinks.price).toLocaleString()}` : 'Contact for Price'}
+                    <div className="detail-description">
+                        <h3>Description</h3>
+                        <p>{drink.description || 'No description available.'}</p>
+                    </div>
+                    
+                    {drink.ingredients && (
+                        <div className="detail-ingredients">
+                            <h3>Ingredients</h3>
+                            <p>{drink.ingredients}</p>
                         </div>
-                        
-                        <div className="detail-description">
-                            <h3>Description</h3>
-                            <p>{drinks.description || 'No description available.'}</p>
-                        </div>
-                        
-                        {drinks.ingredients && (
-                            <div className="detail-ingredients">
-                                <h3>Ingredients</h3>
-                                <p>{drinks.ingredients}</p>
-                            </div>
-                        )}
-                        
-                        <div className="detail-actions">
-                            <div className="quantity-control">
-                                <button 
-                                    className="quantity-btn" 
-                                    onClick={() => handleQuantityChange(-1)}
-                                    disabled={drinks.status === 'UNAVAILABLE'}
-                                >
-                                    -
-                                </button>
-                                <span className="quantity-value">{quantity}</span>
-                                <button 
-                                    className="quantity-btn" 
-                                    onClick={() => handleQuantityChange(1)}
-                                    disabled={drinks.status === 'UNAVAILABLE'}
-                                >
-                                    +
-                                </button>
-                            </div>
-                            
+                    )}
+                    
+                    <div className="detail-actions">
+                        <div className="quantity-control">
                             <button 
-                                className={`add-cart-btn ${drinks.status === 'UNAVAILABLE' ? 'disabled' : ''}`}
-                                onClick={handleAddToCart}
-                                disabled={drinks.status === 'UNAVAILABLE'}
+                                className="quantity-btn" 
+                                onClick={() => handleQuantityChange(-1)}
+                                disabled={drink.status === 'UNAVAILABLE'}
                             >
-                                {drinks.status === 'UNAVAILABLE' ? 'Out of Stock' : 'Add to Cart'}
+                                -
+                            </button>
+                            <span className="quantity-value">{quantity}</span>
+                            <button 
+                                className="quantity-btn" 
+                                onClick={() => handleQuantityChange(1)}
+                                disabled={drink.status === 'UNAVAILABLE'}
+                            >
+                                +
                             </button>
                         </div>
                         
-                        <div className="back-section">
-                            <button className="back-btn" onClick={handleGoBack}>
-                                &larr; Back to Drinks Menu
-                            </button>
-                        </div>
+                        <button 
+                            className={`add-cart-btn ${drink.status === 'UNAVAILABLE' ? 'disabled' : ''}`}
+                            onClick={addToCart}
+                            disabled={drink.status === 'UNAVAILABLE'}
+                        >
+                            {drink.status === 'UNAVAILABLE' ? 'Out of Stock' : 'Add to Cart'}
+                        </button>
+                    </div>
+                    
+                    <div className="back-section">
+                        <button className="back-btn" onClick={handleGoBack}>
+                            &larr; Back to Drinks Menu
+                        </button>
                     </div>
                 </div>
             </div>
-        </CustomerLayout>
+        </div>
     );
 };
 

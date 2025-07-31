@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaSearch} from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 import './Order.css';
 import { format } from 'date-fns';
 
@@ -12,13 +12,13 @@ export default function OrderList() {
   const [statusFilter, setStatusFilter] = useState('all'); // all, delivered, cancelled
   const [searchTerm, setSearchTerm] = useState('');
 
-  
+
 
   const fetchOrders = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      
+
       // Lấy đơn hàng đã giao và đã hủy
       const [deliveredRes, cancelledRes] = await Promise.all([
         axios.get('http://localhost:8080/api/orders/filter?status=DELIVERED', {
@@ -28,11 +28,11 @@ export default function OrderList() {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
-      
+
       // Gộp kết quả
       const allOrders = [...deliveredRes.data, ...cancelledRes.data]
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      
+
       setOrders(allOrders);
       applyFilters(allOrders, statusFilter, searchTerm);
     } catch (err) {
@@ -49,23 +49,23 @@ export default function OrderList() {
 
   const applyFilters = (ordersList, status, search) => {
     let result = [...ordersList];
-    
+
     // Lọc theo trạng thái
     if (status !== 'all') {
       result = result.filter(order => order.status === status);
     }
-    
+
     // Lọc theo từ khóa tìm kiếm
     if (search.trim()) {
       const searchLower = search.toLowerCase();
-      result = result.filter(order => 
+      result = result.filter(order =>
         order.orderNumber.toLowerCase().includes(searchLower) ||
         order.customer?.fullName?.toLowerCase().includes(searchLower) ||
         order.customer?.email?.toLowerCase().includes(searchLower) ||
         order.foodList?.some(food => food.name.toLowerCase().includes(searchLower))
       );
     }
-    
+
     setFilteredOrders(result);
   };
 
@@ -95,7 +95,7 @@ export default function OrderList() {
       <div className="order-waiting-confirm-container">
         <div className="delivery-header">
           <h2>Đơn hàng đã hoàn thành/hủy</h2>
-          
+
           <div className="order-filters">
             <div className="search-box">
               <FaSearch className="search-icon" />
@@ -107,7 +107,7 @@ export default function OrderList() {
                 className="search-input"
               />
             </div>
-            
+
             <div className="status-filter-buttons">
               <button
                 className={`filter-btn ${statusFilter === 'all' ? 'active' : ''}`}
@@ -130,7 +130,7 @@ export default function OrderList() {
             </div>
           </div>
         </div>
-        
+
         {loading ? (
           <div className="loading-state">
             <div className="spinner"></div>
@@ -170,11 +170,13 @@ export default function OrderList() {
                   </td>
                   <td>
                     <ul className="food-list">
-                      {order.foodList?.map((food) => (
+                      {order.foodList?.map(food => (
                         <li key={food.id}>
-                          {food.name} <span className="food-price">${food.price}</span>
+                          {food.name} <b>x{food.quantity}</b>
+                          <span className="food-price"> ({Number(food.price).toLocaleString()} $)</span>
                         </li>
                       ))}
+
                     </ul>
                   </td>
                   <td className="price-column">${order.totalPrice}</td>
@@ -190,7 +192,7 @@ export default function OrderList() {
           </table>
         )}
       </div>
-      
+
       {/* Thông tin chi tiết đơn hàng */}
       <div className="customer-info-card">
         <h3>Thông tin đơn hàng</h3>
@@ -200,7 +202,7 @@ export default function OrderList() {
             <div className="info-row"><span>Email:</span> {selectedOrder.customer?.email}</div>
             <div className="info-row"><span>Điện thoại:</span> {selectedOrder.customer?.phoneNumber || "-"}</div>
             <div className="info-row"><span>Địa chỉ:</span> {selectedOrder.customer?.address || "-"}</div>
-            
+
             {selectedOrder.customer?.imageUrl && (
               <div className="customer-image">
                 <img
@@ -209,9 +211,9 @@ export default function OrderList() {
                 />
               </div>
             )}
-            
+
             <div className="info-row"><span>Điểm tích lũy:</span> {selectedOrder.customer?.point || 0}</div>
-            
+
             <div className="order-summary">
               <h4>Tóm tắt đơn hàng</h4>
               <div className="info-row"><span>Mã đơn:</span> #{selectedOrder.orderNumber}</div>
@@ -220,7 +222,7 @@ export default function OrderList() {
                 <span>Thanh toán:</span> {selectedOrder.paymentMethod?.name || "Chưa thanh toán"}
               </div>
               <div className="info-row">
-                <span>Trạng thái:</span> 
+                <span>Trạng thái:</span>
                 <span className={` ${getStatusBadgeClass(selectedOrder.status)}`}>
                   {selectedOrder.status}
                 </span>
@@ -228,14 +230,14 @@ export default function OrderList() {
               <div className="info-row">
                 <span>Thời gian:</span> {formatDate(selectedOrder.createdAt)}
               </div>
-              
+
               {selectedOrder.status === 'CANCELLED' && selectedOrder.rejectReason && (
                 <div className="mt-15">
                   <span>Lý do hủy:</span>
                   <p className="reject-reason">{selectedOrder.rejectReason}</p>
                 </div>
               )}
-              
+
               {selectedOrder.deliveryNote && (
                 <div className="mt-15">
                   <span>Ghi chú giao hàng:</span>
@@ -243,7 +245,7 @@ export default function OrderList() {
                 </div>
               )}
             </div>
-            
+
             {selectedOrder.statusHistory && selectedOrder.statusHistory.length > 0 && (
               <div className="order-history mt-15">
                 <h4>Lịch sử trạng thái</h4>
