@@ -355,6 +355,43 @@
     font-style: normal;
 }
 
+/* Delivery Address Information */
+
+
+/* Customer Information */
+.customer-info {
+    margin-top: 15px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+}
+
+.customer-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.customer-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+}
+
+.customer-label {
+    font-weight: 600;
+    color: #333;
+    min-width: 100px;
+}
+
+.customer-value {
+    color: #666;
+    flex: 1;
+    line-height: 1.4;
+}
+
 .order-footer {
     display: flex;
     justify-content: space-between;

@@ -7,7 +7,8 @@ export default function TableForm() {
   const [form, setForm] = useState({ 
     number: '', 
     capacity: '', 
-    status: 'AVAILABLE' 
+    status: 'AVAILABLE',
+    location: ''
   });
   const [originalNumber, setOriginalNumber] = useState('');
   const [errors, setErrors] = useState({});
@@ -219,6 +220,20 @@ export default function TableForm() {
           </div>
 
           <div className="form-group">
+            <label>Location</label>
+            <input 
+              type="text" 
+              name="location" 
+              value={form.location} 
+              onChange={handleChange} 
+              placeholder="Enter table location (e.g., Near window, Corner table)"
+              className={errors.location ? 'error' : ''}
+            />
+            {errors.location && <p className="error-message">{errors.location}</p>}
+            <p className="info-hint">Optional: Describe where this table is located in the restaurant</p>
+          </div>
+
+          <div className="form-group">
             <label>Status</label>
             <select 
               name="status" 
@@ -227,7 +242,9 @@ export default function TableForm() {
               className={errors.status ? 'error' : ''}
             >
               <option value="AVAILABLE">AVAILABLE</option>
+              <option value="OCCUPIED">OCCUPIED</option>
               <option value="RESERVED">RESERVED</option>
+              <option value="CLEANING">CLEANING</option>
             </select>
             {errors.status && <p className="error-message">{errors.status}</p>}
           </div>

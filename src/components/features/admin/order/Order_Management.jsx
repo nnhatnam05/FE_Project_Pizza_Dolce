@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MdOutlinePending, MdLocalShipping, MdDoneAll } from 'react-icons/md';
 import axios from 'axios';
-import OrderWaitingConfirmation from './Order_WaitingConfirm';
 import OrderList from './OrderList';
 import OrderDeliveryStatus from './Order_DeliveryStatus';
 import './Order.css';
@@ -26,11 +25,6 @@ const OrderManagement = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      
-      // Lấy số lượng đơn hàng chờ xác nhận
-      const waitingRes = await axios.get('http://localhost:8080/api/orders/waiting-confirm', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
       
       // Lấy số lượng đơn hàng đang giao
       const deliveryRes = await Promise.all([
@@ -62,7 +56,7 @@ const OrderManagement = () => {
       const completedCount = completedRes.reduce((total, res) => total + res.data.length, 0);
       
       setOrderStats({
-        waiting: waitingRes.data.length,
+        waiting: 0,
         delivery: deliveryCount,
         completed: completedCount
       });
@@ -75,14 +69,12 @@ const OrderManagement = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'waiting':
-        return <OrderWaitingConfirmation />;
       case 'delivery':
         return <OrderDeliveryStatus />;
       case 'completed':
         return <OrderList />;
       default:
-        return <OrderWaitingConfirmation />;
+        return <OrderDeliveryStatus />;
     }
   };
 
@@ -91,12 +83,12 @@ const OrderManagement = () => {
       <div className="order-management-header">
         <h1>Quản lý đơn hàng</h1>
         <div className="order-stats">
-          <div className="stat-item">
+          {/* <div className="stat-item">
             <span className="stat-count waiting">
               {loading ? '...' : orderStats.waiting}
             </span>
             <span className="stat-label">Chờ xác nhận</span>
-          </div>
+          </div> */}
           <div className="stat-item">
             <span className="stat-count delivery">
               {loading ? '...' : orderStats.delivery}
@@ -113,13 +105,13 @@ const OrderManagement = () => {
       </div>
       
       <div className="order-tabs">
-        <button 
+        {/* <button 
           className={`order-tab ${activeTab === 'waiting' ? 'active' : ''}`}
           onClick={() => setActiveTab('waiting')}
         >
           <MdOutlinePending /> 
           <span>Đơn hàng chờ xác nhận</span>
-        </button>
+        </button> */}
         <button 
           className={`order-tab ${activeTab === 'delivery' ? 'active' : ''}`}
           onClick={() => setActiveTab('delivery')}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { validatePhoneNumber } from '../../../../utils/phoneValidation';
 import './Customer_Layout.css';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
@@ -17,7 +18,6 @@ const CustomerLayout = ({ children }) => {
         fullName: '',
         phoneNumber: '',
         address: '',
-        imageUrl: '',
     });
     const [changePassword, setChangePassword] = useState({
         oldPassword: '',
@@ -27,8 +27,7 @@ const CustomerLayout = ({ children }) => {
     const [showChangePassword, setShowChangePassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [avatarFile, setAvatarFile] = useState(null);
-    const [avatarPreview, setAvatarPreview] = useState(null);
+    // Avatar upload removed - using fixed SVG avatar
 
     // Shopping cart and mini cart pop-ups
     const [cart, setCart] = useState([]);
@@ -42,7 +41,6 @@ const CustomerLayout = ({ children }) => {
 
     const profileDropdownRef = useRef(null);
     const profileIconRef = useRef(null);
-    const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
     // Get customer details via token
@@ -61,13 +59,13 @@ const CustomerLayout = ({ children }) => {
     // Sync profile data
     useEffect(() => {
         if (customer) {
+            console.log('Customer provider:', customer.customer?.provider); // Debug log
             setFormData({
                 fullName: customer.fullName || '',
                 phoneNumber: customer.phoneNumber || '',
                 address: customer.address || '',
-                imageUrl: customer.imageUrl || '',
             });
-            setAvatarPreview(customer.imageUrl || null);
+            // Avatar preview removed
             
             // 已登录用户，获取订单历史
             fetchCustomerOrders();
@@ -129,6 +127,7 @@ const CustomerLayout = ({ children }) => {
                 return;
             }
             const data = await response.json();
+            console.log('Customer data received:', data); // Debug log
             setCustomer(data);
         } catch (error) {
             console.error('Failed to fetch customer data:', error);
@@ -177,14 +176,9 @@ const CustomerLayout = ({ children }) => {
             [name]: value,
         }));
     };
-    const handleAvatarChange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onloadend = () => setAvatarPreview(reader.result);
-        reader.readAsDataURL(file);
-        setAvatarFile(file);
-    };
+    // Avatar upload function removed
+
+    // Using imported validatePhoneNumber function
 
     // Update your personal information（multipart/form-data）
     const handleSubmit = async () => {
@@ -194,18 +188,27 @@ const CustomerLayout = ({ children }) => {
                 setErrorMessage('You need to login to update your profile');
                 return;
             }
+
+            // Validate phone number if provided
+            if (formData.phoneNumber) {
+                const phoneError = validatePhoneNumber(formData.phoneNumber);
+                if (phoneError) {
+                    setErrorMessage(phoneError);
+                    setTimeout(() => setErrorMessage(''), 3000);
+                    return;
+                }
+            }
             const formDataToSend = new FormData();
             const detailObject = {
                 fullName: formData.fullName,
                 phoneNumber: formData.phoneNumber,
                 address: formData.address,
-                imageUrl: formData.imageUrl,
                 point: customer?.point || 0,
                 voucher: customer?.voucher || 0,
             };
             const detailBlob = new Blob([JSON.stringify(detailObject)], { type: 'application/json' });
             formDataToSend.append('detail', detailBlob);
-            if (avatarFile) formDataToSend.append('image', avatarFile);
+            // No image upload needed
             const response = await fetch('http://localhost:8080/api/customer/me/detail', {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}` },
@@ -219,7 +222,6 @@ const CustomerLayout = ({ children }) => {
             setCustomer(updatedCustomer);
             setEditMode(false);
             setSuccessMessage('Update successful');
-            setAvatarFile(null);
             setTimeout(() => setSuccessMessage(''), 3000);
         } catch (error) {
             setErrorMessage(error.message || 'Update failed');
@@ -315,6 +317,15 @@ const CustomerLayout = ({ children }) => {
     };
     // Open the change password modal
     const openChangePasswordModal = () => {
+        console.log('Opening change password modal, customer provider:', customer?.customer?.provider); // Debug log
+        // Kiểm tra nếu user đăng nhập bằng Google thì không cho phép đổi mật khẩu
+        if (customer && customer.customer && (customer.customer.provider === 'GOOGLE' || customer.customer.provider === 'google')) {
+            console.log('Google login detected, showing notice instead of password form'); // Debug log
+            setShowChangePassword(true);
+            setShowModal(true);
+            setIsProfileOpen(false);
+            return;
+        }
         setShowChangePassword(true);
         setShowModal(true);
         setIsProfileOpen(false);
@@ -347,36 +358,33 @@ const CustomerLayout = ({ children }) => {
                         <input type="text" placeholder="Search" />
                     </div>
                     <div className="p4-header-actions">
-                        {/* Personal data */}
+                                                {/* Personal data */}
                         <div className="p4-profile">
-                            {customer?.imageUrl ? (
-                                <img
-                                    src={
-                                        customer?.imageUrl
-                                            ? (customer.imageUrl.startsWith('http')
-                                                ? customer.imageUrl
-                                                : `http://localhost:8080${customer.imageUrl}`)
-                                            : 'https://via.placeholder.com/150'
-                                    }
-                                    alt={customer?.fullName || 'Avatar'}
-                                    className="p4-profile-avatar"
-                                    onClick={toggleProfile}
-                                    ref={profileIconRef}
-                                />
-                            ) : (
-                                <span
-                                    className="p4-profile-icon"
-                                    onClick={toggleProfile}
-                                    ref={profileIconRef}
-                                ></span>
-                            )}
+                            <div
+                                className="p4-profile-avatar-container"
+                                onClick={toggleProfile}
+                                ref={profileIconRef}
+                            >
+                                <svg width="40" height="40" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg" className="p4-profile-avatar-svg">
+                                    <rect width="150" height="150" fill="#f0f0f0"/>
+                                    <circle cx="75" cy="60" r="25" fill="#ccc"/>
+                                    <path d="M30 120c0-25 20-45 45-45s45 20 45 45v30H30z" fill="#ccc"/>
+                                </svg>
+                            </div>
                             <div
                                 className={`p4-profile-dropdown ${isProfileOpen ? 'show' : ''}`}
                                 ref={profileDropdownRef}
                             >
                                 <span>
                                     {customer ? (
-                                        <>Hello, <b>{customer?.fullName || 'Customer'}</b></>
+                                        <>
+                                            Hello, <b>{customer?.fullName || 'Customer'}</b>
+                                            {customer.customer && customer.customer.provider && (customer.customer.provider === 'GOOGLE' || customer.customer.provider === 'google') && (
+                                                <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '4px' }}>
+                                                    Google Account
+                                                </div>
+                                            )}
+                                        </>
                                     ) : (
                                         <>Welcome to<br /><b>Dolce</b></>
                                     )}
@@ -393,7 +401,18 @@ const CustomerLayout = ({ children }) => {
                                 </div>
                                 <div className="p4-profile-list">
                                     <span onClick={() => checkLoginAndRedirect(showCustomerInfo)}>😊 Personal Information</span>
-                                    <span onClick={() => checkLoginAndRedirect(openChangePasswordModal)}>🔑 Change Password</span>
+                                    <span onClick={() => checkLoginAndRedirect(() => navigate('/addresses'))}>📍 Manage Addresses</span>
+                                    <span onClick={() => checkLoginAndRedirect(() => navigate('/vouchers'))}>🎫 My Vouchers</span>
+                                    {/* Chỉ hiển thị nút đổi mật khẩu nếu không đăng nhập bằng Google */}
+                                    {customer && customer.customer && customer.customer.provider !== 'GOOGLE' && customer.customer.provider !== 'google' && (
+                                        <span onClick={() => checkLoginAndRedirect(openChangePasswordModal)}>🔑 Change Password</span>
+                                    )}
+                                    {/* Hiển thị thông báo cho Google login */}
+                                    {customer && customer.customer && (customer.customer.provider === 'GOOGLE' || customer.customer.provider === 'google') && (
+                                        <span style={{ color: '#888', fontSize: '0.9rem', cursor: 'default' }}>
+                                            🔑 Password (Google Account)
+                                        </span>
+                                    )}
                                     <span onClick={() => checkLoginAndRedirect(goToOrderHistory)}>🕒 Order History</span>
                                 </div>
                             </div>
@@ -417,13 +436,13 @@ const CustomerLayout = ({ children }) => {
                                                 ? lastAdded.imageUrl
                                                 : lastAdded.imageUrl
                                                     ? `http://localhost:8080${lastAdded.imageUrl}`
-                                                    : 'https://via.placeholder.com/60'
+                                                    : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZjBmMGYwIi8+Cjx0ZXh0IHg9IjMwIiB5PSIzNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5ET0xDRTwvdGV4dD4KPHN2Zz4K'
                                             }
                                             alt={lastAdded.name || ''}
                                             className="p4-mini-cart-product-img"
                                             onError={(e) => {
                                                 e.target.onerror = null; 
-                                                e.target.src = 'https://via.placeholder.com/60?text=DOLCE';
+                                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZjBmMGYwIi8+Cjx0ZXh0IHg9IjMwIiB5PSIzNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5ET0xDRTwvdGV4dD4KPHN2Zz4K';
                                             }}
                                         />
                                         <div className="p4-mini-cart-product-info">
@@ -461,14 +480,11 @@ const CustomerLayout = ({ children }) => {
                                     setShowDeleteConfirm(false);
                                     setErrorMessage('');
                                     setSuccessMessage('');
-                                    setAvatarPreview(customer?.imageUrl || null);
-                                    setAvatarFile(null);
                                     if (customer) {
                                         setFormData({
                                             fullName: customer.fullName || '',
                                             phoneNumber: customer.phoneNumber || '',
                                             address: customer.address || '',
-                                            imageUrl: customer.imageUrl || '',
                                         });
                                     }
                                 }}>×</button>
@@ -495,92 +511,65 @@ const CustomerLayout = ({ children }) => {
                                     </div>
                                 ) : showChangePassword ? (
                                     <div className="p4-change-password">
-                                        <div className="p4-form-group">
-                                            <label>Current Password</label>
-                                            <input
-                                                type="password"
-                                                name="oldPassword"
-                                                value={changePassword.oldPassword}
-                                                onChange={handlePasswordChange}
-                                            />
-                                        </div>
-                                        <div className="p4-form-group">
-                                            <label>New Password</label>
-                                            <input
-                                                type="password"
-                                                name="newPassword"
-                                                value={changePassword.newPassword}
-                                                onChange={handlePasswordChange}
-                                            />
-                                        </div>
-                                        <div className="p4-form-group">
-                                            <label>Confirm New Password</label>
-                                            <input
-                                                type="password"
-                                                name="confirmPassword"
-                                                value={changePassword.confirmPassword}
-                                                onChange={handlePasswordChange}
-                                            />
-                                        </div>
-                                        <div className="p4-modal-actions">
-                                            <button className="p4-btn-secondary" onClick={() => setShowChangePassword(false)}>Cancel</button>
-                                            <button className="p4-btn-main" onClick={handlePasswordSubmit}>Save</button>
-                                        </div>
+                                        {/* Kiểm tra nếu user đăng nhập bằng Google */}
+                                        {customer && customer.customer && (customer.customer.provider === 'GOOGLE' || customer.customer.provider === 'google') ? (
+                                            <div className="p4-google-login-notice">
+                                                <h3>🔐 Google Account Login</h3>
+                                                <p>Password change is not available for accounts logged in via Google. Please manage your password through your Google account settings.</p>
+                                                <p style={{ fontSize: '0.9rem', color: '#888', marginTop: '10px' }}>
+                                                    <strong>Note:</strong> Your account is linked to Google, so password management is handled through your Google account.
+                                                </p>
+                                                <div className="p4-modal-actions">
+                                                    <button className="p4-btn-secondary" onClick={() => setShowChangePassword(false)}>Close</button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div className="p4-form-group">
+                                                    <label>Current Password</label>
+                                                    <input
+                                                        type="password"
+                                                        name="oldPassword"
+                                                        value={changePassword.oldPassword}
+                                                        onChange={handlePasswordChange}
+                                                    />
+                                                </div>
+                                                <div className="p4-form-group">
+                                                    <label>New Password</label>
+                                                    <input
+                                                        type="password"
+                                                        name="newPassword"
+                                                        value={changePassword.newPassword}
+                                                        onChange={handlePasswordChange}
+                                                    />
+                                                </div>
+                                                <div className="p4-form-group">
+                                                    <label>Confirm New Password</label>
+                                                    <input
+                                                        type="password"
+                                                        name="confirmPassword"
+                                                        value={changePassword.confirmPassword}
+                                                        onChange={handlePasswordChange}
+                                                    />
+                                                </div>
+                                                <div className="p4-modal-actions">
+                                                    <button className="p4-btn-secondary" onClick={() => setShowChangePassword(false)}>Cancel</button>
+                                                    <button className="p4-btn-main" onClick={handlePasswordSubmit}>Save</button>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 ) : (
                                     <>
                                         <div className="p4-customer-info">
                                             <div className="p4-customer-avatar">
-                                                {editMode ? (
-                                                    <div className="p4-avatar-upload">
-                                                        <img
-                                                            src={
-                                                                avatarPreview
-                                                                    ? (avatarPreview.startsWith('data:')
-                                                                        ? avatarPreview
-                                                                        : (avatarPreview.startsWith('http')
-                                                                            ? avatarPreview
-                                                                            : `http://localhost:8080${avatarPreview}`))
-                                                                    : 'https://via.placeholder.com/150'
-                                                            }
-                                                            alt="Preview"
-                                                            className="p4-avatar-preview"
-                                                        />
-                                                        <input
-                                                            type="file"
-                                                            id="avatar-file-input"
-                                                            ref={fileInputRef}
-                                                            accept="image/*"
-                                                            onChange={handleAvatarChange}
-                                                            style={{ display: 'none' }}
-                                                        />
-                                                        <button
-                                                            className="p4-avatar-select-btn"
-                                                            onClick={() => {
-                                                                if (fileInputRef.current) {
-                                                                    fileInputRef.current.click();
-                                                                } else {
-                                                                    document.getElementById('avatar-file-input')?.click();
-                                                                }
-                                                            }}
-                                                            type="button"
-                                                        >
-                                                            Choose Image
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <img
-                                                        src={
-                                                            customer?.imageUrl
-                                                                ? (customer.imageUrl.startsWith('http')
-                                                                    ? customer.imageUrl
-                                                                    : `http://localhost:8080${customer.imageUrl}`)
-                                                                : 'https://via.placeholder.com/150'
-                                                        }
-                                                        alt={customer?.fullName || 'Customer'}
-                                                    />
-
-                                                )}
+                                                <div className="p4-avatar-fixed">
+                                                    <svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <rect width="150" height="150" fill="#f0f0f0"/>
+                                                        <circle cx="75" cy="60" r="25" fill="#ccc"/>
+                                                        <path d="M30 120c0-25 20-45 45-45s45 20 45 45v30H30z" fill="#ccc"/>
+                                                    </svg>
+                                                </div>
                                             </div>
                                             <div className="p4-customer-details">
                                                 <div className="p4-form-group">
@@ -604,27 +593,63 @@ const CustomerLayout = ({ children }) => {
                                                     <label>Phone Number</label>
                                                     {editMode ? (
                                                         <input
-                                                            type="text"
+                                                            type="tel"
                                                             name="phoneNumber"
                                                             value={formData.phoneNumber}
                                                             onChange={handleInputChange}
+                                                            placeholder="0xxxxxxxxx or +84xxxxxxxxx"
                                                         />
                                                     ) : (
                                                         <p>{customer?.phoneNumber || 'Not updated'}</p>
                                                     )}
                                                 </div>
                                                 <div className="p4-form-group">
-                                                    <label>Address</label>
-                                                    {editMode ? (
-                                                        <textarea
-                                                            name="address"
-                                                            value={formData.address}
-                                                            onChange={handleInputChange}
-                                                            rows="3"
-                                                        ></textarea>
-                                                    ) : (
-                                                        <p>{customer?.address || 'Not updated'}</p>
-                                                    )}
+                                                    <label>Addresses</label>
+                                                    <div className="p4-address-list">
+                                                        {customer?.addresses && customer.addresses.length > 0 ? (
+                                                            customer.addresses.map((address, index) => (
+                                                                <div key={index} className="p4-address-item">
+                                                                    <div className="p4-address-header">
+                                                                        <span className="p4-address-name">{address.name}</span>
+                                                                        {address.isDefault && (
+                                                                            <span className="p4-address-default">Default</span>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="p4-address-details">
+                                                                        <div className="p4-address-text">{address.address}</div>
+                                                                        <div className="p4-address-phone">📞 {address.phoneNumber}</div>
+                                                                        {address.note && (
+                                                                            <div className="p4-address-note">📝 {address.note}</div>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="p4-no-addresses">
+                                                                <p>No addresses found</p>
+                                                                <button 
+                                                                    className="p4-btn-link" 
+                                                                    onClick={() => {
+                                                                        setShowModal(false);
+                                                                        navigate('/addresses');
+                                                                    }}
+                                                                >
+                                                                    Add your first address
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                        <div className="p4-address-actions">
+                                                            <button 
+                                                                className="p4-btn-link" 
+                                                                onClick={() => {
+                                                                    setShowModal(false);
+                                                                    navigate('/addresses');
+                                                                }}
+                                                            >
+                                                                Manage Addresses
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div className="p4-form-group">
                                                     <label>Loyalty Points</label>
@@ -634,21 +659,29 @@ const CustomerLayout = ({ children }) => {
                                                     <label>Vouchers</label>
                                                     <p className="readonly">{customer?.voucher || 0} vouchers</p>
                                                 </div>
+                                                {/* Hiển thị thông tin về loại đăng nhập */}
+                                                {customer && customer.customer && customer.customer.provider && (
+                                                    <div className="p4-form-group">
+                                                        <label>Login Method</label>
+                                                        <p className="readonly">
+                                                            {customer.customer.provider === 'GOOGLE' || customer.customer.provider === 'google' 
+                                                                ? 'Google Account (Password change not available)' 
+                                                                : 'Email/Password'}
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                         <div className="p4-modal-actions">
                                             {editMode ? (
                                                 <>
-                                                    <button className="p4-btn-secondary" onClick={() => {
+                                                                                                        <button className="p4-btn-secondary" onClick={() => {
                                                         setEditMode(false);
-                                                        setAvatarPreview(customer?.imageUrl || null);
-                                                        setAvatarFile(null);
                                                         if (customer) {
                                                             setFormData({
                                                                 fullName: customer.fullName || '',
                                                                 phoneNumber: customer.phoneNumber || '',
                                                                 address: customer.address || '',
-                                                                imageUrl: customer.imageUrl || '',
                                                             });
                                                         }
                                                     }}>Cancel</button>
@@ -657,6 +690,16 @@ const CustomerLayout = ({ children }) => {
                                             ) : (
                                                 <>
                                                     <button className="p4-btn-main" onClick={() => setEditMode(true)}>Edit</button>
+                                                    {/* Chỉ hiển thị nút đổi mật khẩu nếu không đăng nhập bằng Google */}
+                                                    {customer && customer.customer && customer.customer.provider !== 'GOOGLE' && customer.customer.provider !== 'google' && (
+                                                        <button className="p4-btn-secondary" onClick={openChangePasswordModal}>Change Password</button>
+                                                    )}
+                                                    {/* Hiển thị nút thông báo cho Google login */}
+                                                    {customer && customer.customer && (customer.customer.provider === 'GOOGLE' || customer.customer.provider === 'google') && (
+                                                        <button className="p4-btn-secondary" onClick={openChangePasswordModal} style={{ opacity: 0.7 }}>
+                                                            Password (Google)
+                                                        </button>
+                                                    )}
                                                     <button className="p4-btn-danger" onClick={() => setShowDeleteConfirm(true)}>Delete Account</button>
                                                 </>
                                             )}

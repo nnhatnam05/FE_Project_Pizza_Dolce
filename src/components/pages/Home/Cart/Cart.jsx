@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../../common/Layout/customer_layout';
 import axios from 'axios';
+import AddressSelection from '../Cart/AddressSelection/AddressSelection';
 import './Cart.css';
 
 const Cart = () => {
@@ -13,6 +14,9 @@ const Cart = () => {
     const [loading, setLoading] = useState(true);
     const [note, setNote] = useState('');
     const [voucher, setVoucher] = useState('');
+    const [appliedVoucher, setAppliedVoucher] = useState(null);
+    const [voucherDiscount, setVoucherDiscount] = useState(0);
+    const [voucherError, setVoucherError] = useState('');
     const [needInvoice, setNeedInvoice] = useState(false);
     const [customer, setCustomer] = useState(null);
     const [isTokenValid, setIsTokenValid] = useState(Boolean(localStorage.getItem('token')));
@@ -25,11 +29,12 @@ const Cart = () => {
     const [showExistingOrderModal, setShowExistingOrderModal] = useState(false);
     const [showConfirmPaymentModal, setShowConfirmPaymentModal] = useState(false);
     const [existingOrderId, setExistingOrderId] = useState(null);
+    const [showAddressSelection, setShowAddressSelection] = useState(false);
+    const [selectedDeliveryAddress, setSelectedDeliveryAddress] = useState(null);
 
     // shipping fee
-    const shippingFee = 5;
+    const shippingFee = 0;
 
-    // 倒计时重定向效果
     useEffect(() => {
         if (orderPlaced) {
             const countdownTimer = setInterval(() => {
@@ -138,6 +143,48 @@ const Cart = () => {
         }
     };
 
+    // Validate voucher
+    const validateVoucher = async () => {
+        if (!voucher.trim()) {
+            setVoucherError('Please enter a voucher code');
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const orderAmount = calculateSubtotal() + shippingFee;
+            
+            const response = await axios.post('http://localhost:8080/api/customer/vouchers/validate', {
+                voucherCode: voucher,
+                orderAmount: orderAmount
+            }, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.data.valid) {
+                setAppliedVoucher(response.data.voucher);
+                setVoucherDiscount(response.data.discount);
+                setVoucherError('');
+                alert(`Voucher applied! You saved $${response.data.discount.toFixed(2)}`);
+            } else {
+                setVoucherError(response.data.message);
+                setAppliedVoucher(null);
+                setVoucherDiscount(0);
+            }
+        } catch (error) {
+            setVoucherError('Failed to validate voucher: ' + (error.response?.data?.message || error.message));
+            setAppliedVoucher(null);
+            setVoucherDiscount(0);
+        }
+    };
+
+    // Remove applied voucher
+    const removeVoucher = () => {
+        setVoucher('');
+        setAppliedVoucher(null);
+        setVoucherDiscount(0);
+        setVoucherError('');
+    };
 
     const checkLoginStatus = () => {
         const token = localStorage.getItem('token');
@@ -235,7 +282,8 @@ const Cart = () => {
 
     // Calculate total (including shipping and other items)
     const calculateTotal = () => {
-        return calculateSubtotal() + calculateOtherItemsTotal() + shippingFee;
+        const subtotal = calculateSubtotal() + calculateOtherItemsTotal() + shippingFee;
+        return Math.max(0, subtotal - voucherDiscount);
     };
 
 
@@ -376,17 +424,38 @@ const Cart = () => {
             }
         }
 
-        if (currentTokenValid && customer) {
+        if (selectedDeliveryAddress) {
             return (
                 <div className="customer-address-info">
-                    <p><strong>Delivery Address:</strong></p>
-                    <p>{customer.address || 'No address set'}</p>
-                    <p><strong>Contact:</strong> {customer.fullName}</p>
-                    <p><strong>Phone:</strong> {customer.phoneNumber || 'Not provided'}</p>
+                    <p><strong>Selected Delivery Address:</strong></p>
+                    <p><strong>Recipient:</strong> {selectedDeliveryAddress.recipientName}</p>
+                    <p><strong>Phone:</strong> {selectedDeliveryAddress.recipientPhone}</p>
+                    <p><strong>Address:</strong> {selectedDeliveryAddress.deliveryAddress}</p>
+                    {selectedDeliveryAddress.note && (
+                        <p><strong>Note:</strong> {selectedDeliveryAddress.note}</p>
+                    )}
+                    <button 
+                        className="change-address-btn" 
+                        onClick={handleShowAddressSelection}
+                    >
+                        Change Address
+                    </button>
+                </div>
+            );
+        } else if (currentTokenValid && customer) {
+            return (
+                <div className="customer-address-info">
+                    <p><strong>Select Delivery Address:</strong></p>
+                    <p>Please choose a delivery address for your order</p>
+                    <button 
+                        className="select-address-btn" 
+                        onClick={handleShowAddressSelection}
+                    >
+                        Select Address
+                    </button>
                 </div>
             );
         } else if (currentTokenValid) {
-
             return (
                 <div className="customer-address-info">
                     <p>Loading your shipping information...</p>
@@ -396,7 +465,6 @@ const Cart = () => {
                 </div>
             );
         } else {
-
             return (
                 <div className="login-required">
                     <p>Please login to use your saved address</p>
@@ -439,8 +507,7 @@ const Cart = () => {
             setCustomer(customerData);
             setIsTokenValid(true);
     
-            if (!customerData.address || !customerData.phoneNumber ||
-                customerData.address.trim() === '' || customerData.phoneNumber.trim() === '') {
+            if (!selectedDeliveryAddress) {
                 setShowIncompleteInfoModal(true);
                 return;
             }
@@ -476,7 +543,11 @@ const Cart = () => {
                         quantity: item.quantity
                     }))
                 ],
-                note: note || ""
+                note: note || "",
+                deliveryAddress: selectedDeliveryAddress,
+                voucherCode: appliedVoucher ? appliedVoucher.code : null,
+                voucherDiscount: voucherDiscount || 0,
+                needInvoice: needInvoice
             };
     
             console.log("Submit order data:", orderData);
@@ -545,37 +616,18 @@ const Cart = () => {
         navigate('/login/customer');
     };
 
-    // Navigate to personal information page
+    // Navigate to address management page
     const goToPersonalInfo = () => {
-
         setShowIncompleteInfoModal(false);
-
-
-        localStorage.setItem('missingFields', JSON.stringify(getMissingFields()));
-
-
-        navigate('/', { state: { openPersonalInfo: true } });
-
-
-        setTimeout(() => {
-
-            const personalInfoElement = document.querySelector('.p4-profile-list span:first-child');
-            if (personalInfoElement) {
-                personalInfoElement.click();
-            }
-        }, 100);
+        navigate('/addresses');
     };
 
     // Get list of missing fields
     const getMissingFields = () => {
         const missingFields = [];
 
-        if (!customer?.address || customer.address.trim() === '') {
-            missingFields.push('address');
-        }
-
-        if (!customer?.phoneNumber || customer.phoneNumber.trim() === '') {
-            missingFields.push('phoneNumber');
+        if (!selectedDeliveryAddress) {
+            missingFields.push('deliveryAddress');
         }
 
         return missingFields;
@@ -598,6 +650,16 @@ const Cart = () => {
     const getOtherItemQuantity = (id) => {
         const item = otherItems.find(item => item.id === id);
         return item ? item.quantity : 1;
+    };
+
+    // Address selection handlers
+    const handleAddressSelect = (addressData) => {
+        setSelectedDeliveryAddress(addressData);
+        setShowAddressSelection(false);
+    };
+
+    const handleShowAddressSelection = () => {
+        setShowAddressSelection(true);
     };
 
     return (
@@ -775,14 +837,30 @@ const Cart = () => {
 
                             <h2>Voucher</h2>
                             <div className="voucher-section">
-                                <div className="voucher-input-group">
-                                    <input
-                                        type="text"
-                                        value={voucher}
-                                        onChange={(e) => setVoucher(e.target.value)}
-                                        placeholder="Enter voucher code"
-                                    />
-                                    <button className="apply-btn">Apply</button>
+                                {!appliedVoucher ? (
+                                    <div className="voucher-input-group">
+                                        <input
+                                            type="text"
+                                            value={voucher}
+                                            onChange={(e) => setVoucher(e.target.value)}
+                                            placeholder="Enter voucher code"
+                                        />
+                                        <button className="apply-btn" onClick={validateVoucher}>Apply</button>
+                                    </div>
+                                ) : (
+                                    <div className="applied-voucher">
+                                        <div className="voucher-info">
+                                            <span className="voucher-code">✅ {appliedVoucher.code}</span>
+                                            <span className="voucher-discount">-${voucherDiscount.toFixed(2)}</span>
+                                        </div>
+                                        <button className="remove-voucher-btn" onClick={removeVoucher}>Remove</button>
+                                    </div>
+                                )}
+                                {voucherError && <div className="voucher-error">{voucherError}</div>}
+                                <div className="voucher-link">
+                                    <a href="/vouchers" target="_blank" rel="noopener noreferrer">
+                                        🎫 View My Vouchers
+                                    </a>
                                 </div>
                             </div>
 
@@ -794,8 +872,14 @@ const Cart = () => {
                                         onChange={(e) => setNeedInvoice(e.target.checked)}
                                     />
                                     <span className="checkmark"></span>
-                                    Issue Red Invoice
+                                    Issue Invoice
                                 </label>
+                                {needInvoice && (
+                                    <div className="invoice-notice">
+                                        <i className="notice-icon">📧</i>
+                                        <span>Hóa đơn điện tử sẽ được gửi đến email của bạn sau khi thanh toán thành công</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -820,8 +904,14 @@ const Cart = () => {
                                 )}
                                 <div className="summary-row">
                                     <span>Shipping Fee:</span>
-                                    <span className="price">{shippingFee.toLocaleString()} $</span>
+                                    <span className="price">Free Shipping</span>
                                 </div>
+                                {voucherDiscount > 0 && (
+                                    <div className="summary-row voucher-discount">
+                                        <span>Voucher Discount:</span>
+                                        <span className="price discount">-{voucherDiscount.toLocaleString()} $</span>
+                                    </div>
+                                )}
                                 <div className="summary-row total">
                                     <span>Total:</span>
                                     <span className="price">{calculateTotal().toLocaleString()} $</span>
@@ -873,19 +963,15 @@ const Cart = () => {
                         <div className="modal-content">
                             <p>Please update your shipping information completely before continuing.</p>
                             <div className="missing-fields">
-                                {!customer?.address || customer.address.trim() === '' ? (
-                                    <p className="missing-field">• Shipping address</p>
-                                ) : null}
-                                {!customer?.phoneNumber || customer.phoneNumber.trim() === '' ? (
-                                    <p className="missing-field">• Phone</p>
-                                ) : null}
+                                <p className="missing-field">• Please select a delivery address for your order</p>
+                                <p className="missing-field">• You can manage your addresses in your profile</p>
                             </div>
                             <div className="modal-actions">
                                 <button className="modal-btn secondary" onClick={() => setShowIncompleteInfoModal(false)}>
                                     Back
                                 </button>
                                 <button className="modal-btn primary" onClick={goToPersonalInfo}>
-                                    Update Information
+                                    Manage Addresses
                                 </button>
                             </div>
                         </div>
@@ -951,6 +1037,19 @@ const Cart = () => {
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Address Selection Modal */}
+            {showAddressSelection && (
+                <div className="modal-overlay">
+                    <div className="modal-container">
+                        <AddressSelection 
+                            onAddressSelect={handleAddressSelect}
+                            selectedAddress={selectedDeliveryAddress}
+                            onClose={() => setShowAddressSelection(false)}
+                        />
                     </div>
                 </div>
             )}

@@ -992,3 +992,15 @@
         font-size: 36px;
     }
 }
+
+/* Delivery info section */
+.delivery-info-section {
+    margin-top: 16px;
+    border-left: 4px solid #28a745;
+}
+
+.delivery-info-section .section-title {
+    background: #d4edda;
+    color: #155724;
+    border-bottom-color: #c3e6cb;
+}

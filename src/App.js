@@ -16,6 +16,11 @@ import TableForm from './components/features/admin/table/TableForm';
 import OrderList from './components/features/admin/order/OrderList';
 import OrderForm from './components/features/admin/order/OrderForm';
 
+import { VoucherManagement } from './components/features/admin/voucher';
+import CustomerVouchers from './components/pages/Home/Vouchers/CustomerVouchers';
+import CustomerManagement from './components/features/admin/customer/CustomerManagement';
+import DetailCustomer from './components/features/admin/customer/Detail_Customer';
+
 import Dashboard from './components/features/admin/dashboard/Dashboard';
 import Login from './components/features/admin/auth/login_admin/Login';
 import LoginCustomer from './components/features/admin/auth/login_customer/login_customer';
@@ -52,10 +57,7 @@ import Detail_Drinks from "./components/pages/Home/Menu/Drinks/Detail_Drinks";
 import Detail_Pasta from "./components/pages/Home/Menu/Pasta-Main/Detail_Pasta-Main";
 import Detail_Other from "./components/pages/Home/Menu/Other/Detail_Other";
 import Cart from "./components/pages/Home/Cart/Cart";
-import List_Payment from "./components/features/admin/payment/List_Payment";
-import Form_Payment from "./components/features/admin/payment/Form_Payment";
-import OrderManagement from "./components/features/admin/order/Order_Management";
-import OrderWaitingConfirmation from "./components/features/admin/order/Order_WaitingConfirm";
+import OrderManagement from "./components/features/admin/order/Order_Management"; 
 import OrderDeliveryStatus from "./components/features/admin/order/Order_DeliveryStatus";
 import Delivery_Status from "./components/features/staff/delivery-status/Delivery_Status";
 import ForgotPasswordCustomer from "./components/features/admin/auth/login_customer/forgot_password_cus";
@@ -64,6 +66,9 @@ import EditCart from "./components/pages/Home/Cart/payment/editCart";
 import OrderHistory from "./components/pages/Home/OrderHistory";
 import DetailDelivery from "./components/pages/Home/Cart/detail_delivery/detail_delivery";
 import PaymentSuccess from "./components/pages/Home/PaymentSuccess/PaymentSuccess";
+import AddressManagement from "./components/pages/Home/AddressManagement/AddressManagement";
+import TableOrder from "./components/pages/DineIn/TableOrder";
+import TableDashboard from "./components/features/staff/TableDashboard";
 
 
 function App() {
@@ -76,6 +81,9 @@ function App() {
             <Main />
           </CustomerLayout>
         } />
+        
+        {/* Dine-in table order page */}
+        <Route path="/order" element={<TableOrder />} />
         <Route path="/pizza" element={
           <CustomerLayout>
             <List_Pizza />
@@ -160,6 +168,17 @@ function App() {
           </CustomerLayout>
         } />
 
+        <Route path="/addresses" element={
+          <CustomerLayout>
+            <AddressManagement />
+          </CustomerLayout>
+        } />
+
+        <Route path="/vouchers" element={
+          <CustomerLayout>
+            <CustomerVouchers />
+          </CustomerLayout>
+        } />
 
         <Route path="/detail-delivery/:orderId" element={
           <CustomerLayout>
@@ -194,20 +213,21 @@ function App() {
             <Route path="tables/edit/:id" element={<TableForm />} />
 
             <Route path="orders" element={<OrderManagement />} />
-            <Route path="orders/waiting" element={<OrderWaitingConfirmation />} />
             <Route path="orders/delivery" element={<OrderDeliveryStatus />} />
             <Route path="orders/completed" element={<OrderList />} />
             <Route path="orders/create" element={<OrderForm />} />
             <Route path="orders/edit/:id" element={<OrderForm />} />
 
-            <Route path="payment-methods" element={<List_Payment />} />
-            <Route path="payment-methods/create" element={<Form_Payment />} />
-            <Route path="payment-methods/edit/:id" element={<Form_Payment />} />
+
+            <Route path="vouchers" element={<VoucherManagement />} />
 
             <Route path="users" element={<UserList />} />
             <Route path="register" element={<Register />} />
             <Route path="users/edit/:id" element={<EditUser />} />
             <Route path="users/details/:id" element={<DetailUser />} />
+
+            <Route path="customers" element={<CustomerManagement />} />
+            <Route path="customers/details/:id" element={<DetailCustomer />} />
 
             <Route path="attendance" element={<AttendanceManagement />} />
             <Route path="attendance/scan" element={<AttendanceScan />} />
@@ -223,6 +243,7 @@ function App() {
         <Route path="/staff" element={<StaffRoute />}>
           <Route element={<StaffLayout />}>
             <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<TableDashboard />} />
 
             <Route path="foods" element={<FoodList />} />
             <Route path="tables" element={<TableList />} />

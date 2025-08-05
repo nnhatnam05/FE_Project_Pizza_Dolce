@@ -500,12 +500,25 @@ export default function Delivery_Status() {
                                 <div className="info-row"><span>Họ tên:</span> {selectedOrder.customer?.fullName || "Không có tên"}</div>
                                 <div className="info-row"><span>Email:</span> {selectedOrder.customer?.email || "Không có email"}</div>
                                 <div className="info-row"><span>Điện thoại:</span> {selectedOrder.customer?.phoneNumber || "Không có số điện thoại"}</div>
-                                <div className="info-row"><span>Địa chỉ:</span> {selectedOrder.customer?.address || "Không có địa chỉ"}</div>
+                                
+                                <h4 style={{marginTop: '15px', marginBottom: '10px', color: '#333'}}>Thông tin giao hàng</h4>
+                                <div className="info-row"><span>Người nhận:</span> {selectedOrder.recipientName || "Không có tên người nhận"}</div>
+                                <div className="info-row"><span>SĐT giao hàng:</span> {selectedOrder.recipientPhone || "Không có SĐT"}</div>
+                                <div className="info-row"><span>Địa chỉ giao hàng:</span> {selectedOrder.deliveryAddress || "Không có địa chỉ giao hàng"}</div>
                             </div>
                             <div className="order-info">
                                 <h4>Thông tin đơn hàng</h4>
                                 <div className="info-row"><span>Mã đơn:</span> #{selectedOrder.orderNumber}</div>
                                 <div className="info-row"><span>Tổng tiền:</span> ${Number(selectedOrder.totalPrice).toFixed(2)}</div>
+                                {selectedOrder.voucherCode && (
+                                    <div className="info-row voucher-info">
+                                        <span>Voucher:</span> 
+                                        <span className="voucher-code">{selectedOrder.voucherCode}</span>
+                                        {selectedOrder.voucherDiscount > 0 && (
+                                            <span className="voucher-discount">(-${selectedOrder.voucherDiscount})</span>
+                                        )}
+                                    </div>
+                                )}
                                 <div className="info-row"><span>Thanh toán:</span> {selectedOrder.paymentMethod?.name || "Chưa chọn phương thức"}</div>
                                 <div className="info-row">
                                     <span>Trạng thái giao hàng:</span>

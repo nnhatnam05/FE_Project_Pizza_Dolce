@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { validatePhoneNumber } from '../../../../../utils/phoneValidation';
 import './Register.css';
 
 const Register = () => {
@@ -139,14 +140,10 @@ const Register = () => {
     return "";
   };
 
+  // Using imported validatePhoneNumber function
   const validatePhone = (phone) => {
-    if (!phone.trim()) {
-      return "Phone number is required";
-    }
-    if (!/^\d{10}$/.test(phone)) {
-      return "Phone number must be exactly 10 digits";
-    }
-    return "";
+    const error = validatePhoneNumber(phone);
+    return error || "";
   };
 
   const validateStaffDetails = () => {

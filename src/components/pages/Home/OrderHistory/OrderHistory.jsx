@@ -23,6 +23,17 @@ const OrderHistory = () => {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             
+            console.log('Orders data:', response.data);
+            // Log chi tiết từng order để debug
+            response.data.forEach((order, index) => {
+                console.log(`Order ${index + 1}:`, {
+                    id: order.id,
+                    customer: order.customer,
+                    deliveryAddress: order.deliveryAddress,
+                    recipientName: order.recipientName,
+                    recipientPhone: order.recipientPhone
+                });
+            });
             setOrders(response.data);
             setError(null);
         } catch (err) {
@@ -276,6 +287,77 @@ const OrderHistory = () => {
                                     <span className="value">{formatDate(order.createdDate || order.createdAt)}</span>
                                 </div>
                                 
+                                {/* Customer Information */}
+                                <div className="customer-info">
+                                    <div className="customer-details">
+                                        <div className="customer-row">
+                                            <span className="customer-label">Customer ID:</span>
+                                            <span className="customer-value">
+                                                #{order.customer?.id || 'N/A'}
+                                            </span>
+                                        </div>
+                                        <div className="customer-row">
+                                            <span className="customer-label">Customer Name:</span>
+                                            <span className="customer-value">
+                                                {order.customer?.fullName || 'Chưa cập nhật tên'}
+                                            </span>
+                                        </div>
+                                        <div className="customer-row">
+                                            <span className="customer-label">Phone:</span>
+                                            <span className="customer-value">
+                                                {order.customer?.phoneNumber || customer?.phoneNumber || 'N/A'}
+                                            </span>
+                                        </div>
+                                        <div className="customer-row">
+                                            <span className="customer-label">Email:</span>
+                                            <span className="customer-value">
+                                                {order.customer?.email || customer?.email || 'N/A'}
+                                            </span>
+                                        </div>
+                                        {order.deliveryAddress && (
+                                            <>
+                                                <div className="customer-row">
+                                                    <span className="customer-label">Recipient:</span>
+                                                    <span className="customer-value">{order.recipientName}</span>
+                                                </div>
+                                                <div className="customer-row">
+                                                    <span className="customer-label">Delivery Phone:</span>
+                                                    <span className="customer-value">{order.recipientPhone}</span>
+                                                </div>
+                                                <div className="customer-row">
+                                                    <span className="customer-label">Delivery Address:</span>
+                                                    <span className="customer-value">{order.deliveryAddress}</span>
+                                                </div>
+                                            </>
+                                        )}
+                                        {/* Debug info - chỉ hiển thị trong development */}
+                                        {/* {process.env.NODE_ENV === 'development' && (
+                                            <div className="customer-row" style={{fontSize: '10px', color: '#999'}}>
+                                                <span className="customer-label">Debug:</span>
+                                                <span className="customer-value">
+                                                    Customer: {JSON.stringify(order.customer)}
+                                                </span>
+                                            </div>
+                                        )} */}
+                                        {order.deliveryAddress && (
+                                            <>
+                                                <div className="customer-row">
+                                                    <span className="customer-label">Recipient:</span>
+                                                    <span className="customer-value">{order.recipientName}</span>
+                                                </div>
+                                                <div className="customer-row">
+                                                    <span className="customer-label">Delivery Phone:</span>
+                                                    <span className="customer-value">{order.recipientPhone}</span>
+                                                </div>
+                                                <div className="customer-row">
+                                                    <span className="customer-label">Delivery Address:</span>
+                                                    <span className="customer-value">{order.deliveryAddress}</span>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                                
                                 <div className="order-items-preview">
                                     {order.orderFoods?.length > 0 || order.foodList?.length > 0 ? (
                                         <ul className="items-list">
@@ -294,6 +376,8 @@ const OrderHistory = () => {
                                         <p>No items</p>
                                     )}
                                 </div>
+                                
+
                                 
                                 <div className="order-footer">
                                     <div className="order-total">

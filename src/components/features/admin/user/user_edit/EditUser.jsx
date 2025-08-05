@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import { validatePhoneNumber } from '../../../../../utils/phoneValidation';
 import '../user_add/Register.css';
 
 const EditUser = () => {
@@ -239,14 +240,10 @@ const EditUser = () => {
     return "";
   };
 
+  // Using imported validatePhoneNumber function
   const validatePhone = (phone) => {
-    if (!phone.trim()) {
-      return "Phone number is required";
-    }
-    if (!/^\d{10}$/.test(phone)) {
-      return "Phone number must be exactly 10 digits";
-    }
-    return "";
+    const error = validatePhoneNumber(phone);
+    return error || "";
   };
 
   const validatePassword = () => {

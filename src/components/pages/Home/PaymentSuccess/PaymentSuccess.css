@@ -203,4 +203,106 @@
     .order-info p {
         font-size: 13px;
     }
+}
+
+/* Points Notification Styles for PaymentSuccess */
+.points-notification {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    animation: pointsSlideIn 0.6s ease-out;
+    text-align: left;
+}
+
+.points-icon {
+    font-size: 32px;
+    animation: pointsBounce 1.5s ease-in-out infinite alternate;
+    flex-shrink: 0;
+}
+
+.points-content {
+    flex: 1;
+    color: white;
+}
+
+.points-title {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+}
+
+.points-message {
+    margin: 0 0 6px 0;
+    font-size: 16px;
+    color: white;
+}
+
+.points-message strong {
+    font-weight: 700;
+    font-size: 18px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.points-detail {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+    font-style: italic;
+}
+
+@keyframes pointsSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pointsBounce {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.15);
+    }
+}
+
+/* Responsive for points notification in PaymentSuccess */
+@media (max-width: 768px) {
+    .points-notification {
+        padding: 16px;
+        margin: 20px 0;
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+    
+    .points-icon {
+        font-size: 28px;
+    }
+    
+    .points-title {
+        font-size: 16px;
+    }
+    
+    .points-message {
+        font-size: 14px;
+    }
+    
+    .points-message strong {
+        font-size: 16px;
+    }
+    
+    .points-detail {
+        font-size: 12px;
+    }
 } 

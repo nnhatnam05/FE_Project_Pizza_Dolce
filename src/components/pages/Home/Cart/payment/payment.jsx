@@ -30,6 +30,10 @@ const PaymentDetails = () => {
     // Notification modals
     const [showTimeoutModal, setShowTimeoutModal] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    
+    // Points earned
+    const [pointsEarned, setPointsEarned] = useState(0);
+    const [pointsMessage, setPointsMessage] = useState('');
 
     const [qrCodeUrl, setQrCodeUrl] = useState(null);
     const [qrLoading, setQrLoading] = useState(false);
@@ -65,6 +69,7 @@ const PaymentDetails = () => {
         } else if (order && order.status === 'PAID') {
             setShowSuccessModal(true);
             setTimerActive(false);
+            fetchPointsEarned(); // Fetch points earned when payment is successful
             setTimeout(() => {
                 navigate(`/detail-delivery/${orderId}`);
             }, 2500);
@@ -216,6 +221,24 @@ const PaymentDetails = () => {
             console.error('Failed to refresh order status:', error);
         }
     }, [orderId]);
+
+    const fetchPointsEarned = async () => {
+        const token = localStorage.getItem('token');
+        if (!token || !orderId) return;
+        
+        try {
+            const response = await axios.get(`http://localhost:8080/api/orders/${orderId}/points-earned`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (response.data.isPaid) {
+                setPointsEarned(response.data.pointsEarned);
+                setPointsMessage(response.data.message);
+            }
+        } catch (error) {
+            console.error('Failed to fetch points earned:', error);
+        }
+    };
 
     useEffect(() => {
         let statusChecker;
@@ -376,6 +399,47 @@ const PaymentDetails = () => {
                             </span>
                         </div>
                     </div>
+                    
+                    {/* Customer and Delivery Information */}
+                    <div className="customer-delivery-info">
+                        <div className="customer-section">
+                            <h4>Customer Information</h4>
+                            <div className="info-row">
+                                <span className="info-label">Name:</span>
+                                <span className="info-value">{order.customer?.fullName || 'N/A'}</span>
+                            </div>
+                            <div className="info-row">
+                                <span className="info-label">Phone:</span>
+                                <span className="info-value">{order.customer?.phoneNumber || 'N/A'}</span>
+                            </div>
+                        </div>
+                        
+                        {order.deliveryAddress && (
+                            <div className="delivery-section">
+                                <h4>Delivery Information</h4>
+                                <div className="info-row">
+                                    <span className="info-label">Recipient:</span>
+                                    <span className="info-value">{order.recipientName}</span>
+                                </div>
+                                <div className="info-row">
+                                    <span className="info-label">Delivery Phone:</span>
+                                    <span className="info-value">{order.recipientPhone}</span>
+                                </div>
+                                <div className="info-row">
+                                    <span className="info-label">Address:</span>
+                                    <span className="info-value">{order.deliveryAddress}</span>
+                                </div>
+                                {order.deliveryLatitude && order.deliveryLongitude && (
+                                    <div className="info-row">
+                                        <span className="info-label">Coordinates:</span>
+                                        <span className="info-value">
+                                            {order.deliveryLatitude}, {order.deliveryLongitude}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
                     <div className="order-items">
                         <h3>Ordered Items</h3>
                         <table className="order-items-table">
@@ -398,9 +462,25 @@ const PaymentDetails = () => {
                                 ))}
                             </tbody>
                         </table>
-                        <div className="order-total">
-                            <span>Total:</span>
-                            <span>{Number(order.totalPrice).toLocaleString()} $</span>
+                        <div className="order-summary">
+                            <div className="summary-row">
+                                <span>Subtotal:</span>
+                                <span>{Number(order.foodList?.reduce((sum, item) => sum + (item.price * item.quantity), 0) || 0).toLocaleString()} $</span>
+                            </div>
+                            <div className="summary-row">
+                                <span>Shipping Fee:</span>
+                                <span>Free Shipping</span>
+                            </div>
+                            {order.voucherCode && order.voucherDiscount > 0 && (
+                                <div className="summary-row voucher-discount">
+                                    <span>Voucher Discount ({order.voucherCode}):</span>
+                                    <span className="discount-amount">-{Number(order.voucherDiscount).toLocaleString()} $</span>
+                                </div>
+                            )}
+                            <div className="order-total">
+                                <span>Total:</span>
+                                <span>{Number(order.totalPrice).toLocaleString()} $</span>
+                            </div>
                         </div>
                     </div>
                     {order.note && (
@@ -409,6 +489,7 @@ const PaymentDetails = () => {
                             <p>{order.note}</p>
                         </div>
                     )}
+
                     {deliveryStatus && (
                         <div className="delivery-status-box">
                             <h3>Delivery Information</h3>
@@ -678,6 +759,20 @@ const PaymentDetails = () => {
                             <p className="notification-message">
                                 Thank you for your payment. Your order has been paid and is now being prepared.
                             </p>
+                            {pointsEarned > 0 && (
+                                <div className="points-notification">
+                                    <div className="points-icon">🎉</div>
+                                    <div className="points-content">
+                                        <h5 className="points-title">Points Earned!</h5>
+                                        <p className="points-message">
+                                            You earned <strong>{pointsEarned} points</strong> from this order!
+                                        </p>
+                                        <p className="points-detail">
+                                            Order total: ${order?.totalPrice} = {pointsEarned} points
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                             <div className="order-reference">
                                 Order #: {order?.orderNumber}
                             </div>

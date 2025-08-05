@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate, NavLink } from 'react-router-dom';
+import { validatePhoneNumber } from '../../../../utils/phoneValidation';
 import {
   AppBar,
   Toolbar,
@@ -57,6 +58,7 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import CheckIcon from '@mui/icons-material/Check';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PaymentIcon from '@mui/icons-material/Payment';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import KeyIcon from '@mui/icons-material/Key';
 import axios from 'axios';
 import './AdminLayout.css';
@@ -393,9 +395,20 @@ function AdminLayoutContent() {
     }
   };
 
+  // Using imported validatePhoneNumber function
+
   // Submit profile updates
   const handleProfileSubmit = async () => {
     try {
+      // Validate phone number if provided
+      if (editFormData.phone) {
+        const phoneError = validatePhoneNumber(editFormData.phone);
+        if (phoneError) {
+          alert(phoneError);
+          return;
+        }
+      }
+
       // For other roles, allow full profile edit
       const formData = new FormData();
       
@@ -581,14 +594,20 @@ function AdminLayoutContent() {
 
         },
         {
-          label: 'Payment',
-          icon: <PaymentIcon />,
-          to: '/admin/payment-methods',
+          label: 'Vouchers',
+          icon: <LocalOfferIcon />,
+          to: '/admin/vouchers',
+          new: true,
         },
         {
           label: 'Users',
           icon: <AccountCircleIcon />,
           to: '/admin/users',
+        },
+        {
+          label: 'Customers',
+          icon: <PersonIcon />,
+          to: '/admin/customers',
         },
       ],
     },

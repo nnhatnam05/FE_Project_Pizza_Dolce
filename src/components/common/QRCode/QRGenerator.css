@@ -1,0 +1,256 @@
+.qr-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.qr-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.qr-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+  border-radius: 12px 12px 0 0;
+}
+
+.qr-modal-header h3 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.qr-modal-content {
+  padding: 24px;
+}
+
+.qr-print-content {
+  text-align: center;
+}
+
+.restaurant-info {
+  margin-bottom: 24px;
+}
+
+.restaurant-info h2 {
+  margin: 0 0 8px 0;
+  color: #1f2937;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.restaurant-info p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.qr-code-container {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 2px dashed #d1d5db;
+}
+
+.qr-instructions {
+  margin-top: 24px;
+}
+
+.qr-instructions p {
+  margin: 8px 0;
+  color: #4b5563;
+}
+
+.qr-instructions p:first-child {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.qr-url {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  background: #f3f4f6;
+  padding: 8px 12px;
+  border-radius: 4px;
+  word-break: break-all;
+  color: #374151;
+}
+
+.qr-modal-actions {
+  display: flex;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #f8fafc;
+  border-radius: 0 0 12px 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+  min-width: 120px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.btn-secondary {
+  background: #10b981;
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #059669;
+}
+
+.btn-warning {
+  background: #f59e0b;
+  color: white;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background: #d97706;
+}
+
+.btn-outline {
+  background: white;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.btn-outline:hover {
+  background: #f9fafb;
+  color: #374151;
+}
+
+/* Print styles */
+@media print {
+  .qr-modal-overlay,
+  .qr-modal-header,
+  .qr-modal-actions {
+    display: none !important;
+  }
+  
+  .qr-modal {
+    box-shadow: none;
+    border-radius: 0;
+    max-width: none;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+  }
+  
+  .qr-modal-content {
+    padding: 0;
+  }
+  
+  .qr-print-content {
+    page-break-inside: avoid;
+    margin: 20px;
+  }
+  
+  .restaurant-info h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .restaurant-info p {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  
+  .qr-code-container {
+    background: white;
+    border: 2px solid #000;
+    margin: 20px 0;
+    padding: 20px;
+  }
+  
+  .qr-instructions p {
+    font-size: 14px;
+    color: #000;
+  }
+  
+  .qr-url {
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    font-size: 12px;
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .qr-modal {
+    width: 95%;
+    margin: 20px;
+  }
+  
+  .qr-modal-actions {
+    flex-direction: column;
+  }
+  
+  .btn {
+    min-width: auto;
+  }
+} 

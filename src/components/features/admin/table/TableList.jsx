@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import QRGenerator from '../../../common/QRCode/QRGenerator';
 import './Table.css';
 
 export default function TableList() {
@@ -13,6 +14,8 @@ export default function TableList() {
     key: null,
     direction: 'ascending'
   });
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [selectedTable, setSelectedTable] = useState(null);
 
   const tablesPerPage = 10;
 
@@ -46,6 +49,40 @@ export default function TableList() {
       } catch (err) {
         console.error("Failed to delete table:", err);
       }
+    }
+  };
+
+  const showQRCode = async (table) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/tables/${table.id}/qr-code`);
+      
+      setSelectedTable({
+        ...table,
+        qrCodeUrl: response.data.qrCode
+      });
+      setShowQRModal(true);
+    } catch (err) {
+      console.error("Failed to get QR code:", err);
+      alert("Failed to load QR code");
+    }
+  };
+
+  const updateTableStatus = async (tableId, newStatus) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(`http://localhost:8080/api/tables/${tableId}/status`, 
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      fetchTables(); // Refresh the table list
+    } catch (err) {
+      console.error("Failed to update table status:", err);
+      alert("Failed to update table status");
     }
   };
 
@@ -137,7 +174,9 @@ export default function TableList() {
           >
             <option value="ALL">All status</option>
             <option value="AVAILABLE">AVAILABLE</option>
+            <option value="OCCUPIED">OCCUPIED</option>
             <option value="RESERVED">RESERVED</option>
+            <option value="CLEANING">CLEANING</option>
           </select>
         </div>
       </div>
@@ -157,7 +196,9 @@ export default function TableList() {
                   <th className="sortable" onClick={() => requestSort('capacity')}>
                     Capacity{getSortDirectionIndicator('capacity')}
                   </th>
+                  <th>Location</th>
                   <th>Status</th>
+                  <th>QR Code</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -170,10 +211,27 @@ export default function TableList() {
                       <td>{actualIndex}</td>
                       <td>F{table.number}</td>
                       <td>{table.capacity} persons</td>
+                      <td>{table.location || 'Not specified'}</td>
                       <td>
-                        <span className={`status-badge status-${table.status.toLowerCase()}`}>
-                          {table.status}
-                        </span>
+                        <select 
+                          value={table.status} 
+                          onChange={(e) => updateTableStatus(table.id, e.target.value)}
+                          className={`status-select status-${table.status.toLowerCase()}`}
+                        >
+                          <option value="AVAILABLE">AVAILABLE</option>
+                          <option value="OCCUPIED">OCCUPIED</option>
+                          <option value="RESERVED">RESERVED</option>
+                          <option value="CLEANING">CLEANING</option>
+                        </select>
+                      </td>
+                      <td className="qr-cell">
+                        <button 
+                          onClick={() => showQRCode(table)} 
+                          className="qr-btn" 
+                          title="View QR Code"
+                        >
+                          📱 QR
+                        </button>
                       </td>
                       <td className="actions-cell">
                         <div className="action-buttons">
@@ -249,6 +307,19 @@ export default function TableList() {
             <div className="no-results">No tables found</div>
           )}
         </>
+      )}
+      
+      {/* QR Code Modal */}
+      {showQRModal && selectedTable && (
+        <QRGenerator
+          tableId={selectedTable.id}
+          tableNumber={selectedTable.number}
+          qrCodeUrl={selectedTable.qrCodeUrl}
+          onClose={() => {
+            setShowQRModal(false);
+            setSelectedTable(null);
+          }}
+        />
       )}
     </div>
   );

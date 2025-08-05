@@ -432,24 +432,45 @@ const DetailDelivery = () => {
                         <div className="info-card">
                             <div className="info-item">
                                 <div className="info-label">Tên:</div>
-                                <div className="info-value">{order?.customer?.name || order?.customer?.fullName || 'Không có tên'}</div>
+                                <div className="info-value">{order?.customer?.fullName || 'Chưa cập nhật tên'}</div>
                             </div>
                             <div className="info-item">
                                 <div className="info-label">Số điện thoại:</div>
-                                <div className="info-value">{order?.customer?.phoneNumber || order?.phoneNumber || 'Không có'}</div>
+                                <div className="info-value">{order?.customer?.phoneNumber || 'Không có'}</div>
                             </div>
                             <div className="info-item">
-                                <div className="info-label">Địa chỉ:</div>
-                                <div className="info-value">{order?.customer?.address || order?.shippingAddress || order?.address || 'Không có'}</div>
+                                <div className="info-label">Email:</div>
+                                <div className="info-value">{order?.customer?.email || 'Không có'}</div>
                             </div>
-                            {(order?.customer?.email || order?.email) && (
+                        </div>
+                    </div>
+                    
+                    {/* Thông tin địa chỉ giao hàng */}
+                    {order?.deliveryAddress && (
+                        <div className="content-section delivery-info-section">
+                            <h2 className="section-title">Thông tin địa chỉ giao hàng</h2>
+                            <div className="info-card">
                                 <div className="info-item">
-                                    <div className="info-label">Email:</div>
-                                    <div className="info-value">{order?.customer?.email || order?.email}</div>
+                                    <div className="info-label">Người nhận:</div>
+                                    <div className="info-value">{order?.recipientName || 'Không có'}</div>
+                                </div>
+                                <div className="info-item">
+                                    <div className="info-label">Số điện thoại giao hàng:</div>
+                                    <div className="info-value">{order?.recipientPhone || 'Không có'}</div>
+                                </div>
+                                <div className="info-item">
+                                    <div className="info-label">Địa chỉ giao hàng:</div>
+                                    <div className="info-value">{order?.deliveryAddress || 'Không có'}</div>
+                                </div>
+                                {order?.deliveryLatitude && order?.deliveryLongitude && (
+                                    <div className="info-item">
+                                        <div className="info-label">Tọa độ:</div>
+                                        <div className="info-value">{order?.deliveryLatitude}, {order?.deliveryLongitude}</div>
                                 </div>
                             )}
                         </div>
                     </div>
+                    )}
                 </div>
                 {/* Cột phải - Trạng thái và tóm tắt đơn hàng */}
                 <div className="right-column">

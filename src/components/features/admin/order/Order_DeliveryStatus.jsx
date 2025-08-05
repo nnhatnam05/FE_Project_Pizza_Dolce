@@ -263,7 +263,11 @@ export default function Order_DeliveryStatus() {
             <div className="cus-name">{selectedOrder.customer?.fullName}</div>
             <div className="info-row"><span>Email:</span> {selectedOrder.customer?.email}</div>
             <div className="info-row"><span>Điện thoại:</span> {selectedOrder.customer?.phoneNumber || "-"}</div>
-            <div className="info-row"><span>Địa chỉ:</span> {selectedOrder.customer?.address || "-"}</div>
+                                            
+                                <h4 style={{marginTop: '15px', marginBottom: '10px', color: '#333'}}>Thông tin giao hàng</h4>
+                                <div className="info-row"><span>Người nhận:</span> {selectedOrder.recipientName || "-"}</div>
+                                <div className="info-row"><span>SĐT giao hàng:</span> {selectedOrder.recipientPhone || "-"}</div>
+                                <div className="info-row"><span>Địa chỉ giao hàng:</span> {selectedOrder.deliveryAddress || "-"}</div>
 
             {selectedOrder.customer?.imageUrl && (
               <div className="customer-image">
@@ -280,6 +284,15 @@ export default function Order_DeliveryStatus() {
               <h4>Tóm tắt đơn hàng</h4>
               <div className="info-row"><span>Mã đơn:</span> #{selectedOrder.orderNumber}</div>
               <div className="info-row"><span>Tổng tiền:</span> ${selectedOrder.totalPrice}</div>
+              {selectedOrder.voucherCode && (
+                <div className="info-row voucher-info">
+                  <span>Voucher:</span> 
+                  <span className="voucher-code">{selectedOrder.voucherCode}</span>
+                  {selectedOrder.voucherDiscount > 0 && (
+                    <span className="voucher-discount">(-${selectedOrder.voucherDiscount})</span>
+                  )}
+                </div>
+              )}
               <div className="info-row">
                 <span>Thanh toán:</span> {selectedOrder.paymentMethod?.name || "Chưa thanh toán"}
               </div>

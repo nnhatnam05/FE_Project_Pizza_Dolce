@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate, NavLink } from 'react-router-dom';
+import { validatePhoneNumber } from '../../../../utils/phoneValidation';
 import {
   AppBar,
   Toolbar,
@@ -233,6 +234,8 @@ function StaffLayoutContent() {
     fileInputRef.current.click();
   };
 
+  // Using imported validatePhoneNumber function
+
   // Submit profile updates
   const handleProfileSubmit = async () => {
     try {
@@ -262,6 +265,15 @@ function StaffLayoutContent() {
       }
       
       // For other roles, allow full profile edit
+      // Validate phone number if provided
+      if (editFormData.phone) {
+        const phoneError = validatePhoneNumber(editFormData.phone);
+        if (phoneError) {
+          alert(phoneError);
+          return;
+        }
+      }
+      
       const formData = new FormData();
       
       // Append text fields
@@ -541,7 +553,7 @@ function StaffLayoutContent() {
         {
           label: 'Dashboard',
           icon: <DashboardIcon />,
-          to: '/staff',
+          to: '/staff/dashboard',
         },
       ],
     },

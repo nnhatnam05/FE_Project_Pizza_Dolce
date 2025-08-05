@@ -9,9 +9,29 @@ const PaymentSuccess = () => {
     const [orderDetails, setOrderDetails] = useState(null);
     const [loading, setLoading] = useState(true);
     const [orderId, setOrderId] = useState(null);
+    const [pointsEarned, setPointsEarned] = useState(0);
+    const [pointsMessage, setPointsMessage] = useState('');
 
     const status = searchParams.get('status');
     const orderCode = searchParams.get('orderCode');
+
+    const fetchPointsEarned = async (orderId) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token || !orderId) return;
+            
+            const response = await axios.get(`http://localhost:8080/api/orders/${orderId}/points-earned`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (response.data.isPaid) {
+                setPointsEarned(response.data.pointsEarned);
+                setPointsMessage(response.data.message);
+            }
+        } catch (error) {
+            console.error('Failed to fetch points earned:', error);
+        }
+    };
 
     useEffect(() => {
         if (status === 'success' && orderCode) {
@@ -39,6 +59,11 @@ const PaymentSuccess = () => {
                         totalPrice: orderData.totalPrice,
                         message: 'Thanh toán thành công!'
                     });
+                    
+                    // Fetch points earned
+                    if (orderData.orderId) {
+                        fetchPointsEarned(orderData.orderId);
+                    }
                 } catch (error) {
                     console.error('Error finding order:', error);
                     setOrderDetails({
@@ -115,6 +140,21 @@ const PaymentSuccess = () => {
                                 {orderDetails.totalPrice && (
                                     <p><strong>Tổng tiền:</strong> {Number(orderDetails.totalPrice).toLocaleString()} $</p>
                                 )}
+                            </div>
+                        )}
+                        
+                        {pointsEarned > 0 && (
+                            <div className="points-notification">
+                                <div className="points-icon">🎉</div>
+                                <div className="points-content">
+                                    <h3 className="points-title">Chúc mừng! Bạn đã nhận được điểm thưởng!</h3>
+                                    <p className="points-message">
+                                        Bạn đã nhận được <strong>{pointsEarned} điểm</strong> từ đơn hàng này!
+                                    </p>
+                                    <p className="points-detail">
+                                        Quy tắc: Mỗi 10$ = 10 điểm (làm tròn xuống)
+                                    </p>
+                                </div>
                             </div>
                         )}
                     </>
