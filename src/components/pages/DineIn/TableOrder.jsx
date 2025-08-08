@@ -2,90 +2,181 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import TableMenu from './TableMenu';
+import { useResizeObserverErrorSuppression } from '../../../utils/errorHandler';
+import { useNotification } from '../../../contexts/NotificationContext';
+import useWebSocket from '../../../hooks/useWebSocket';
 import './TableOrder.css';
 
 const TableOrder = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const tableId = searchParams.get('table');
+  const { showSuccess, showError, showWarning } = useNotification();
+  const { connected, subscribe } = useWebSocket();
+  const tableNumber = searchParams.get('table'); // This is table number, not table ID
   
   const [table, setTable] = useState(null);
-  const [currentOrder, setCurrentOrder] = useState(null);
+  const [allOrders, setAllOrders] = useState([]);
+  const [tableSummary, setTableSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [showCallStaff, setShowCallStaff] = useState(false);
-  const [callReason, setCallReason] = useState('');
+  const [isCallingStaff, setIsCallingStaff] = useState(false);
+  const [expandedOrders, setExpandedOrders] = useState(new Set()); // Track expanded orders
+  const [showItemsSummary, setShowItemsSummary] = useState(false); // Track items summary visibility
+
+  // Suppress ResizeObserver errors
+  useResizeObserverErrorSuppression();
 
   useEffect(() => {
-    if (!tableId) {
+    if (!tableNumber) {
       setError('Invalid table QR code');
       setLoading(false);
       return;
     }
-    
+
     loadTableInfo();
-    loadCurrentOrder();
-  }, [tableId]);
+    loadAllOrders();
+    loadTableSummary();
+  }, [tableNumber]);
+
+  // WebSocket listener for payment confirmation
+  useEffect(() => {
+    if (connected && subscribe && tableNumber) {
+      console.log('[WEBSOCKET] Setting up payment confirmation listener for table:', tableNumber);
+      
+      // Listen for payment confirmation for this specific table
+      const paymentSub = subscribe('/topic/table/payment-confirmed', (data) => {
+        console.log('[WEBSOCKET] Payment confirmation received:', data);
+        
+        if (data.tableNumber === parseInt(tableNumber)) {
+          console.log('[WEBSOCKET] Payment confirmed for our table, redirecting to thank you page');
+          
+          // Show success notification
+          showSuccess('Thanh toán đã được xác nhận! Đang chuyển đến trang nhận điểm...');
+          
+          // Redirect to thank you page with claim token
+          const thankYouUrl = `/dinein/thank-you?token=${data.claimToken}&table=${tableNumber}`;
+          setTimeout(() => {
+            window.location.href = thankYouUrl;
+          }, 1500); // Small delay to show the notification
+        }
+      });
+
+      // Cleanup subscription on unmount
+      return () => {
+        if (paymentSub) {
+          console.log('[WEBSOCKET] Cleaning up payment confirmation listener');
+          paymentSub.unsubscribe();
+        }
+      };
+    } else {
+      console.log('[WEBSOCKET] Not setting up listener - connected:', connected, 'subscribe:', !!subscribe, 'tableNumber:', tableNumber);
+    }
+  }, [connected, subscribe, tableNumber, showSuccess]);
+
+
+
 
   const loadTableInfo = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/dinein/table/${tableId}`);
+      console.log('Loading table info for tableNumber:', tableNumber);
+      const response = await axios.get(`http://localhost:8080/api/dinein/table/${tableNumber}`);
+      console.log('Table info loaded:', response.data);
       setTable(response.data);
     } catch (err) {
       console.error('Failed to load table info:', err);
+      console.error('Error response:', err.response);
       setError('Table not found or invalid QR code');
     }
   };
 
-  const loadCurrentOrder = async () => {
+  const loadAllOrders = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/dinein/table/${tableId}/current-order`);
-      if (response.data.hasActiveOrder) {
-        setCurrentOrder(response.data.order);
-      }
+      console.log('Loading all orders for tableNumber:', tableNumber);
+      const response = await axios.get(`http://localhost:8080/api/dinein/table/${tableNumber}/all-orders`);
+      console.log('All orders loaded:', response.data);
+      setAllOrders(response.data || []);
     } catch (err) {
-      console.error('Failed to load current order:', err);
-    } finally {
+      console.error('Failed to load all orders:', err);
+      console.error('Error response:', err.response);
+      setAllOrders([]);
+    }
+  };
+
+  const loadTableSummary = async () => {
+    try {
+      console.log('Loading table summary for tableNumber:', tableNumber);
+      const response = await axios.get(`http://localhost:8080/api/dinein/table/${tableNumber}/summary`);
+      console.log('Table summary loaded:', response.data);
+      setTableSummary(response.data);
+      setLoading(false);
+    } catch (err) {
+      console.error('Failed to load table summary:', err);
+      console.error('Error response:', err.response);
+      setTableSummary(null);
       setLoading(false);
     }
   };
 
-  const handleCallStaff = async () => {
-    if (!callReason.trim()) {
-      alert('Please select a reason for calling staff');
-      return;
-    }
-
+    const handleCallStaff = async () => {
+    if (isCallingStaff) return; // Prevent double clicks
+    
+    setIsCallingStaff(true);
+    
     try {
-      await axios.post(`http://localhost:8080/api/dinein/table/${tableId}/call-staff`, {
-        reason: callReason
+      console.log('Calling staff for table:', tableNumber);
+      
+      // Call staff API with default reason
+      const response = await axios.post(`http://localhost:8080/api/dinein/table/${tableNumber}/call-staff`, {
+        reason: 'Customer needs assistance'
+      }, {
+        timeout: 10000 // 10 second timeout
       });
-      alert('Staff has been notified and will assist you shortly!');
-      setShowCallStaff(false);
-      setCallReason('');
+      
+      console.log('Staff call response:', response.data);
+      showSuccess('Staff has been notified and will assist you shortly!');
+      
     } catch (err) {
       console.error('Failed to call staff:', err);
-      alert('Failed to call staff. Please try again.');
+      if (err.code === 'ECONNABORTED') {
+        showError('Request timed out. Please try again.');
+      } else {
+                  showError('Failed to call staff. Please try again.');
+      }
+    } finally {
+      setIsCallingStaff(false);
     }
   };
 
   const handleRequestPayment = async () => {
-    if (!currentOrder) {
-      alert('No active order to pay for');
+    if (!allOrders || allOrders.length === 0) {
+      showWarning('No orders to pay for');
       return;
     }
 
     try {
-      await axios.post(`http://localhost:8080/api/dinein/table/${tableId}/request-payment`);
-      alert('Payment request sent to staff. They will bring the bill to your table shortly!');
+      // Always use table number for API calls
+      await axios.post(`http://localhost:8080/api/dinein/table/${tableNumber}/request-payment`);
+      showSuccess('Payment request sent to staff. They will bring the bill to your table shortly!');
     } catch (err) {
       console.error('Failed to request payment:', err);
-      alert('Failed to request payment. Please try again or call staff.');
+              showError('Failed to request payment. Please try again or call staff.');
     }
   };
 
-  const handleOrderUpdate = (updatedOrder) => {
-    setCurrentOrder(updatedOrder);
+  const handleOrderUpdate = (newOrder) => {
+    // Reload all orders and summary after new order is created
+    loadAllOrders();
+    loadTableSummary();
+  };
+
+  const toggleOrderExpansion = (orderId) => {
+    const newExpandedOrders = new Set(expandedOrders);
+    if (newExpandedOrders.has(orderId)) {
+      newExpandedOrders.delete(orderId);
+    } else {
+      newExpandedOrders.add(orderId);
+    }
+    setExpandedOrders(newExpandedOrders);
   };
 
   if (loading) {
@@ -122,17 +213,20 @@ const TableOrder = () => {
           <p className="table-location">{table?.location || 'Restaurant Table'}</p>
           <p className="table-capacity">Capacity: {table?.capacity} persons</p>
         </div>
-        
+
+
+
         <div className="table-actions">
-          <button 
+          <button
             className="btn btn-outline"
-            onClick={() => setShowCallStaff(true)}
+            onClick={handleCallStaff}
+            disabled={isCallingStaff}
           >
-            🔔 Call Staff
+            {isCallingStaff ? '⏳ Calling...' : '🔔 Call Staff'}
           </button>
-          
-          {currentOrder && (
-            <button 
+
+          {allOrders && allOrders.length > 0 && (
+            <button
               className="btn btn-success"
               onClick={handleRequestPayment}
             >
@@ -142,107 +236,130 @@ const TableOrder = () => {
         </div>
       </div>
 
-      {/* Current Order Summary */}
-      {currentOrder && (
-        <div className="current-order-summary">
-          <h3>📋 Current Order</h3>
-          <div className="order-details">
-            <p><strong>Order #:</strong> {currentOrder.orderNumber}</p>
-            <p><strong>Status:</strong> <span className={`status-badge status-${currentOrder.status?.toLowerCase() || 'new'}`}>{currentOrder.status || 'NEW'}</span></p>
-            <p><strong>Total:</strong> ${currentOrder.totalPrice?.toFixed(2)}</p>
-            <p><strong>Items:</strong> {currentOrder.orderFoods?.length || 0} items</p>
+      {/* Table Summary */}
+      {tableSummary && (
+        <div className="table-summary">
+          <h3>📊 Table Summary</h3>
+          <div className="summary-stats">
+            <p><strong>Total Orders:</strong> {tableSummary.totalOrders}</p>
+            <p><strong>Total Items:</strong> {tableSummary.detailedItemsSummary?.totalItems || 0}</p>
+            <p><strong>Total Amount to Pay:</strong> ${tableSummary.totalAmountToPay?.toFixed(2) || '0.00'}</p>
+          </div>
+
+          {/* Items Summary */}
+          {tableSummary.detailedItemsSummary && tableSummary.detailedItemsSummary.items && tableSummary.detailedItemsSummary.items.length > 0 && (
+            <div className="table-items-summary">
+              <div
+                className="table-items-summary-header"
+                onClick={() => setShowItemsSummary(!showItemsSummary)}
+                style={{ cursor: 'pointer' }}
+              >
+                <h4>📋 Items Summary</h4>
+                <span className="toggle-items-icon">
+                  {showItemsSummary ? '▼' : '▶'}
+                </span>
+              </div>
+
+              {showItemsSummary && (
+                <div className="table-items-summary-content">
+                  <div className="table-items-list">
+                    {tableSummary.detailedItemsSummary.items.map((item, index) => (
+                      <div key={index} className="table-item-summary">
+                        <div className="table-item-info">
+                          <span className="table-item-name">{item.foodName}</span>
+                          <span className="table-item-quantity">x{item.totalQuantity}</span>
+                        </div>
+                        <div className="table-item-pricing">
+                          <span className="table-item-unit-price">${item.foodPrice?.toFixed(2)}</span>
+                          <span className="table-item-total">${item.totalPrice?.toFixed(2)}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="table-items-summary-total">
+                    <strong>Subtotal: ${tableSummary.detailedItemsSummary.totalValue?.toFixed(2) || '0.00'}</strong>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* All Orders */}
+      {allOrders && allOrders.length > 0 && (
+        <div className="table-all-orders">
+          <h3>📋 All Orders ({allOrders.length})</h3>
+          <div className="table-orders-list">
+            {allOrders.map((order, index) => {
+              const isExpanded = expandedOrders.has(order.id);
+              return (
+                <div key={order.id} className="table-order-card">
+                  <div
+                    className="table-order-header"
+                    onClick={() => toggleOrderExpansion(order.id)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div className="table-order-title">
+                      <h4>Order #{index + 1}</h4>
+                      <span className="table-order-expand-icon">
+                        {isExpanded ? '▼' : '▶'}
+                      </span>
+                    </div>
+                    <span className={`table-order-status table-order-status-${order.status?.toLowerCase() || 'new'}`}>
+                      {order.status || 'NEW'}
+                    </span>
+                  </div>
+                  <div className="table-order-details">
+                    <p><strong>Order #:</strong> {order.orderNumber}</p>
+                    <p><strong>Total:</strong> ${order.totalPrice?.toFixed(2)}</p>
+                    <p><strong>Items:</strong> {order.orderItemsCount} items</p>
+                    <p><strong>Created:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                  </div>
+
+                  {/* Expanded Order Items Details */}
+                  {isExpanded && order.orderItems && order.orderItems.length > 0 && (
+                    <div className="table-order-items-details">
+                      <h5>📝 Order Items:</h5>
+                      <div className="table-order-items-list">
+                        {order.orderItems.map((item, itemIndex) => (
+                          <div key={itemIndex} className="table-order-item">
+                            <div className="table-order-item-info">
+                              <span className="table-order-item-name">{item.foodName}</span>
+                              <span className="table-order-item-quantity">x{item.quantity}</span>
+                            </div>
+                            <div className="table-order-item-pricing">
+                              <span className="table-order-item-unit-price">${item.foodPrice?.toFixed(2)} each</span>
+                              <span className="table-order-item-total-price">${item.totalPrice?.toFixed(2)}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Show message if no items */}
+                  {isExpanded && (!order.orderItems || order.orderItems.length === 0) && (
+                    <div className="table-order-items-details">
+                      <p className="table-order-no-items">No items in this order</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
 
       {/* Menu Component */}
-      <TableMenu 
-        tableId={tableId}
-        currentOrder={currentOrder}
+      <TableMenu
+        tableNumber={tableNumber}
+        table={table}
+        allOrders={allOrders}
         onOrderUpdate={handleOrderUpdate}
       />
 
-      {/* Call Staff Modal */}
-      {showCallStaff && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h3>🔔 Call Staff</h3>
-              <button 
-                className="close-btn"
-                onClick={() => setShowCallStaff(false)}
-              >
-                ×
-              </button>
-            </div>
-            
-            <div className="modal-content">
-              <p>What do you need assistance with?</p>
-              <div className="call-reasons">
-                <label className="reason-option">
-                  <input 
-                    type="radio" 
-                    name="callReason" 
-                    value="Need assistance with order"
-                    checked={callReason === 'Need assistance with order'}
-                    onChange={(e) => setCallReason(e.target.value)}
-                  />
-                  Need assistance with order
-                </label>
-                
-                <label className="reason-option">
-                  <input 
-                    type="radio" 
-                    name="callReason" 
-                    value="Request extra items"
-                    checked={callReason === 'Request extra items'}
-                    onChange={(e) => setCallReason(e.target.value)}
-                  />
-                  Request extra items (napkins, water, etc.)
-                </label>
-                
-                <label className="reason-option">
-                  <input 
-                    type="radio" 
-                    name="callReason" 
-                    value="Ready to pay"
-                    checked={callReason === 'Ready to pay'}
-                    onChange={(e) => setCallReason(e.target.value)}
-                  />
-                  Ready to pay
-                </label>
-                
-                <label className="reason-option">
-                  <input 
-                    type="radio" 
-                    name="callReason" 
-                    value="General assistance"
-                    checked={callReason === 'General assistance'}
-                    onChange={(e) => setCallReason(e.target.value)}
-                  />
-                  General assistance
-                </label>
-              </div>
-            </div>
-            
-            <div className="modal-actions">
-              <button 
-                className="btn btn-primary"
-                onClick={handleCallStaff}
-                disabled={!callReason}
-              >
-                📞 Call Staff
-              </button>
-              <button 
-                className="btn btn-outline"
-                onClick={() => setShowCallStaff(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 };

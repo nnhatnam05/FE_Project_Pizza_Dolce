@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../../common/Layout/customer_layout';
 import axios from 'axios';
+import { useNotification } from '../../../../contexts/NotificationContext';
 import './AddressManagement.css';
 
 // Dữ liệu quận và phường TP.HCM (cập nhật 2024)
@@ -411,6 +412,7 @@ const parseAddress = (fullAddress) => {
 const AddressManagement = () => {
     const navigate = useNavigate();
     const { customer } = useContext(CartContext);
+    const { showError, showWarning } = useNotification();
     const [addresses, setAddresses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -936,6 +938,8 @@ const AddressManagement = () => {
                         }));
                         setShowMapModal(false);
                     }}
+                    showError={showError}
+                    showWarning={showWarning}
                 />
             )}
         </div>
@@ -943,7 +947,7 @@ const AddressManagement = () => {
 };
 
 // Map Modal Component
-const MapModal = ({ isOpen, onClose, onLocationSelect }) => {
+const MapModal = ({ isOpen, onClose, onLocationSelect, showError, showWarning }) => {
     const mapRef = useRef(null);
     const [mapInstance, setMapInstance] = useState(null);
     const [marker, setMarker] = useState(null);
@@ -1003,7 +1007,7 @@ const MapModal = ({ isOpen, onClose, onLocationSelect }) => {
                 });
                 setMarker(newMarker);
             } else {
-                alert('Vị trí phải nằm trong nội thành Hồ Chí Minh!');
+                showError('Vị trí phải nằm trong nội thành Hồ Chí Minh!');
             }
         });
 
@@ -1027,7 +1031,7 @@ const MapModal = ({ isOpen, onClose, onLocationSelect }) => {
             onLocationSelect(selectedLocation);
             onClose();
         } else {
-            alert('Vui lòng chọn vị trí trên bản đồ!');
+            showWarning('Vui lòng chọn vị trí trên bản đồ!');
         }
     };
 

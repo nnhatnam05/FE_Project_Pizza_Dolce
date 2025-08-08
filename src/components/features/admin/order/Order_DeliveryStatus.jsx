@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNotification } from "../../../../contexts/NotificationContext";
 import "./Order.css";
 import { FaSync, FaSearch } from "react-icons/fa";
 
@@ -12,6 +13,7 @@ const DELIVERY_STATUS = [
 export default function Order_DeliveryStatus() {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const { showError } = useNotification();
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all"); // all, preparing, waiting, delivering
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,7 +60,7 @@ export default function Order_DeliveryStatus() {
     } catch (error) {
       console.error("Failed to fetch orders:", error);
       if (showLoading) {
-        alert("Không thể tải danh sách đơn hàng!");
+        showError("Không thể tải danh sách đơn hàng!");
       }
     } finally {
       if (showLoading) setLoading(false);

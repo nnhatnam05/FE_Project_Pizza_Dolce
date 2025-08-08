@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNotification } from '../../../../contexts/NotificationContext';
 import './VoucherManagement.css';
 
 const VoucherManagement = () => {
     const [vouchers, setVouchers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { showConfirm } = useNotification();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showGiveModal, setShowGiveModal] = useState(false);
@@ -152,7 +154,14 @@ const VoucherManagement = () => {
     };
 
     const handleDeleteVoucher = async (voucherId) => {
-        if (!window.confirm('Are you sure you want to delete this voucher?')) return;
+        const confirmed = await showConfirm({
+            title: 'Delete Voucher',
+            message: 'Are you sure you want to delete this voucher?',
+            type: 'danger',
+            confirmText: 'Delete'
+        });
+        
+        if (!confirmed) return;
         
         try {
             const token = localStorage.getItem('token');

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useNotification } from '../../../../contexts/NotificationContext';
 import './Food.css';
 
 export default function FoodList() {
   const [foods, setFoods] = useState([]);
   const [filter, setFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const { showConfirm } = useNotification();
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,7 +33,14 @@ export default function FoodList() {
   };
   
   const deleteFood = async (id) => {
-    if (window.confirm("Are you sure you want to delete this food item?")) {
+    const confirmed = await showConfirm({
+      title: 'Delete Food Item',
+      message: 'Are you sure you want to delete this food item?',
+      type: 'danger',
+      confirmText: 'Delete'
+    });
+    
+    if (confirmed) {
       try {
         await axios.delete(`http://localhost:8080/api/foods/${id}`, {
           headers: {

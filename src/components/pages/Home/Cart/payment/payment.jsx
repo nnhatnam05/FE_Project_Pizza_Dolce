@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useNotification } from '../../../../../contexts/NotificationContext';
 import './payment.css';
 
 const PaymentDetails = () => {
     const { orderId } = useParams();
     const navigate = useNavigate();
+    const { showError } = useNotification();
 
     const [order, setOrder] = useState(null);
 
@@ -307,7 +309,7 @@ const PaymentDetails = () => {
             setOrder(response.data);
         } catch (error) {
             setCancelling(false);
-            alert(error.response?.data?.message || "Could not cancel order. Please try again.");
+            showError(error.response?.data?.message || "Could not cancel order. Please try again.");
         }
     };
     const handleEditOrder = () => {

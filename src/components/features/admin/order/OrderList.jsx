@@ -3,11 +3,13 @@ import axios from 'axios';
 import { FaSearch } from 'react-icons/fa';
 import './Order.css';
 import { format } from 'date-fns';
+import { useNotification } from '../../../../contexts/NotificationContext';
 
 export default function OrderList() {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { showError } = useNotification();
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all'); // all, delivered, cancelled
   const [searchTerm, setSearchTerm] = useState('');
@@ -37,7 +39,7 @@ export default function OrderList() {
       applyFilters(allOrders, statusFilter, searchTerm);
     } catch (err) {
       console.error("Failed to fetch orders:", err);
-      alert("Không thể tải danh sách đơn hàng!");
+      showError("Không thể tải danh sách đơn hàng!");
     } finally {
       setLoading(false);
     }

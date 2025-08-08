@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Delivery.css";
 import { FaCheck, FaTimes, FaTruck, FaMotorcycle, FaUtensils, FaSpinner, FaSearch, FaSync } from "react-icons/fa";
+import { useNotification } from "../../../../contexts/NotificationContext";
 
 const DELIVERY_STATUS = [
     { key: "PREPARING", label: "Đang chuẩn bị", color: "#ffa502", icon: <FaUtensils /> },
@@ -15,6 +16,7 @@ export default function Delivery_Status() {
     const [orders, setOrders] = useState([]);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { showSuccess, showError, showWarning } = useNotification();
     const [updating, setUpdating] = useState(false);
     const [deliveryNote, setDeliveryNote] = useState("");
     const [cancelReason, setCancelReason] = useState("");
@@ -57,7 +59,7 @@ export default function Delivery_Status() {
         } catch (error) {
             console.error("Failed to fetch orders:", error);
             if (showLoading) {
-                alert("Không thể tải danh sách đơn hàng!");
+                showError("Không thể tải danh sách đơn hàng!");
             }
         } finally {
             if (showLoading) setLoading(false);
@@ -94,7 +96,7 @@ export default function Delivery_Status() {
             };
             if (actionToConfirm === "CANCELLED") {
                 if (!cancelReason.trim()) {
-                    alert("Vui lòng nhập lý do hủy đơn hàng!");
+                    showWarning("Vui lòng nhập lý do hủy đơn hàng!");
                     setUpdating(false);
                     return;
                 }
@@ -116,10 +118,10 @@ export default function Delivery_Status() {
             // Refresh danh sách đơn hàng sau khi cập nhật
             await fetchOrders(false);
 
-            alert(`Đã cập nhật trạng thái đơn hàng thành ${getStatusLabel(actionToConfirm)}!`);
+            showSuccess(`Đã cập nhật trạng thái đơn hàng thành ${getStatusLabel(actionToConfirm)}!`);
         } catch (error) {
             console.error("Failed to update order status:", error);
-            alert("Không thể cập nhật trạng thái đơn hàng!");
+            showError("Không thể cập nhật trạng thái đơn hàng!");
         } finally {
             setUpdating(false);
         }

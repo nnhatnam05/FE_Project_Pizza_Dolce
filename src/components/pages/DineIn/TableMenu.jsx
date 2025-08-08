@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNotification } from '../../../contexts/NotificationContext';
 import './TableMenu.css';
 
-const TableMenu = ({ tableId, currentOrder, onOrderUpdate }) => {
+const TableMenu = ({ tableNumber, table, allOrders, onOrderUpdate }) => {
   const [foods, setFoods] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCart, setShowCart] = useState(false);
+  const { showSuccess, showError, showWarning } = useNotification();
 
   useEffect(() => {
     loadFoods();
@@ -77,13 +79,23 @@ const TableMenu = ({ tableId, currentOrder, onOrderUpdate }) => {
 
   const submitOrder = async () => {
     if (cart.length === 0) {
-      alert('Please add items to your order');
+      showWarning('Please add items to your order');
+      return;
+    }
+
+    if (!table || !table.id) {
+      showError('Table information not loaded. Please wait and try again.');
       return;
     }
 
     try {
+      console.log('=== DEBUG: Submitting order ===');
+      console.log('tableNumber param:', tableNumber);
+      console.log('table object:', table);
+      console.log('cart:', cart);
+
       const orderData = {
-        tableId: parseInt(tableId),
+        tableId: table?.id, // Use actual table ID from table object
         foods: cart.map(item => ({
           id: item.id,
           quantity: item.quantity
@@ -92,22 +104,18 @@ const TableMenu = ({ tableId, currentOrder, onOrderUpdate }) => {
         orderType: 'DINE_IN'
       };
 
-      let response;
-      if (currentOrder) {
-        // Add to existing order
-        response = await axios.post(`http://localhost:8080/api/dinein/table/${tableId}/add-items`, orderData);
-      } else {
-        // Create new order
-        response = await axios.post('http://localhost:8080/api/dinein/order', orderData);
-      }
+      console.log('Order data to send:', orderData);
+
+      // Always create new order for each order submission
+      const response = await axios.post(`http://localhost:8080/api/dinein/table/${tableNumber}/add-items`, orderData);
 
       onOrderUpdate(response.data);
       setCart([]);
       setShowCart(false);
-      alert('Order submitted successfully!');
+              showSuccess('Order submitted successfully!');
     } catch (err) {
       console.error('Failed to submit order:', err);
-      alert('Failed to submit order. Please try again.');
+              showError('Failed to submit order. Please try again.');
     }
   };
 
@@ -215,7 +223,7 @@ const TableMenu = ({ tableId, currentOrder, onOrderUpdate }) => {
                 className="submit-order-btn"
                 onClick={submitOrder}
               >
-                {currentOrder ? 'Add to Current Order' : 'Submit Order'}
+                Submit New Order
               </button>
             </div>
           )}

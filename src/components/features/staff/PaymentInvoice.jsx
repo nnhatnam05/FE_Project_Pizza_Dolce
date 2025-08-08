@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNotification } from '../../../contexts/NotificationContext';
 import './PaymentInvoice.css';
 
 const PaymentInvoice = ({ tableId, onClose, onPaymentComplete }) => {
-  const [table, setTable] = useState(null);
-  const [order, setOrder] = useState(null);
+  const [bill, setBill] = useState(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const { showSuccess, showError } = useNotification();
 
   // Get auth token from localStorage
   const getAuthHeaders = () => {
@@ -22,60 +23,41 @@ const PaymentInvoice = ({ tableId, onClose, onPaymentComplete }) => {
     try {
       const headers = getAuthHeaders();
       
-      const [tableRes, orderRes] = await Promise.all([
-        axios.get(`http://localhost:8080/api/tables/${tableId}`, { headers }),
-        axios.get(`http://localhost:8080/api/dinein/table/${tableId}/current-order`)
-      ]);
-      
-      setTable(tableRes.data);
-      if (orderRes.data.hasActiveOrder) {
-        setOrder(orderRes.data.order);
-      }
+      // Get detailed bill for the table
+      const billRes = await axios.get(`http://localhost:8080/api/dinein/tables/${tableId}/bill`, { headers });
+      setBill(billRes.data);
     } catch (err) {
-      console.error('Failed to load invoice data:', err);
+      console.error('Failed to load bill data:', err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleConfirmPayment = async () => {
-    if (!order) return;
+    if (!bill) return;
     
     setProcessing(true);
     try {
       const headers = getAuthHeaders();
       
-      // Update order status to PAID
-      await axios.put(`http://localhost:8080/api/dinein/orders/${order.id}/status`, {
-        status: 'PAID'
-      }, { headers });
+      // Confirm payment for the table (this will mark all orders as PAID and reset table status)
+      await axios.post(`http://localhost:8080/api/dinein/tables/${tableId}/confirm-payment`, {}, { headers });
       
-      // Update table status to AVAILABLE
-      await axios.put(`http://localhost:8080/api/tables/${tableId}`, {
-        ...table,
-        status: 'AVAILABLE'
-      }, { headers });
-      
-      // End table session
-      await axios.post(`http://localhost:8080/api/dinein/table/${tableId}/end-session`, {}, { headers });
-      
-      alert('Payment confirmed successfully! Table is now available.');
+      showSuccess(`Payment confirmed successfully! Table ${bill.tableNumber} is now available.`);
       onPaymentComplete();
       onClose();
       
     } catch (err) {
       console.error('Failed to confirm payment:', err);
-      alert('Failed to confirm payment. Please try again.');
+      showError('Failed to confirm payment. Please try again.');
     } finally {
       setProcessing(false);
     }
   };
 
   const calculateSubtotal = () => {
-    if (!order?.orderFoods) return 0;
-    return order.orderFoods.reduce((sum, item) => 
-      sum + (item.food.price * item.quantity), 0
-    );
+    if (!bill?.items) return 0;
+    return bill.items.reduce((sum, item) => sum + item.totalPrice, 0);
   };
 
   const calculateTax = (subtotal) => {
@@ -101,13 +83,13 @@ const PaymentInvoice = ({ tableId, onClose, onPaymentComplete }) => {
     );
   }
 
-  if (!order) {
+  if (!bill) {
     return (
       <div className="payment-invoice-overlay">
         <div className="payment-invoice-modal">
           <div className="error-container">
-            <h3>❌ No Active Order</h3>
-            <p>This table doesn't have an active order to pay for.</p>
+            <h3>❌ No Active Orders</h3>
+            <p>This table doesn't have any active orders to pay for.</p>
             <button className="btn btn-secondary" onClick={onClose}>
               Close
             </button>
@@ -127,37 +109,40 @@ const PaymentInvoice = ({ tableId, onClose, onPaymentComplete }) => {
         {/* Invoice Header */}
         <div className="invoice-header">
           <div className="restaurant-info">
-            <h2>🍽️ Restaurant Invoice</h2>
-            <p>Table {table?.number} • {new Date().toLocaleDateString()}</p>
+            <h2>🍽️ Pizza Dolce Bill</h2>
+            <p>Table {bill.tableNumber} • {new Date().toLocaleDateString()}</p>
           </div>
           <button className="close-btn" onClick={onClose}>✕</button>
         </div>
 
-        {/* Order Details */}
+        {/* Bill Details */}
         <div className="invoice-content">
           <div className="order-info">
-            <h3>Order #{order.orderNumber}</h3>
-            <p><strong>Status:</strong> <span className={`status-badge status-${order.status?.toLowerCase()}`}>{order.status}</span></p>
-            <p><strong>Time:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+            <h3>Bill Summary</h3>
+            <p><strong>Total Orders:</strong> {bill.ordersCount} orders</p>
+            <p><strong>Total Items:</strong> {bill.itemsCount} items</p>
+            <p><strong>Generated:</strong> {new Date(bill.generatedAt).toLocaleString()}</p>
           </div>
 
           {/* Items List */}
           <div className="invoice-items">
-            <h4>Order Items</h4>
+            <h4>All Items</h4>
             <div className="items-table">
               <div className="table-header">
                 <span>Item</span>
+                <span>Order</span>
                 <span>Qty</span>
-                <span>Price</span>
+                <span>Unit Price</span>
                 <span>Total</span>
               </div>
               
-              {order.orderFoods?.map((item, index) => (
+              {bill.items?.map((item, index) => (
                 <div key={index} className="table-row">
-                  <span className="item-name">{item.food.name}</span>
+                  <span className="item-name">{item.foodName}</span>
+                  <span className="item-order">#{item.orderNumber}</span>
                   <span className="item-qty">{item.quantity}</span>
-                  <span className="item-price">${item.food.price.toFixed(2)}</span>
-                  <span className="item-total">${(item.food.price * item.quantity).toFixed(2)}</span>
+                  <span className="item-price">${item.unitPrice.toFixed(2)}</span>
+                  <span className="item-total">${item.totalPrice.toFixed(2)}</span>
                 </div>
               ))}
             </div>
@@ -177,6 +162,7 @@ const PaymentInvoice = ({ tableId, onClose, onPaymentComplete }) => {
               <span><strong>Total:</strong></span>
               <span><strong>${total.toFixed(2)}</strong></span>
             </div>
+            <img src="/images/QR-BILL.png" alt="QR Code"  className='qr-bill'/>
           </div>
         </div>
 

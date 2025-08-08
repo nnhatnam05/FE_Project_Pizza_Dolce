@@ -3,11 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './editCart.css';
 import { CartContext } from '../../../../common/Layout/customer_layout';
+import { useNotification } from '../../../../../contexts/NotificationContext';
 
 const EditCart = () => {
     const { orderId } = useParams();
     const navigate = useNavigate();
     const { setCart } = useContext(CartContext);
+    const { showError, showWarning } = useNotification();
 
     const [order, setOrder] = useState(null);
     const [foodItems, setFoodItems] = useState([]);
@@ -185,18 +187,18 @@ const EditCart = () => {
             }
             setSaving(false);
         } catch (error) {
-            alert(error.response?.data?.message || "Unable to update order");
+            showError(error.response?.data?.message || "Unable to update order");
             setSaving(false);
         }
     };
 
     const handleSaveClick = () => {
         if (foodItems.length === 0) {
-            alert("Order must have at least one item");
+            showWarning("Order must have at least one item");
             return;
         }
         if (!selectedPaymentMethod) {
-            alert("Please select a payment method");
+            showWarning("Please select a payment method");
             return;
         }
         setShowSaveConfirm(true);
@@ -253,7 +255,7 @@ const EditCart = () => {
             setOrder(response.data);
         } catch (error) {
             setCancelling(false);
-            alert(error.response?.data?.message || "Unable to cancel the order, please try again");
+            showError(error.response?.data?.message || "Unable to cancel the order, please try again");
         }
     };
 

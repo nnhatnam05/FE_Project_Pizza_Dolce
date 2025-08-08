@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useNotification } from '../../../../../contexts/NotificationContext';
 import './detail_delivery.css';
 
 const statusSteps = [
@@ -13,6 +14,7 @@ const statusSteps = [
 const DetailDelivery = () => {
     const { orderId } = useParams();
     const navigate = useNavigate();
+    const { showSuccess, showError } = useNotification();
     const [order, setOrder] = useState(null);
     const [deliveryStatus, setDeliveryStatus] = useState(null);
     const [previousStatus, setPreviousStatus] = useState(null);
@@ -172,11 +174,11 @@ const DetailDelivery = () => {
                 setRatingSubmitting(false);
                 setShowRatingModal(false);
                 setShowCompletionModal(false);
-                alert('Cảm ơn bạn đã đánh giá!');
+                showSuccess('Cảm ơn bạn đã đánh giá!');
             }, 1000);
         } catch (error) {
             setRatingSubmitting(false);
-            alert('Không thể gửi đánh giá. Vui lòng thử lại.');
+            showError('Không thể gửi đánh giá. Vui lòng thử lại.');
         }
     };
 

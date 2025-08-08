@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useNotification } from '../../../../contexts/NotificationContext';
 import './Payment.css';
 
 export default function List_Payment() {
   const [payments, setPayments] = useState([]);
   const [filter, setFilter] = useState('');
   const [loading, setLoading] = useState(true);
+  const { showError } = useNotification();
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [paymentToDelete, setPaymentToDelete] = useState(null);
 
@@ -53,7 +55,7 @@ export default function List_Payment() {
       fetchPayments();
     } catch (error) {
       console.error('Delete failed:', error);
-      alert('Delete failed!');
+              showError('Delete failed!');
     }
   };
 

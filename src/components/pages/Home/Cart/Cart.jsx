@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../../common/Layout/customer_layout';
 import axios from 'axios';
 import AddressSelection from '../Cart/AddressSelection/AddressSelection';
+import { useNotification } from '../../../../contexts/NotificationContext';
 import './Cart.css';
 
 const Cart = () => {
     const navigate = useNavigate();
     const { cart, setCart, handleRemoveFromCart } = useContext(CartContext);
+    const { showSuccess, showError } = useNotification();
     const [orderPlaced, setOrderPlaced] = useState(false);
     const [otherItems, setOtherItems] = useState([]);
     const [selectedOtherItems, setSelectedOtherItems] = useState([]);
@@ -165,7 +167,7 @@ const Cart = () => {
                 setAppliedVoucher(response.data.voucher);
                 setVoucherDiscount(response.data.discount);
                 setVoucherError('');
-                alert(`Voucher applied! You saved $${response.data.discount.toFixed(2)}`);
+                showSuccess(`Voucher applied! You saved $${response.data.discount.toFixed(2)}`);
             } else {
                 setVoucherError(response.data.message);
                 setAppliedVoucher(null);
@@ -600,13 +602,13 @@ const Cart = () => {
                     setShowExistingOrderModal(true);
                 } else {
               
-                    alert("Failed to create an order, please try again later");
+                    showError("Failed to create an order, please try again later");
                 }
             }
     
         } catch (error) {
             console.error("An error occurred while processing the payment:", error);
-            alert("An error occurred, please refresh the page and try again");
+                            showError("An error occurred, please refresh the page and try again");
         }
     };
     

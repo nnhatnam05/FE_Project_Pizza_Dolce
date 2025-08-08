@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import QRGenerator from '../../../common/QRCode/QRGenerator';
+import { useNotification } from '../../../../contexts/NotificationContext';
 import './Table.css';
 
 export default function TableList() {
   const [tables, setTables] = useState([]);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');
+  const { showError, showConfirm } = useNotification();
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({
@@ -37,7 +39,14 @@ export default function TableList() {
   };
 
   const deleteTable = async (id) => {
-    if (window.confirm("Are you sure you want to delete this table?")) {
+    const confirmed = await showConfirm({
+      title: 'Delete Table',
+      message: 'Are you sure you want to delete this table?',
+      type: 'danger',
+      confirmText: 'Delete'
+    });
+    
+    if (confirmed) {
       try {
         const token = localStorage.getItem('token');
         await axios.delete(`http://localhost:8080/api/tables/${id}`, {
@@ -63,7 +72,7 @@ export default function TableList() {
       setShowQRModal(true);
     } catch (err) {
       console.error("Failed to get QR code:", err);
-      alert("Failed to load QR code");
+              showError("Failed to load QR code");
     }
   };
 
@@ -82,7 +91,7 @@ export default function TableList() {
       fetchTables(); // Refresh the table list
     } catch (err) {
       console.error("Failed to update table status:", err);
-      alert("Failed to update table status");
+              showError("Failed to update table status");
     }
   };
 

@@ -1,6 +1,8 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
+import { NotificationProvider } from './contexts/NotificationContext';
+import NotificationContainer from './components/common/NotificationContainer';
 
 import HomePage from './components/pages/Home/HomePage';
 import AdminLayout from './components/common/Layout/admin_layout/AdminLayout';
@@ -68,12 +70,16 @@ import DetailDelivery from "./components/pages/Home/Cart/detail_delivery/detail_
 import PaymentSuccess from "./components/pages/Home/PaymentSuccess/PaymentSuccess";
 import AddressManagement from "./components/pages/Home/AddressManagement/AddressManagement";
 import TableOrder from "./components/pages/DineIn/TableOrder";
+import ThankYouPage from "./components/pages/DineIn/ThankYouPage";
 import TableDashboard from "./components/features/staff/TableDashboard";
+import OrderEdit from "./components/features/staff/OrderEdit";
+import WebSocketTest from "./components/test/WebSocketTest";
 
 
 function App() {
   return (
-    <BrowserRouter>
+    <NotificationProvider>
+      <BrowserRouter>
       <Routes>
         {/* Main customer page */}
         <Route path="/" element={
@@ -83,7 +89,11 @@ function App() {
         } />
         
         {/* Dine-in table order page */}
-        <Route path="/order" element={<TableOrder />} />
+                  <Route path="/order" element={<TableOrder />} />
+          <Route path="/dinein/thank-you" element={<ThankYouPage />} />
+        
+        {/* WebSocket Test page */}
+        <Route path="/websocket-test" element={<WebSocketTest />} />
         <Route path="/pizza" element={
           <CustomerLayout>
             <List_Pizza />
@@ -242,8 +252,9 @@ function App() {
         {/* Staff Routes */}
         <Route path="/staff" element={<StaffRoute />}>
           <Route element={<StaffLayout />}>
-            <Route index element={<Dashboard />} />
+            <Route index element={<TableDashboard />} />
             <Route path="dashboard" element={<TableDashboard />} />
+            <Route path="orders/:orderId/edit" element={<OrderEdit />} />
 
             <Route path="foods" element={<FoodList />} />
             <Route path="tables" element={<TableList />} />
@@ -259,7 +270,9 @@ function App() {
         <Route path="/loading" element={<Loading />} />
         <Route path="*" element={<Monkey404 />} />
       </Routes>
+      <NotificationContainer />
     </BrowserRouter>
+    </NotificationProvider>
   );
 }
 

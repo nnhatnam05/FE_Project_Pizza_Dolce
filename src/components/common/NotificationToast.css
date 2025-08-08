@@ -1,0 +1,137 @@
+.notification-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  min-width: 300px;
+  max-width: 400px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slideInRight 0.3s ease-out;
+  margin-bottom: 10px;
+}
+
+.notification-toast.notification-high {
+  border-left: 4px solid #e74c3c;
+}
+
+.notification-toast.notification-medium {
+  border-left: 4px solid #f39c12;
+}
+
+.notification-toast.notification-low {
+  border-left: 4px solid #3498db;
+}
+
+/* Type-based styling */
+.notification-toast.success {
+  border-left: 4px solid #27ae60;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fff9 100%);
+}
+
+.notification-toast.error {
+  border-left: 4px solid #e74c3c;
+  background: linear-gradient(135deg, #ffffff 0%, #fff8f8 100%);
+}
+
+.notification-toast.warning {
+  border-left: 4px solid #f39c12;
+  background: linear-gradient(135deg, #ffffff 0%, #fffcf8 100%);
+}
+
+.notification-toast.info {
+  border-left: 4px solid #3498db;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fcff 100%);
+}
+
+.notification-content {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 12px;
+}
+
+.notification-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.notification-text {
+  flex: 1;
+}
+
+.notification-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+
+.notification-message {
+  font-size: 13px;
+  color: #7f8c8d;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.notification-time {
+  font-size: 11px;
+  color: #bdc3c7;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #95a5a6;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notification-close:hover {
+  color: #7f8c8d;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Container for multiple notifications */
+.notifications-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.notifications-container .notification-toast {
+  position: relative;
+  top: auto;
+  right: auto;
+  pointer-events: all;
+  margin-bottom: 10px;
+}
+
+/* Sound notification indicator */
+.notification-toast.with-sound::before {
+  content: '🔊';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 12px;
+} 

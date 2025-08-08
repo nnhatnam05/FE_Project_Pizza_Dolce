@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import './SignUp.css';
 import Loading from '../../load/Loading';
 import { GoogleLogin } from '@react-oauth/google';
 
 const SignUp = () => {
+  const [searchParams] = useSearchParams();
+  const returnUrl = searchParams.get('return_url');
+  const claimToken = searchParams.get('claim_token');
+  
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -16,7 +20,7 @@ const SignUp = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
 
-  // 1: form đăng ký, 2: nhập code
+  // 1: form đăng ký, 2: nhập code, 3: claiming points
   const [step, setStep] = useState(1);
   const [verifyCode, setVerifyCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -180,6 +184,35 @@ const SignUp = () => {
     }
   };
 
+  // Auto-claim points after successful registration
+  const autoClaimPoints = async (email) => {
+    if (!claimToken) {
+      console.log('No claim token provided, skipping auto-claim');
+      return true; // Success, no claiming needed
+    }
+
+    try {
+      console.log('Auto-claiming points for new user:', email, 'with token:', claimToken);
+      const response = await axios.post('http://localhost:8080/api/dinein/points/claim-new-user', {
+        token: claimToken,
+        email: email
+      });
+
+      if (response.data.success) {
+        console.log('Points auto-claimed successfully:', response.data.message);
+        return true;
+      } else {
+        console.error('Failed to auto-claim points:', response.data.message);
+        // Don't fail the registration, just log the error
+        return true;
+      }
+    } catch (err) {
+      console.error('Error auto-claiming points:', err);
+      // Don't fail the registration, just log the error
+      return true;
+    }
+  };
+
   // Xác thực mã
   const handleVerifyCode = async (e) => {
     e.preventDefault();
@@ -196,12 +229,40 @@ const SignUp = () => {
         password: formData.password,
         code: verifyCode
       });
+      
       if (response.data && response.data.message === 'Registration successful') {
-        setShowLoadingScreen(true);
-        setTimeout(() => {
-          setShowLoadingScreen(false);
-          navigate('/login/customer');
-        }, 2000);
+        // If we have a claim token, try to auto-claim points
+        if (claimToken) {
+          setStep(3); // Show claiming points step
+          const claimSuccess = await autoClaimPoints(formData.email);
+          
+          if (claimSuccess) {
+            setShowLoadingScreen(true);
+            setTimeout(() => {
+              setShowLoadingScreen(false);
+              // Redirect to return URL if provided, otherwise to login
+              if (returnUrl) {
+                window.location.href = decodeURIComponent(returnUrl);
+              } else {
+                navigate('/login/customer');
+              }
+            }, 3000); // Longer delay to show claiming message
+          } else {
+            // If claiming fails, still proceed with normal flow
+            setShowLoadingScreen(true);
+            setTimeout(() => {
+              setShowLoadingScreen(false);
+              navigate('/login/customer');
+            }, 2000);
+          }
+        } else {
+          // Normal flow without claiming
+          setShowLoadingScreen(true);
+          setTimeout(() => {
+            setShowLoadingScreen(false);
+            navigate('/login/customer');
+          }, 2000);
+        }
       } else {
         setError(response.data.message || 'Verification failed');
       }
@@ -270,7 +331,7 @@ const SignUp = () => {
             </div>
           )}
 
-          {/* STEP 1: ĐĂNG KÝ - STEP 2: NHẬP CODE */}
+          {/* STEP 1: ĐĂNG KÝ - STEP 2: NHẬP CODE - STEP 3: CLAIMING POINTS */}
           {step === 1 ? (
             <form className="signup-form" onSubmit={handleSubmit}>
               <div className="input-group">
@@ -350,7 +411,7 @@ const SignUp = () => {
                 {loading ? 'Sending Code...' : 'Create Account'}
               </button>
             </form>
-          ) : (
+          ) : step === 2 ? (
             <form className="verify-form" onSubmit={handleVerifyCode}>
               <div className="input-group">
                 <label htmlFor="verifyCode">Verification Code</label>
@@ -407,6 +468,27 @@ const SignUp = () => {
                 ← Back to Sign Up
               </button>
             </form>
+          ) : (
+            // STEP 3: CLAIMING POINTS
+            <div className="claiming-points-step">
+              <div className="claiming-icon">
+                <div className="points-animation">🎁</div>
+              </div>
+              <h2>Đang nhận điểm thưởng...</h2>
+              <p className="claiming-message">
+                Tài khoản của bạn đã được tạo thành công!<br/>
+                Chúng tôi đang tự động nhận điểm thưởng cho bạn...
+              </p>
+              <div className="claiming-loader">
+                <div className="spinner"></div>
+                <p>Vui lòng đợi trong giây lát...</p>
+              </div>
+              {claimToken && (
+                <div className="claim-info">
+                  <p>🎉 Bạn sẽ nhận được điểm thưởng từ đơn hàng vừa thanh toán!</p>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>

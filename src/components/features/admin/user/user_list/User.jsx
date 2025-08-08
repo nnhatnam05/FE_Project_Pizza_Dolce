@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useNotification } from '../../../../../contexts/NotificationContext';
 import './User.css';
 
 export default function User() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const { showError } = useNotification();
   const [currentUserRole, setCurrentUserRole] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
@@ -81,13 +83,13 @@ export default function User() {
   const handleDelete = (id, name) => {
     // Kiểm tra xem người dùng hiện tại có quyền ADMIN không
     if (currentUserRole !== 'ADMIN') {
-      alert("You don't have permission to delete users. Only ADMIN users can perform this action.");
+      showError("You don't have permission to delete users. Only ADMIN users can perform this action.");
       return;
     }
     
     // Prevent deleting current logged-in user
     if (id === currentUserId) {
-      alert("You cannot delete your own account while logged in.");
+      showError("You cannot delete your own account while logged in.");
       return;
     }
 

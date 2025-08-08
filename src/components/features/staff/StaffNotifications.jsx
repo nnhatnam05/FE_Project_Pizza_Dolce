@@ -13,8 +13,20 @@ const StaffNotifications = ({
   const [showInvoice, setShowInvoice] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState(null);
   
-  const getTableInfo = (tableId) => {
-    return tables.find(table => table.id === tableId) || { number: 'Unknown', location: '' };
+  const getTableInfo = (notification) => {
+    // If notification has valid tableNumber (not 0), use it
+    if (notification.tableNumber && notification.tableNumber > 0) {
+      return { number: notification.tableNumber, location: '' };
+    }
+    
+    // Fallback to finding by tableId
+    const tableId = notification.tableId;
+    const foundTable = tables.find(table => table.id === tableId);
+    if (foundTable) {
+      return { number: foundTable.number, location: foundTable.location || '' };
+    }
+    
+    return { number: 'Unknown', location: '' };
   };
 
   const formatTimeAgo = (timestamp) => {
@@ -58,13 +70,13 @@ const StaffNotifications = ({
       ...call,
       type: 'staff_call',
       priority: getPriorityLevel(call.timestamp),
-      table: getTableInfo(call.tableId)
+      table: getTableInfo(call)
     })),
     ...paymentRequests.map(request => ({
       ...request,
       type: 'payment_request',
       priority: getPriorityLevel(request.timestamp),
-      table: getTableInfo(request.tableId)
+      table: getTableInfo(request)
     }))
   ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
