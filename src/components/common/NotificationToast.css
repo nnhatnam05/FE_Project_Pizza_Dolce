@@ -81,22 +81,31 @@
 }
 
 .notification-close {
-  background: none;
+  background: rgba(149, 165, 166, 0.1);
   border: none;
-  font-size: 18px;
+  font-size: 16px;
   color: #95a5a6;
   cursor: pointer;
   padding: 0;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: all 0.2s ease;
+  font-weight: bold;
 }
 
 .notification-close:hover {
-  color: #7f8c8d;
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  transform: scale(1.1);
+}
+
+.notification-close:active {
+  transform: scale(0.95);
 }
 
 @keyframes slideInRight {

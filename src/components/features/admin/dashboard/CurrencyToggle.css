@@ -1,0 +1,117 @@
+.currency-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.toggle-icon {
+  font-size: 16px;
+}
+
+.toggle-text {
+  font-size: 14px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 4px;
+  background: #f3f4f6;
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.toggle-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.toggle-button:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.toggle-button.active {
+  background: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(59, 130, 246, 0.3);
+}
+
+.toggle-button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.currency-symbol {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.currency-code {
+  font-size: 12px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .currency-toggle {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .toggle-label {
+    justify-content: center;
+  }
+  
+  .toggle-buttons {
+    justify-content: center;
+  }
+  
+  .toggle-button {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .currency-toggle {
+    padding: 10px 12px;
+  }
+  
+  .toggle-button {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  
+  .currency-symbol {
+    font-size: 13px;
+  }
+  
+  .currency-code {
+    font-size: 11px;
+  }
+} 

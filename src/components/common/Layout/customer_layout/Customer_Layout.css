@@ -30,6 +30,13 @@
   font-weight: bold;
   letter-spacing: 2px;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.p4-logo:hover {
+  color: #ffd700;
+  transform: scale(1.05);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 .p4-search input {
@@ -68,6 +75,18 @@
 .p4-nav-links span {
   cursor: pointer;
   color: #333;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.p4-nav-links span:hover {
+  background: #232f54;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(35, 47, 84, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 
@@ -148,11 +167,14 @@
   border-radius: 10px;
   padding: 6px 20px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(195, 137, 58, 0.3);
 }
 
 .p4-btn-main:hover {
   background: #b07830;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(195, 137, 58, 0.4);
 }
 
 .p4-btn-secondary {
@@ -162,11 +184,15 @@
   border-radius: 10px;
   padding: 6px 20px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .p4-btn-secondary:hover {
   background: #e0d7c7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  color: #333;
 }
 
 .p4-profile-list {
@@ -205,6 +231,11 @@
 .p4-cart {
   position: relative;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.p4-cart:hover {
+  transform: scale(1.1);
 }
 
 .p4-cart-icon {
@@ -212,6 +243,12 @@
   height: 32px;
   background: none !important;
   display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.p4-cart-icon:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
 }
 
 .p4-cart-count {
@@ -230,18 +267,7 @@
   font-weight: bold;
 }
 
-/* Profile list styling enhancements */
-.p4-profile-list span {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 12px 0;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  font-size: 0.95rem;
-  cursor: pointer;
-}
+/* Profile list styling enhancements - REMOVED DUPLICATE */
 
 /* Modal styles */
 .p4-modal-overlay {
@@ -819,8 +845,9 @@
 }
 
 .p4-profile-avatar-container:hover {
-  border-color: #ddd;
+  border-color: #ffd700;
   transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
 }
 
 .p4-profile-avatar-svg {

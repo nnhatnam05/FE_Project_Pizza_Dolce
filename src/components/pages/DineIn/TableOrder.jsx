@@ -51,7 +51,7 @@ const TableOrder = () => {
           console.log('[WEBSOCKET] Payment confirmed for our table, redirecting to thank you page');
           
           // Show success notification
-          showSuccess('Thanh toán đã được xác nhận! Đang chuyển đến trang nhận điểm...');
+          showSuccess('Payment has been confirmed! Redirecting to points page...');
           
           // Redirect to thank you page with claim token
           const thankYouUrl = `/dinein/thank-you?token=${data.claimToken}&table=${tableNumber}`;

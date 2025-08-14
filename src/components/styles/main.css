@@ -802,6 +802,12 @@
   .p4-footer-main {
     grid-template-columns: repeat(2, 1fr);
   }
+  
+  /* Tablet adjustments */
+  .p4-food-list {
+    grid-template-columns: repeat(2, 1fr); /* 2 cột trên tablet */
+    max-width: 600px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -871,6 +877,33 @@
   
   .p4-summer-desc {
     font-size: 1.2rem;
+  }
+  
+  /* Mobile food card adjustments */
+  .p4-food-card {
+    width: 100%;
+    max-width: 320px;
+  }
+  
+  .p4-food-list {
+    grid-template-columns: repeat(2, 1fr); /* 2 cột trên mobile */
+    gap: 16px;
+    max-width: 100%;
+  }
+  
+  .p4-food-thumb {
+    height: 180px;
+  }
+  
+  /* Mobile food footer adjustments */
+  .p4-food-footer {
+    margin-top: 12px;
+  }
+  
+  .p4-food-add {
+    width: 40px;
+    height: 40px;
+    font-size: 1.6rem;
   }
 }
 
@@ -1337,9 +1370,11 @@
 /* Enhanced Food List Styles */
 .p4-food-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr); /* Cố định 3 cột để hiển thị 9 item đẹp mắt */
   gap: 24px;
   justify-content: center;
+  max-width: 900px; /* Giới hạn chiều rộng để 3 cột cân đối */
+  margin: 0 auto;
 }
 
 .p4-food-card {
@@ -1352,6 +1387,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  width: 280px; /* Tăng kích thước chiều ngang */
 }
 
 .p4-food-card:hover {
@@ -1361,7 +1397,7 @@
 
 .p4-food-thumb {
   width: 100%;
-  height: 180px;
+  height: 200px; /* Tăng chiều cao để phù hợp với chiều ngang mới */
   position: relative;
   overflow: hidden;
 }
@@ -1389,7 +1425,7 @@
 .p4-food-title {
   font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
   color: #333;
   text-align: center;
   line-height: 1.4;
@@ -1399,40 +1435,52 @@
   justify-content: center;
 }
 
+/* Food footer container */
+.p4-food-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 15px;
+}
+
 .p4-food-price {
-  color: #e74c3c;
+  color: #222; /* Thay đổi màu giá tiền thành dark gray như trong hình ảnh */
   font-size: 1.1rem;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 15px;
+  font-weight: 500; /* Giảm độ đậm để giống hình ảnh */
+  text-align: left; /* Căn trái để cân đối với nút + */
+  margin: 0; /* Reset margin */
 }
 
 .p4-food-add {
-  background: #e74c3c;
-  color: #fff;
-  border: none;
-  width: 36px;
-  height: 36px;
+  background: #fff; /* Nền trắng như trong hình ảnh */
+  color: #000; /* Màu đen cho dấu + */
+  border: 1px solid #e0e0e0; /* Viền mỏng màu xám nhạt hơn */
+  width: 50px; /* Tăng kích thước nút + */
+  height: 50px;
   border-radius: 50%;
-  font-size: 1.4rem;
-  font-weight: bold;
+  font-size: 3rem; /* Tăng kích thước dấu + */
+  font-weight: 500; /* Dấu + đậm hơn */
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  margin: 0 auto;
+  margin: 0; /* Reset margin vì đã có container */
   transition: all 0.2s ease;
-  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+  box-shadow: none; /* Không có shadow như hình ảnh */
 }
 
 .p4-food-add:hover {
-  background: #c0392b;
-  transform: scale(1.1);
+  background: #f8f8f8; /* Màu xám nhạt hơn khi hover */
+  border-color: #ccc; /* Viền đậm hơn khi hover */
+  transform: scale(1.02); /* Scale rất nhẹ */
 }
 
 .p4-food-add:disabled {
-  background: #ccc;
+  background: #f5f5f5;
+  color: #ccc;
+  border-color: #eee;
   cursor: not-allowed;
   box-shadow: none;
 }

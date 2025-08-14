@@ -48,9 +48,9 @@ export default function OrderForm() {
     navigate('/admin/orders');
   };
 
-  // XÓA ĐƠN HÀNG
+      // DELETE ORDER
   const handleDelete = async () => {
-    if(window.confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?')) {
+            if(window.confirm('Are you sure you want to delete this order?')) {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
       await axios.delete(`http://localhost:8080/api/orders/${id}`, { headers });
@@ -63,14 +63,14 @@ export default function OrderForm() {
       <h2>{id ? "Edit Order" : "Create Order"}</h2>
       <form onSubmit={handleSubmit} className="mt-3">
         <div className="mb-3">
-          <label className="form-label">Khách hàng</label>
+          <label className="form-label">Customer</label>
           <select className="form-select" name="customerId" value={form.customerId} onChange={handleChange} required>
-            <option value="">-- Chọn khách hàng --</option>
+            <option value="">-- Select customer --</option>
             {customers.map(c => <option key={c.id} value={c.id}>{c.fullName} ({c.email})</option>)}
           </select>
         </div>
         <div className="mb-3">
-          <label className="form-label">Món ăn</label>
+                      <label className="form-label">Food Items</label>
           <select multiple className="form-select" value={form.foodIds} onChange={handleFoods}>
             {foods.map(f => <option key={f.id} value={f.id}>{f.name} (${f.price})</option>)}
           </select>
@@ -85,7 +85,7 @@ export default function OrderForm() {
         <button type="submit" className="btn btn-success">{id ? "Update" : "Create"}</button>
         {id && (
           <button type="button" className="btn btn-danger ms-2" onClick={handleDelete}>
-            Xóa đơn hàng
+            Delete Order
           </button>
         )}
       </form>

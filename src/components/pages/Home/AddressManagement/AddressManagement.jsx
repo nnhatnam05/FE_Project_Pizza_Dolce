@@ -230,8 +230,8 @@ const HCM_WARDS = {
         { id: 169, name: 'Phường Bình Trị Đông' },
         { id: 170, name: 'Phường Bình Trị Đông A' },
         { id: 171, name: 'Phường Bình Trị Đông B' },
-        { id: 172, name: 'Phường Tân Tạo' },
-        { id: 173, name: 'Phường Tân Tạo A' }
+                    { id: 172, name: 'Tan Tao Ward' },
+            { id: 173, name: 'Tan Tao A Ward' }
     ],
     14: [ // Quận Bình Thạnh
         { id: 174, name: 'Phường 1' },
@@ -464,7 +464,7 @@ const AddressManagement = () => {
             setAddresses(response.data);
             setError(null);
         } catch (err) {
-            setError('Không thể tải danh sách địa chỉ. Vui lòng thử lại.');
+            setError('Cannot load address list. Please try again.');
             setAddresses([]);
         } finally {
             setLoading(false);
@@ -520,15 +520,15 @@ const AddressManagement = () => {
         }
         
         if (!formData.districtId) {
-            errors.districtId = 'Vui lòng chọn quận';
+            errors.districtId = 'Please select district';
         }
         
         if (!formData.wardId) {
-            errors.wardId = 'Vui lòng chọn phường';
+            errors.wardId = 'Please select ward';
         }
         
         if (!formData.latitude || !formData.longitude) {
-            errors.latitude = 'Vui lòng chọn vị trí trên bản đồ hoặc sử dụng vị trí mẫu';
+            errors.latitude = 'Please select location on map or use sample location';
         }
         
         setFormErrors(errors);
@@ -541,7 +541,7 @@ const AddressManagement = () => {
         const token = localStorage.getItem('token');
         if (!token) return;
         
-        // Tạo địa chỉ đầy đủ từ các thành phần
+        // Create full address from components
         const selectedDistrict = HCM_DISTRICTS.find(d => d.id === parseInt(formData.districtId));
         const selectedWard = availableWards.find(w => w.id === parseInt(formData.wardId));
         
@@ -561,16 +561,16 @@ const AddressManagement = () => {
             setShowAddModal(false);
             resetForm();
             setError(null); // Clear any previous errors
-            setSuccessMessage('Thêm địa chỉ thành công!');
+            setSuccessMessage('Address added successfully!');
             setTimeout(() => setSuccessMessage(null), 3000);
         } catch (err) {
             console.error('Error adding address:', err);
             if (err.response?.data?.message) {
-                setError(`Lỗi thêm địa chỉ: ${err.response.data.message}`);
+                setError(`Error adding address: ${err.response.data.message}`);
             } else if (err.response?.data) {
-                setError(`Lỗi thêm địa chỉ: ${JSON.stringify(err.response.data)}`);
+                setError(`Error adding address: ${JSON.stringify(err.response.data)}`);
             } else {
-                setError('Không thể thêm địa chỉ. Vui lòng kiểm tra thông tin và thử lại.');
+                setError('Cannot add address. Please check information and try again.');
             }
         }
     };
@@ -581,7 +581,7 @@ const AddressManagement = () => {
         const token = localStorage.getItem('token');
         if (!token || !selectedAddress) return;
         
-        // Tạo địa chỉ đầy đủ từ các thành phần
+        // Create full address from components
         const selectedDistrict = HCM_DISTRICTS.find(d => d.id === parseInt(formData.districtId));
         const selectedWard = availableWards.find(w => w.id === parseInt(formData.wardId));
         
@@ -603,16 +603,16 @@ const AddressManagement = () => {
             setShowEditModal(false);
             resetForm();
             setError(null); // Clear any previous errors
-            setSuccessMessage('Cập nhật địa chỉ thành công!');
+            setSuccessMessage('Address updated successfully!');
             setTimeout(() => setSuccessMessage(null), 3000);
         } catch (err) {
             console.error('Error updating address:', err);
             if (err.response?.data?.message) {
-                setError(`Lỗi cập nhật địa chỉ: ${err.response.data.message}`);
+                setError(`Error updating address: ${err.response.data.message}`);
             } else if (err.response?.data) {
-                setError(`Lỗi cập nhật địa chỉ: ${JSON.stringify(err.response.data)}`);
+                setError(`Error updating address: ${JSON.stringify(err.response.data)}`);
             } else {
-                setError('Không thể cập nhật địa chỉ. Vui lòng kiểm tra thông tin và thử lại.');
+                setError('Cannot update address. Please check information and try again.');
             }
         }
     };
@@ -630,16 +630,16 @@ const AddressManagement = () => {
             setShowDeleteModal(false);
             setSelectedAddress(null);
             setError(null); // Clear any previous errors
-            setSuccessMessage('Xóa địa chỉ thành công!');
+            setSuccessMessage('Address deleted successfully!');
             setTimeout(() => setSuccessMessage(null), 3000);
         } catch (err) {
             console.error('Error deleting address:', err);
             if (err.response?.data?.message) {
-                setError(`Lỗi xóa địa chỉ: ${err.response.data.message}`);
+                setError(`Error deleting address: ${err.response.data.message}`);
             } else if (err.response?.data) {
-                setError(`Lỗi xóa địa chỉ: ${JSON.stringify(err.response.data)}`);
+                setError(`Error deleting address: ${JSON.stringify(err.response.data)}`);
             } else {
-                setError('Không thể xóa địa chỉ. Vui lòng thử lại.');
+                setError('Cannot delete address. Please try again.');
             }
         }
     };
@@ -658,16 +658,16 @@ const AddressManagement = () => {
                 isDefault: addr.id === addressId
             })));
             setError(null); // Clear any previous errors
-            setSuccessMessage('Đặt địa chỉ mặc định thành công!');
+            setSuccessMessage('Set default address successfully!');
             setTimeout(() => setSuccessMessage(null), 3000);
         } catch (err) {
             console.error('Error setting default address:', err);
             if (err.response?.data?.message) {
-                setError(`Lỗi đặt địa chỉ mặc định: ${err.response.data.message}`);
+                setError(`Error setting default address: ${err.response.data.message}`);
             } else if (err.response?.data) {
-                setError(`Lỗi đặt địa chỉ mặc định: ${JSON.stringify(err.response.data)}`);
+                setError(`Error setting default address: ${JSON.stringify(err.response.data)}`);
             } else {
-                setError('Không thể đặt địa chỉ mặc định. Vui lòng thử lại.');
+                setError('Cannot set default address. Please try again.');
             }
         }
     };
@@ -740,12 +740,12 @@ const AddressManagement = () => {
         return (
             <div className="address-management-container">
                 <div className="login-required">
-                    <h2>Vui lòng đăng nhập để quản lý địa chỉ</h2>
+                    <h2>Please login to manage addresses</h2>
                     <button 
                         className="login-btn"
                         onClick={() => navigate('/login/customer')}
                     >
-                        Đăng nhập
+                        Login
                     </button>
                 </div>
             </div>
@@ -755,15 +755,15 @@ const AddressManagement = () => {
     return (
         <div className="address-management-container">
             <div className="breadcrumb">
-                <span onClick={() => navigate('/')}>Trang chủ</span>
+                <span onClick={() => navigate('/')}>Home</span>
                 <span> • </span>
-                <span>Quản lý địa chỉ</span>
+                <span>Address Management</span>
             </div>
             
             <div className="address-header">
-                <h1>Quản lý địa chỉ giao hàng</h1>
+                <h1>Delivery Address Management</h1>
                 <button className="add-address-btn" onClick={openAddModal}>
-                    + Thêm địa chỉ mới
+                    + Add New Address
                 </button>
             </div>
             
@@ -782,14 +782,14 @@ const AddressManagement = () => {
             )}
             
             {loading ? (
-                <div className="loading-message">Đang tải...</div>
+                <div className="loading-message">Loading...</div>
             ) : addresses.length === 0 ? (
                 <div className="empty-addresses">
                     <div className="empty-icon">📍</div>
-                    <h3>Chưa có địa chỉ nào</h3>
-                    <p>Thêm địa chỉ giao hàng để thuận tiện khi đặt hàng</p>
+                    <h3>No addresses yet</h3>
+                    <p>Add delivery addresses for convenience when ordering</p>
                     <button className="add-first-address-btn" onClick={openAddModal}>
-                        Thêm địa chỉ đầu tiên
+                        Add First Address
                     </button>
                 </div>
             ) : (
@@ -801,7 +801,7 @@ const AddressManagement = () => {
                                     <h3>{address.name}</h3>
                                     <p className="phone">{address.phoneNumber}</p>
                                     {address.isDefault && (
-                                        <span className="default-badge">Mặc định</span>
+                                        <span className="default-badge">Default</span>
                                     )}
                                 </div>
                                 <div className="address-actions">
@@ -809,20 +809,20 @@ const AddressManagement = () => {
                                         className="action-btn edit"
                                         onClick={() => openEditModal(address)}
                                     >
-                                        Sửa
+                                        Edit
                                     </button>
                                     <button 
                                         className="action-btn delete"
                                         onClick={() => openDeleteModal(address)}
                                     >
-                                        Xóa
+                                        Delete
                                     </button>
                                     {!address.isDefault && (
                                         <button 
                                             className="action-btn default"
                                             onClick={() => handleSetDefault(address.id)}
                                         >
-                                            Đặt mặc định
+                                            Set as Default
                                         </button>
                                     )}
                                 </div>
@@ -830,7 +830,7 @@ const AddressManagement = () => {
                             <div className="address-details">
                                 <p className="address-text">{address.address}</p>
                                 {address.note && (
-                                    <p className="address-note">Ghi chú: {address.note}</p>
+                                    <p className="address-note">Note: {address.note}</p>
                                 )}
                             </div>
                         </div>
@@ -843,7 +843,7 @@ const AddressManagement = () => {
                 <div className="modal-overlay">
                     <div className="modal-container">
                         <div className="modal-header">
-                            <h3>Thêm địa chỉ mới</h3>
+                            <h3>Add New Address</h3>
                             <button className="modal-close" onClick={closeModal}>×</button>
                         </div>
                         <div className="modal-content">
@@ -856,10 +856,10 @@ const AddressManagement = () => {
                             />
                             <div className="modal-actions">
                                 <button className="modal-btn secondary" onClick={closeModal}>
-                                    Hủy
+                                    Cancel
                                 </button>
                                 <button className="modal-btn primary" onClick={handleAddAddress}>
-                                    Thêm địa chỉ
+                                    Add Address
                                 </button>
                             </div>
                         </div>
@@ -872,7 +872,7 @@ const AddressManagement = () => {
                 <div className="modal-overlay">
                     <div className="modal-container">
                         <div className="modal-header">
-                            <h3>Sửa địa chỉ</h3>
+                            <h3>Edit Address</h3>
                             <button className="modal-close" onClick={closeModal}>×</button>
                         </div>
                         <div className="modal-content">
@@ -885,10 +885,10 @@ const AddressManagement = () => {
                             />
                             <div className="modal-actions">
                                 <button className="modal-btn secondary" onClick={closeModal}>
-                                    Hủy
+                                    Cancel
                                 </button>
                                 <button className="modal-btn primary" onClick={handleEditAddress}>
-                                    Cập nhật
+                                    Update
                                 </button>
                             </div>
                         </div>
@@ -901,23 +901,23 @@ const AddressManagement = () => {
                 <div className="modal-overlay">
                     <div className="modal-container">
                         <div className="modal-header">
-                            <h3>Xác nhận xóa</h3>
+                            <h3>Confirm Delete</h3>
                             <button className="modal-close" onClick={closeModal}>×</button>
                         </div>
                         <div className="modal-content">
                             <div className="delete-confirmation">
                                 <div className="warning-icon">⚠️</div>
-                                <h4>Bạn có chắc chắn muốn xóa địa chỉ này?</h4>
-                                <p>Địa chỉ: <strong>{selectedAddress?.address}</strong></p>
-                                <p>Người nhận: <strong>{selectedAddress?.name}</strong></p>
-                                <p className="warning-text">Hành động này không thể hoàn tác.</p>
+                                <h4>Are you sure you want to delete this address?</h4>
+                                <p>Address: <strong>{selectedAddress?.address}</strong></p>
+                                <p>Recipient: <strong>{selectedAddress?.name}</strong></p>
+                                <p className="warning-text">This action cannot be undone.</p>
                             </div>
                             <div className="modal-actions">
                                 <button className="modal-btn secondary" onClick={closeModal}>
-                                    Hủy
+                                    Cancel
                                 </button>
                                 <button className="modal-btn danger" onClick={handleDeleteAddress}>
-                                    Xóa địa chỉ
+                                    Delete Address
                                 </button>
                             </div>
                         </div>
@@ -964,7 +964,7 @@ const MapModal = ({ isOpen, onClose, onLocationSelect, showError, showWarning })
         }
     }, []);
 
-    // Khởi tạo map khi modal mở và DOM đã có ref
+            // Initialize map when modal opens and DOM has ref
     useEffect(() => {
         if (!isOpen) return;
         if (!window.google || !window.google.maps) return;
@@ -1031,7 +1031,7 @@ const MapModal = ({ isOpen, onClose, onLocationSelect, showError, showWarning })
             onLocationSelect(selectedLocation);
             onClose();
         } else {
-            showWarning('Vui lòng chọn vị trí trên bản đồ!');
+            showWarning('Please select location on map!');
         }
     };
 
@@ -1047,17 +1047,17 @@ const MapModal = ({ isOpen, onClose, onLocationSelect, showError, showWarning })
         <div className="modal-overlay">
             <div className="modal-container map-modal">
                 <div className="modal-header">
-                    <h3>Chọn vị trí trên bản đồ</h3>
+                    <h3>Select Location on Map</h3>
                     <button className="modal-close" onClick={onClose}>×</button>
                 </div>
                 <div className="modal-content">
                     <div className="map-selection-container">
                         <div className="map-instructions">
-                            <p>📍 Click vào bản đồ để chọn vị trí giao hàng</p>
-                            <p>🗺️ Vị trí phải nằm trong nội thành Hồ Chí Minh</p>
+                            <p>📍 Click on map to select delivery location</p>
+                            <p>🗺️ Location must be within Ho Chi Minh City</p>
                             {selectedLocation && (
                                 <p className="selected-coordinates">
-                                    ✅ Đã chọn: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
+                                    ✅ Selected: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
                                 </p>
                             )}
                         </div>
@@ -1067,20 +1067,20 @@ const MapModal = ({ isOpen, onClose, onLocationSelect, showError, showWarning })
                         </div>
                         <div className="map-actions">
                             <button className="modal-btn secondary" onClick={onClose}>
-                                Hủy
+                                Cancel
                             </button>
                             <button 
                                 className="modal-btn secondary" 
                                 onClick={handleDemoLocation}
                             >
-                                Demo vị trí
+                                Demo Location
                             </button>
                             <button 
                                 className="modal-btn primary" 
                                 onClick={handleConfirmLocation}
                                 disabled={!selectedLocation}
                             >
-                                Xác nhận vị trí
+                                Confirm Location
                             </button>
                         </div>
                     </div>
@@ -1097,26 +1097,26 @@ const AddressForm = ({ formData, formErrors, handleInputChange, availableWards, 
         <div className="address-form">
             <div className="form-row">
                 <div className="form-group">
-                    <label>Tên người nhận *</label>
+                    <label>Recipient Name *</label>
                     <input
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        placeholder="Nhập tên người nhận"
+                        placeholder="Enter recipient name"
                         className={formErrors.name ? 'error' : ''}
                     />
                     {formErrors.name && <span className="error-message">{formErrors.name}</span>}
                 </div>
                 
                 <div className="form-group">
-                    <label>Số điện thoại *</label>
+                    <label>Phone Number *</label>
                     <input
                         type="tel"
                         name="phoneNumber"
                         value={formData.phoneNumber}
                         onChange={handleInputChange}
-                        placeholder="Nhập số điện thoại"
+                        placeholder="Enter phone number"
                         className={formErrors.phoneNumber ? 'error' : ''}
                     />
                     {formErrors.phoneNumber && <span className="error-message">{formErrors.phoneNumber}</span>}
@@ -1124,13 +1124,13 @@ const AddressForm = ({ formData, formErrors, handleInputChange, availableWards, 
             </div>
             
             <div className="form-group">
-                <label>Số nhà và tên đường *</label>
+                <label>House Number and Street Name *</label>
                 <input
                     type="text"
                     name="streetAddress"
                     value={formData.streetAddress}
                     onChange={handleInputChange}
-                    placeholder="Ví dụ: 123 Nguyễn Huệ"
+                    placeholder="Example: 123 Nguyen Hue"
                     className={formErrors.streetAddress ? 'error' : ''}
                 />
                 {formErrors.streetAddress && <span className="error-message">{formErrors.streetAddress}</span>}
@@ -1138,14 +1138,14 @@ const AddressForm = ({ formData, formErrors, handleInputChange, availableWards, 
             
             <div className="form-row">
                 <div className="form-group">
-                    <label>Quận *</label>
+                    <label>District *</label>
                     <select
                         name="districtId"
                         value={formData.districtId}
                         onChange={handleInputChange}
                         className={formErrors.districtId ? 'error' : ''}
                     >
-                        <option value="">Chọn quận</option>
+                        <option value="">Select district</option>
                         {HCM_DISTRICTS.map(district => (
                             <option key={district.id} value={district.id}>
                                 {district.name}
@@ -1156,7 +1156,7 @@ const AddressForm = ({ formData, formErrors, handleInputChange, availableWards, 
                 </div>
                 
                 <div className="form-group">
-                    <label>Phường *</label>
+                    <label>Ward *</label>
                     <select
                         name="wardId"
                         value={formData.wardId}
@@ -1164,7 +1164,7 @@ const AddressForm = ({ formData, formErrors, handleInputChange, availableWards, 
                         className={formErrors.wardId ? 'error' : ''}
                         disabled={!formData.districtId}
                     >
-                        <option value="">Chọn phường</option>
+                        <option value="">Select ward</option>
                         {availableWards.map(ward => (
                             <option key={ward.id} value={ward.id}>
                                 {ward.name}
@@ -1176,7 +1176,7 @@ const AddressForm = ({ formData, formErrors, handleInputChange, availableWards, 
             </div>
             
             <div className="form-group">
-                <label>Thành phố</label>
+                <label>City</label>
                 <input
                     type="text"
                     name="city"
@@ -1184,17 +1184,17 @@ const AddressForm = ({ formData, formErrors, handleInputChange, availableWards, 
                     disabled
                     className="disabled-input"
                 />
-                <small className="form-help">Mặc định: Thành phố Hồ Chí Minh</small>
+                <small className="form-help">Default: Ho Chi Minh City</small>
             </div>
             
             <div className="form-group">
-                <label>Vị trí trên bản đồ *</label>
+                <label>Map Location *</label>
                 <div className="map-container">
                     <div className="map-placeholder coming-soon" id="map">
                         <div className="map-placeholder-content">
                             <div className="map-placeholder-icon">🗺️</div>
                             <p><strong>Coming Soon</strong></p>
-                            <small>Tính năng bản đồ sẽ sớm được cập nhật</small>
+                            <small>Map feature will be updated soon</small>
                             <button 
                                 type="button" 
                                 className="demo-location-btn"
@@ -1207,13 +1207,13 @@ const AddressForm = ({ formData, formErrors, handleInputChange, availableWards, 
                                     });
                                 }}
                             >
-                                Sử dụng vị trí mẫu (TP.HCM)
+                                Use sample location (HCMC)
                             </button>
                         </div>
                     </div>
                     {formData.latitude && formData.longitude && (
                         <div className="coordinates-display">
-                            <span>Tọa độ: {formData.latitude.toFixed(6)}, {formData.longitude.toFixed(6)}</span>
+                            <span>Coordinates: {formData.latitude.toFixed(6)}, {formData.longitude.toFixed(6)}</span>
                             <button 
                                 type="button" 
                                 className="clear-coordinates-btn"
@@ -1232,7 +1232,7 @@ const AddressForm = ({ formData, formErrors, handleInputChange, availableWards, 
                                     });
                                 }}
                             >
-                                Xóa
+                                Clear
                             </button>
                         </div>
                     )}
@@ -1241,12 +1241,12 @@ const AddressForm = ({ formData, formErrors, handleInputChange, availableWards, 
             </div>
             
             <div className="form-group">
-                <label>Ghi chú</label>
+                <label>Note</label>
                 <textarea
                     name="note"
                     value={formData.note}
                     onChange={handleInputChange}
-                    placeholder="Ghi chú thêm (không bắt buộc)"
+                    placeholder="Additional note (optional)"
                     rows="2"
                 />
             </div>
@@ -1260,7 +1260,7 @@ const AddressForm = ({ formData, formErrors, handleInputChange, availableWards, 
                         onChange={handleInputChange}
                     />
                     <span className="checkmark"></span>
-                    Đặt làm địa chỉ mặc định
+                    Set as default address
                 </label>
             </div>
         </div>

@@ -12,7 +12,7 @@ const Detail_Drinks = () => {
     const [error, setError] = useState('');
     const [quantity, setQuantity] = useState(1);
     
-    // 使用CartContext
+    // Sử dụng CartContext
     const { handleAddToCart } = useContext(CartContext);
     
     // API URL - replace with your actual API endpoint
@@ -48,7 +48,7 @@ const Detail_Drinks = () => {
     };
 
     const addToCart = () => {
-        // 使用CartContext中的handleAddToCart函数
+        // Sử dụng hàm handleAddToCart từ CartContext
         if (drink && drink.status !== 'UNAVAILABLE') {
             handleAddToCart({
                 id: drink.id,

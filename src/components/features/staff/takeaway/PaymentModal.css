@@ -1,0 +1,263 @@
+/* Payment Modal Styles */
+.payment-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.payment-modal {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #495057;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 5px;
+}
+
+.close-btn:hover {
+    color: #495057;
+}
+
+.modal-content {
+    padding: 20px;
+}
+
+.order-summary {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.order-summary h4 {
+    margin: 0 0 10px 0;
+    color: #495057;
+}
+
+.summary-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.summary-row .amount {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.payment-method-section h4 {
+    margin: 0 0 15px 0;
+    color: #495057;
+}
+
+.payment-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.payment-option:hover {
+    border-color: #007bff;
+    background: #f8f9ff;
+}
+
+.payment-option input[type="radio"] {
+    margin-right: 10px;
+}
+
+.option-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.option-icon {
+    font-size: 20px;
+}
+
+.option-label {
+    font-weight: 500;
+}
+
+.qr-banking-section {
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f8f9ff;
+}
+
+.qr-display {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.qr-display h4 {
+    margin: 0 0 15px 0;
+    color: #495057;
+}
+
+.qr-image-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.qr-image {
+    max-width: 200px;
+    height: auto;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+}
+
+.qr-instruction {
+    color: #495057;
+    font-size: 14px;
+    margin: 0;
+}
+
+.bill-upload h4 {
+    margin: 0 0 15px 0;
+    color: #495057;
+}
+
+.upload-area {
+    margin-bottom: 15px;
+}
+
+.file-input {
+    display: none;
+}
+
+.upload-label {
+    display: inline-block;
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.upload-label:hover {
+    background: #0056b3;
+}
+
+.bill-preview {
+    position: relative;
+    display: inline-block;
+}
+
+.bill-preview img {
+    max-width: 200px;
+    height: auto;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+}
+
+.remove-preview {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.modal-actions {
+    padding: 20px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.cancel-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.cancel-btn:hover:not(:disabled) {
+    background: #5a6268;
+}
+
+.confirm-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.confirm-btn:hover:not(:disabled) {
+    background: #218838;
+}
+
+.confirm-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .payment-options {
+        grid-template-columns: 1fr;
+    }
+} 

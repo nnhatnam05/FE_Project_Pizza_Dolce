@@ -13,15 +13,14 @@ const EditCart = () => {
 
     const [order, setOrder] = useState(null);
     const [foodItems, setFoodItems] = useState([]);
-    const [paymentMethods, setPaymentMethods] = useState([]);
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
     const [note, setNote] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [availableFoods, setAvailableFoods] = useState([]);
-    const [addingItem, setAddingItem] = useState(false);
-    const [selectedFood, setSelectedFood] = useState(null);
-    const [quantity, setQuantity] = useState(1);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [foodsLoading, setFoodsLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 
@@ -34,8 +33,8 @@ const EditCart = () => {
 
     useEffect(() => {
         fetchOrder();
-        fetchPaymentMethods();
         fetchAvailableFoods();
+        loadCategories();
     }, [orderId]);
 
     const fetchOrder = async () => {
@@ -78,7 +77,6 @@ const EditCart = () => {
 
             setFoodItems(items);
             setNote(response.data.note || '');
-            setSelectedPaymentMethod(response.data.paymentMethod?.id);
             setLoading(false);
         } catch (error) {
             setError(error.response?.data?.message || "Unable to load order information");
@@ -92,26 +90,44 @@ const EditCart = () => {
         }
     };
 
-    const fetchPaymentMethods = async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/api/payment-methods');
-            setPaymentMethods(response.data);
-        } catch (error) {
-            // Silent fail
-        }
-    };
-
     const fetchAvailableFoods = async () => {
         try {
+            setFoodsLoading(true);
             const response = await axios.get('http://localhost:8080/api/foods');
             const availableFoods = response.data.filter(food => 
                 food.status === 'AVAILABLE'
             );
-            setAvailableFoods(availableFoods);
+            setAvailableFoods(response.data); // Keep all foods for display
         } catch (error) {
-            // Silent fail
+            console.error('Failed to load foods:', error);
+        } finally {
+            setFoodsLoading(false);
         }
     };
+
+    const loadCategories = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/categories');
+            setCategories(response.data);
+        } catch (error) {
+            console.error('Failed to load categories:', error);
+            // Fallback: extract categories from foods
+            const uniqueTypes = [...new Set(availableFoods.map(food => food.type).filter(type => type))];
+            const categoryOptions = uniqueTypes.map(type => ({
+                id: type,
+                name: type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()
+            }));
+            setCategories(categoryOptions);
+        }
+    };
+
+    // Filter foods
+    const filteredFoods = availableFoods.filter(food => {
+        const matchesCategory = selectedCategory === 'all' || food.type === selectedCategory;
+        const matchesSearch = food.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            food.description?.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesCategory && matchesSearch;
+    });
 
     const updateQuantity = (id, newQuantity) => {
         if (newQuantity < 1) return;
@@ -126,27 +142,26 @@ const EditCart = () => {
         setFoodItems(items => items.filter(item => item.id !== id));
     };
 
-    const handleAddItem = () => {
-        if (!selectedFood || quantity < 1) return;
-        const existingItem = foodItems.find(item => item.id === selectedFood.id);
+    // Add item to order
+    const addToOrder = (food) => {
+        if (food.status === 'UNAVAILABLE') return;
+        
+        const existingItem = foodItems.find(item => item.id === food.id);
         if (existingItem) {
-            updateQuantity(selectedFood.id, existingItem.quantity + quantity);
+            updateQuantity(food.id, existingItem.quantity + 1);
         } else {
             setFoodItems(items => [
                 ...items, 
                 {
-                    id: selectedFood.id,
-                    quantity: quantity,
-                    name: selectedFood.name,
-                    price: selectedFood.price,
-                    imageUrl: selectedFood.imageUrl,
-                    type: selectedFood.type
+                    id: food.id,
+                    quantity: 1,
+                    name: food.name,
+                    price: food.price,
+                    imageUrl: food.imageUrl,
+                    type: food.type
                 }
             ]);
         }
-        setAddingItem(false);
-        setSelectedFood(null);
-        setQuantity(1);
     };
 
     const saveOrder = async () => {
@@ -171,7 +186,6 @@ const EditCart = () => {
             const mergedFoodItems = Array.from(foodMap.values());
             const orderData = {
                 customerId: order.customer?.id,
-                paymentMethodId: selectedPaymentMethod,
                 foods: mergedFoodItems.map(item => ({
                     id: item.id,
                     quantity: item.quantity
@@ -195,10 +209,6 @@ const EditCart = () => {
     const handleSaveClick = () => {
         if (foodItems.length === 0) {
             showWarning("Order must have at least one item");
-            return;
-        }
-        if (!selectedPaymentMethod) {
-            showWarning("Please select a payment method");
             return;
         }
         setShowSaveConfirm(true);
@@ -285,7 +295,7 @@ const EditCart = () => {
             
             {order && order.status !== 'WAITING_PAYMENT' && (
                 <div className="edit-cart-warning">
-                                          <p>You can only edit orders in "Waiting for Payment" status.</p>
+                    <p>You can only edit orders in "Waiting for Payment" status.</p>
                     <button onClick={() => navigate(`/payment-details/${order.orderNumber}`)}>
                         Back
                     </button>
@@ -294,211 +304,200 @@ const EditCart = () => {
             
             {order && order.status === 'WAITING_PAYMENT' && (
                 <div className="edit-cart-content">
-                    <div className="edit-cart-items">
-                        <div className="section-header">
-                            <h2>Order Items</h2>
-                            <button 
-                                className="add-item-btn"
-                                onClick={() => setAddingItem(true)}
-                            >
-                                + Add item
-                            </button>
-                        </div>
-                        
-                        {foodItems.length === 0 ? (
-                            <div className="empty-items-message">
-                                No items yet. Please add items to your order.
-                            </div>
-                        ) : (
-                            <table className="items-table">
-                                <thead>
-                                    <tr>
-                                        <th className="item-name-col">Item Name</th>
-                                        <th className="item-price-col">Price</th>
-                                        <th className="item-quantity-col">Quantity</th>
-                                        <th className="item-total-col">Total</th>
-                                        <th className="item-actions-col"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                    {/* Top Section - 2 Columns */}
+                    <div className="top-section">
+                        {/* Left Column - Order Summary */}
+                        <div className="order-summary-section">
+                            <h3>📋 Order Summary ({foodItems.length} items)</h3>
+                            
+                            {foodItems.length === 0 ? (
+                                <div className="empty-order">
+                                    <div className="empty-icon">🛒</div>
+                                    <p>No items selected</p>
+                                    <small>Add items from the menu below</small>
+                                </div>
+                            ) : (
+                                <div className="order-items">
                                     {foodItems.map(item => (
-                                        <tr key={item.id}>
-                                            <td>{item.name}</td>
-                                            <td>{Number(item.price).toLocaleString()} $</td>
-                                            <td>
-                                                <div className="quantity-control">
-                                                    <button 
-                                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                        disabled={item.quantity <= 1}
-                                                    >
-                                                        -
-                                                    </button>
-                                                    <span>{item.quantity}</span>
-                                                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
-                                                        +
-                                                    </button>
-                                                </div>
-                                            </td>
-                                            <td>{Number(item.price * item.quantity).toLocaleString()} $</td>
-                                            <td>
+                                        <div key={item.id} className="order-item">
+                                            <div className="item-info">
+                                                <div className="item-name">{item.name}</div>
+                                                <div className="item-price">${item.price?.toFixed(2)}</div>
+                                            </div>
+                                            
+                                            <div className="quantity-controls">
                                                 <button 
-                                                    className="remove-item-btn"
-                                                    onClick={() => removeItem(item.id)}
+                                                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                    className="qty-btn"
                                                 >
-                                                    &times;
+                                                    -
                                                 </button>
-                                            </td>
-                                        </tr>
+                                                <span className="quantity">{item.quantity}</span>
+                                                <button 
+                                                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                    className="qty-btn"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+                                            
+                                            <div className="item-total">
+                                                ${(item.price * item.quantity).toFixed(2)}
+                                            </div>
+
+                                            <button
+                                                className="remove-item-btn"
+                                                onClick={() => removeItem(item.id)}
+                                                title="Remove item"
+                                                aria-label={`Remove ${item.name}`}
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
                                     ))}
-                                </tbody>
-                            </table>
-                        )}
-                        
-                        <div className="order-total">
-                            <span>Total:</span>
-                            <span>{calculateTotal().toLocaleString()} $</span>
-                        </div>
-                    </div>
-                    
-                    <div className="edit-cart-options">
-                        <div className="payment-method-section">
-                            <h2>Payment Method</h2>
-                            <div className="payment-options">
-                                {paymentMethods.map(method => (
-                                    <div key={method.id} className="payment-option">
-                                        <input 
-                                            type="radio"
-                                            id={`payment-${method.id}`}
-                                            name="paymentMethod"
-                                            value={method.id}
-                                            checked={selectedPaymentMethod === method.id}
-                                            onChange={() => setSelectedPaymentMethod(method.id)}
-                                        />
-                                        <label htmlFor={`payment-${method.id}`}>{method.name}</label>
+                                    
+                                    <div className="order-totals">
+                                        <div className="total-row final">
+                                            <span><strong>Total:</strong></span>
+                                            <span><strong>${calculateTotal().toFixed(2)}</strong></span>
+                                        </div>
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            )}
                         </div>
-                        
-                        <div className="note-section">
-                            <h2>Order Note</h2>
+
+                        {/* Right Column - Order Note */}
+                        <div className="note-section-container">
+                            <h3>📝 Order Note</h3>
                             <textarea
                                 value={note}
                                 onChange={(e) => setNote(e.target.value)}
                                 placeholder="Enter notes for this order (optional)"
-                                rows="4"
+                                rows="6"
+                                className="note-textarea"
                             ></textarea>
-                        </div>
-                    </div>
-                    
-                    <div className="edit-cart-actions">
-                        <div className="left-actions">
-                            <button 
-                                className="delete-order-btn"
-                                onClick={showCancelOrderModal}
-                                disabled={saving}
-                            >
-                                Cancel Order
-                            </button>
-                        </div>
-                        <div className="right-actions">
-                            <button 
-                                className="cancel-btn"
-                                onClick={cancelEdit}
-                                disabled={saving}
-                            >
-                                Back
-                            </button>
-                            <button 
-                                className="save-btn"
-                                onClick={handleSaveClick}
-                                disabled={saving || foodItems.length === 0}
-                            >
-                                {saving ? 'Saving...' : 'Save Changes'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-            
-            {/* Add Food Modal */}
-            {addingItem && (
-                <div className="modal-overlay">
-                    <div className="modal-container">
-                        <div className="modal-header">
-                            <h3>Add Item</h3>
-                            <button 
-                                className="modal-close"
-                                onClick={() => {
-                                    setAddingItem(false);
-                                    setSelectedFood(null);
-                                    setQuantity(1);
-                                }}
-                            >
-                                &times;
-                            </button>
-                        </div>
-                        <div className="modal-content">
-                            <div className="form-group">
-                                <label>Select item:</label>
-                                <select
-                                    value={selectedFood?.id || ''}
-                                    onChange={(e) => {
-                                        const foodId = Number(e.target.value);
-                                        const food = availableFoods.find(f => f.id === foodId);
-                                        setSelectedFood(food);
-                                    }}
-                                >
-                                    <option value="">-- Select an item --</option>
-                                    {availableFoods.map(food => (
-                                        <option key={food.id} value={food.id}>
-                                            {food.name} - {Number(food.price).toLocaleString()} $
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
                             
-                            <div className="form-group">
-                                <label>Quantity:</label>
-                                <div className="quantity-control modal-quantity">
+                            <div className="edit-cart-actions">
+                                <div className="left-actions">
                                     <button 
-                                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                        disabled={quantity <= 1}
+                                        className="delete-order-btn"
+                                        onClick={showCancelOrderModal}
+                                        disabled={saving}
                                     >
-                                        -
+                                        Cancel Order
                                     </button>
-                                    <input 
-                                        type="number" 
-                                        min="1"
-                                        value={quantity}
-                                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                                    />
-                                    <button onClick={() => setQuantity(quantity + 1)}>
-                                        +
+                                </div>
+                                <div className="right-actions">
+                                    <button 
+                                        className="cancel-btn"
+                                        onClick={cancelEdit}
+                                        disabled={saving}
+                                    >
+                                        Back
+                                    </button>
+                                    <button 
+                                        className="save-btn"
+                                        onClick={handleSaveClick}
+                                        disabled={saving || foodItems.length === 0}
+                                    >
+                                        {saving ? 'Saving...' : 'Save Changes'}
                                     </button>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Bottom Section - Menu Items */}
+                    <div className="menu-section">
+                        <h3>🍽️ Menu Items</h3>
+                        
+                        {/* Search and Category Filter */}
+                        <div className="menu-controls">
+                            <div className="search-bar">
+                                <input
+                                    type="text"
+                                    placeholder="Search menu items..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="search-input"
+                                />
+                            </div>
                             
-                            <div className="modal-actions">
+                            <div className="category-filter">
                                 <button 
-                                    className="modal-btn secondary"
-                                    onClick={() => {
-                                        setAddingItem(false);
-                                        setSelectedFood(null);
-                                        setQuantity(1);
-                                    }}
+                                    className={selectedCategory === 'all' ? 'active' : ''}
+                                    onClick={() => setSelectedCategory('all')}
                                 >
-                                    Cancel
+                                    All Items
                                 </button>
-                                <button 
-                                    className="modal-btn primary"
-                                    onClick={handleAddItem}
-                                    disabled={!selectedFood}
-                                >
-                                    Add to Order
-                                </button>
+                                {categories.map(category => (
+                                    <button
+                                        key={category.id}
+                                        className={selectedCategory === category.id ? 'active' : ''}
+                                        onClick={() => setSelectedCategory(category.id)}
+                                    >
+                                        {category.name}
+                                    </button>
+                                ))}
                             </div>
                         </div>
+
+                        {/* Food Grid */}
+                        {foodsLoading ? (
+                            <div className="menu-loading">
+                                <div className="loading-spinner"></div>
+                                <p>Loading menu...</p>
+                            </div>
+                        ) : (
+                            <div className="food-grid">
+                                {filteredFoods.map(food => (
+                                    <div key={food.id} className={`food-card ${food.status === 'UNAVAILABLE' ? 'sold-out' : ''}`}>
+                                        <div className="food-image">
+                                            {food.imageUrl ? (
+                                                <img 
+                                                    src={food.imageUrl.startsWith('http') ? food.imageUrl : `http://localhost:8080${food.imageUrl}`} 
+                                                    alt={food.name}
+                                                    onError={(e) => {
+                                                        e.target.style.display = 'none';
+                                                        e.target.nextSibling.style.display = 'flex';
+                                                    }}
+                                                />
+                                            ) : null}
+                                            <div className="no-image" style={{ display: food.imageUrl ? 'none' : 'flex' }}>
+                                                🍽️
+                                            </div>
+                                            {food.status === 'UNAVAILABLE' && (
+                                                <div className="sold-out-badge">
+                                                    <span>Sold Out</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        
+                                        <div className="food-info">
+                                            <h3>{food.name}</h3>
+                                            <p className="food-description">{food.description}</p>
+                                            <div className="food-price">${food.price?.toFixed(2)}</div>
+                                            
+                                            <button 
+                                                className={`add-to-order-btn ${food.status === 'UNAVAILABLE' ? 'disabled' : ''}`}
+                                                onClick={() => addToOrder(food)}
+                                                disabled={food.status === 'UNAVAILABLE'}
+                                            >
+                                                {food.status === 'UNAVAILABLE' ? 'Out of Stock' : 'Add to Order'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {!foodsLoading && filteredFoods.length === 0 && (
+                            <div className="no-foods">
+                                <div className="no-foods-icon">🔍</div>
+                                <h4>No items found</h4>
+                                <p>Try adjusting your search or category filter</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

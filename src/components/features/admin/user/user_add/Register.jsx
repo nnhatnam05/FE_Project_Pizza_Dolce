@@ -289,7 +289,7 @@ const Register = () => {
       
       const formDataToSend = new FormData();
   
-      // Thêm các trường cơ bản
+      // Add basic fields
       formDataToSend.append('username', formData.username);
       formDataToSend.append('password', formData.password);
       formDataToSend.append('name', formData.name);
@@ -297,7 +297,7 @@ const Register = () => {
       formDataToSend.append('phone', formData.phone);
       formDataToSend.append('role', formData.role);
       
-      // Thêm thông tin nhân viên nếu là STAFF
+      // Add staff information if STAFF
       if (formData.role === 'STAFF') {
         formDataToSend.append('position', formData.position);
         formDataToSend.append('shiftType', formData.shiftType);
@@ -307,7 +307,7 @@ const Register = () => {
         formDataToSend.append('workLocation', formData.workLocation);
       }
       
-      // Thêm ảnh nếu có
+      // Add image if available
       if (selectedImage) {
         formDataToSend.append('image', selectedImage);
       }

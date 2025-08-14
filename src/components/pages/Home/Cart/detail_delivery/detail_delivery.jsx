@@ -5,10 +5,10 @@ import { useNotification } from '../../../../../contexts/NotificationContext';
 import './detail_delivery.css';
 
 const statusSteps = [
-    { status: 'PREPARING', label: 'Đang chuẩn bị', icon: '⏳' },
-    { status: 'WAITING_FOR_SHIPPER', label: 'Chờ shipper', icon: '👤' },
-    { status: 'DELIVERING', label: 'Đang giao', icon: '🚚' },
-    { status: 'DELIVERED', label: 'Đã giao', icon: '✅' }
+    { status: 'PREPARING', label: 'Preparing', icon: '⏳' },
+    { status: 'WAITING_FOR_SHIPPER', label: 'Waiting for shipper', icon: '👤' },
+    { status: 'DELIVERING', label: 'Delivering', icon: '🚚' },
+    { status: 'DELIVERED', label: 'Delivered', icon: '✅' }
 ];
 
 const DetailDelivery = () => {
@@ -33,11 +33,11 @@ const DetailDelivery = () => {
     const [apiError, setApiError] = useState(null);
     const notificationTimeoutRef = useRef(null);
 
-    // Fetch order information
+            // Get order information
     const fetchOrder = useCallback(async () => {
         const token = localStorage.getItem('token');
         if (!token) {
-            setError('Vui lòng đăng nhập để xem đơn hàng');
+            setError('Please login to view order');
             navigate('/login/customer');
             return;
         }
@@ -50,12 +50,12 @@ const DetailDelivery = () => {
             return res.data;
         } catch (err) {
             console.error("Error fetching order:", err);
-            setError('Không thể tải thông tin đơn hàng');
+            setError('Cannot load order information');
             return null;
         }
     }, [orderId, navigate]);
 
-    // Fetch delivery status
+    // Lấy trạng thái giao hàng
     const fetchDeliveryStatus = useCallback(async () => {
         const token = localStorage.getItem('token');
         if (!token) return null;
@@ -76,12 +76,12 @@ const DetailDelivery = () => {
             return res.data;
         } catch (err) {
             setDeliveryStatus(null);
-            setApiError(err.message || "Không thể tải trạng thái giao hàng");
+            setApiError(err.message || "Cannot load delivery status");
             return null;
         }
     }, [orderId]);
 
-    // Init and refresh
+            // Initialize and refresh
     useEffect(() => {
         const initializeData = async () => {
             setLoading(true);
@@ -94,7 +94,7 @@ const DetailDelivery = () => {
                     setShowCompletionModal(true);
                 }
                 if (status.deliveryStatus === 'PAID') {
-                    showStatusChangeNotification('Thanh toán thành công!');
+                    showStatusChangeNotification('Payment successful!');
                 }
             }
             
@@ -135,11 +135,11 @@ const DetailDelivery = () => {
             if (deliveryStatus.deliveryStatus !== previousStatus) {
                 let newStatusLabel;
                 if (deliveryStatus.deliveryStatus === 'PAID') {
-                    newStatusLabel = 'Đã thanh toán';
+                    newStatusLabel = 'Paid';
                 } else {
                     newStatusLabel = statusSteps.find(step => step.status === deliveryStatus.deliveryStatus)?.label || deliveryStatus.deliveryStatus;
                 }
-                showStatusChangeNotification(`Trạng thái đã thay đổi: ${newStatusLabel}`);
+                showStatusChangeNotification(`Status changed: ${newStatusLabel}`);
                 
                 if (deliveryStatus.deliveryStatus === 'DELIVERED') {
                     setShowCompletionModal(true);
@@ -164,7 +164,7 @@ const DetailDelivery = () => {
         }, 5000);
     };
 
-    // Gửi đánh giá
+            // Submit rating
     const submitRating = async () => {
         if (ratingSubmitting) return;
 
@@ -174,11 +174,11 @@ const DetailDelivery = () => {
                 setRatingSubmitting(false);
                 setShowRatingModal(false);
                 setShowCompletionModal(false);
-                showSuccess('Cảm ơn bạn đã đánh giá!');
+                showSuccess('Thank you for your rating!');
             }, 1000);
         } catch (error) {
             setRatingSubmitting(false);
-            showError('Không thể gửi đánh giá. Vui lòng thử lại.');
+            showError('Cannot submit rating. Please try again.');
         }
     };
 
@@ -191,26 +191,26 @@ const DetailDelivery = () => {
         return (
             <div className="status-history-container" onClick={(e) => e.stopPropagation()}>
                 <div className="status-history-header">
-                    <h3>Lịch sử trạng thái</h3>
+                    <h3>Status History</h3>
                     <button className="close-history" onClick={() => setShowStatusDetails(false)}>×</button>
                 </div>
                 <div className="status-history-list">
                     {!deliveryStatus.statusHistory || deliveryStatus.statusHistory.length === 0 ? (
                         <div className="history-item">
                             <div className="history-status">
-                                {deliveryStatus.deliveryStatus === 'PAID' ? 'Đã thanh toán' : deliveryStatus.deliveryStatus}
+                                {deliveryStatus.deliveryStatus === 'PAID' ? 'Paid' : deliveryStatus.deliveryStatus}
                             </div>
-                            <div className="history-time">Trạng thái hiện tại</div>
-                            <div className="history-note">Không có lịch sử bổ sung</div>
+                            <div className="history-time">Current Status</div>
+                            <div className="history-note">No additional history</div>
                         </div>
                     ) : (
                         deliveryStatus.statusHistory.map((item, idx) => (
                             <div key={idx} className="history-item">
                                 <div className="history-status">
-                                    {item.status === 'PAID' ? 'Đã thanh toán' : item.status}
+                                    {item.status === 'PAID' ? 'Paid' : item.status}
                                 </div>
                                 <div className="history-time">{new Date(item.changedAt).toLocaleString('vi-VN')}</div>
-                                <div className="history-note">{item.note || '(Không có ghi chú)'}</div>
+                                <div className="history-note">{item.note || '(No note)'}</div>
                             </div>
                         ))
                     )}
@@ -219,10 +219,10 @@ const DetailDelivery = () => {
         );
     };
 
-    // Render danh sách món ăn
+            // Render food list
     const renderOrderItems = () => {
         if (!order || !order.foodList || order.foodList.length === 0) {
-            return <p style={{padding: '20px', textAlign: 'center', color: '#6c757d'}}>Không có món ăn trong đơn hàng này</p>;
+            return <p style={{padding: '20px', textAlign: 'center', color: '#6c757d'}}>No food items in this order</p>;
         }
 
         return (
@@ -230,16 +230,16 @@ const DetailDelivery = () => {
                 <table className="order-items-table">
                     <thead>
                         <tr>
-                            <th>Món ăn</th>
-                            <th>Giá</th>
-                            <th>Số lượng</th>
-                            <th>Tổng</th>
+                            <th>Food Item</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         {order.foodList.map(item => (
                             <tr key={item.id}>
-                                <td className="item-name-cell">{item.name || 'Không có tên'}</td>
+                                <td className="item-name-cell">{item.name || 'No name'}</td>
                                 <td className="item-price-cell">{Number(item.price).toLocaleString()} $</td>
                                 <td className="item-quantity-cell">{item.quantity}</td>
                                 <td className="item-total-cell">{Number(item.price * item.quantity).toLocaleString()} $</td>
@@ -248,7 +248,7 @@ const DetailDelivery = () => {
                     </tbody>
                 </table>
                 <div className="order-total">
-                    <span>Tổng cộng:</span>
+                    <span>Total:</span>
                     <span>{Number(order.totalPrice).toLocaleString()} $</span>
                 </div>
             </div>
@@ -259,7 +259,7 @@ const DetailDelivery = () => {
     const renderRatingForm = () => {
         return (
             <div className="rating-form">
-                <h3>Bạn đánh giá đơn hàng này như thế nào?</h3>
+                <h3>How do you rate this order?</h3>
                 <div className="rating-stars">
                     {[1, 2, 3, 4, 5].map(star => (
                         <span
@@ -273,7 +273,7 @@ const DetailDelivery = () => {
                 </div>
                 <textarea
                     className="rating-comment"
-                    placeholder="Chia sẻ trải nghiệm của bạn..."
+                    placeholder="Share your experience..."
                     value={ratingComment}
                     onChange={(e) => setRatingComment(e.target.value)}
                     rows={3}
@@ -284,7 +284,7 @@ const DetailDelivery = () => {
                         onClick={submitRating}
                         disabled={ratingSubmitting}
                     >
-                        {ratingSubmitting ? 'Đang gửi...' : 'Gửi đánh giá'}
+                        {ratingSubmitting ? 'Sending...' : 'Submit Rating'}
                     </button>
                 </div>
             </div>
@@ -299,7 +299,7 @@ const DetailDelivery = () => {
             <div className="completion-modal-content">
                 <div className="completion-header">
                     <div className="completion-icon">🎉</div>
-                    <h2 className="completion-title">Đơn hàng đã giao thành công!</h2>
+                    <h2 className="completion-title">Order delivered successfully!</h2>
                 </div>
                 
                 <div className="completion-body">
@@ -310,9 +310,9 @@ const DetailDelivery = () => {
                     </div>
                     
                     <div className="completion-message">
-                        <h3>Chúc mừng bạn! 🎊</h3>
-                        <p>Đơn hàng #{order?.orderNumber || order?.id} đã được giao đến tận tay bạn.</p>
-                        <p className="bon-appetit">Thưởng thức bữa ăn ngon miệng! Bon Appétit! 🍽️</p>
+                        <h3>Congratulations! 🎊</h3>
+                        <p>Order #{order?.orderNumber || order?.id} has been delivered to your doorstep.</p>
+                        <p className="bon-appetit">Enjoy your meal! Bon Appétit! 🍽️</p>
                     </div>
                     
                     <div className="completion-actions">
@@ -324,7 +324,7 @@ const DetailDelivery = () => {
                             }}
                         >
                             <span className="btn-icon">🛒</span>
-                            Tiếp tục mua sắm
+                            Continue Shopping
                         </button>
                         <button 
                             className="close-modal-btn"
@@ -334,7 +334,7 @@ const DetailDelivery = () => {
                             }}
                         >
                             <span className="btn-icon">✕</span>
-                            Đóng
+                            Close
                         </button>
                     </div>
                 </div>
@@ -383,19 +383,19 @@ const DetailDelivery = () => {
         );
     };
 
-    if (loading) return <div className="delivery-loading">Đang tải...</div>;
+    if (loading) return <div className="delivery-loading">Loading...</div>;
     if (error) return <div className="delivery-error">{error}</div>;
 
-    // Lấy tag trạng thái đơn hàng
+            // Get order status tag
     const getStatusTag = (status) => {
         switch (status) {
-            case 'WAITING_PAYMENT': return <span className="status-tag waiting_payment">Chờ thanh toán</span>;
-            case 'PAID': return <span className="status-tag paid">Đã thanh toán</span>;
-            case 'CONFIRMED': return <span className="status-tag confirmed">Đã xác nhận</span>;
-            case 'PREPARING': return <span className="status-tag preparing">Đang chuẩn bị</span>;
-            case 'DELIVERING': return <span className="status-tag delivering">Đang giao</span>;
-            case 'COMPLETED': return <span className="status-tag completed">Hoàn thành</span>;
-            case 'CANCELLED': return <span className="status-tag cancelled">Đã hủy</span>;
+            case 'WAITING_PAYMENT': return <span className="status-tag waiting_payment">Waiting for payment</span>;
+            case 'PAID': return <span className="status-tag paid">Paid</span>;
+            case 'CONFIRMED': return <span className="status-tag confirmed">Confirmed</span>;
+            case 'PREPARING': return <span className="status-tag preparing">Preparing</span>;
+            case 'DELIVERING': return <span className="status-tag delivering">Delivering</span>;
+            case 'COMPLETED': return <span className="status-tag completed">Completed</span>;
+            case 'CANCELLED': return <span className="status-tag cancelled">Cancelled</span>;
             default: return <span className="status-tag">{status}</span>;
         }
     };
@@ -412,37 +412,37 @@ const DetailDelivery = () => {
             )}
             
             <div className="breadcrumb">
-                <span onClick={() => navigate('/')}>Trang chủ</span>
+                <span onClick={() => navigate('/')}>Home</span>
                 <span>•</span>
-                <span onClick={() => navigate('/order-history')}>Lịch sử đơn hàng</span>
+                <span onClick={() => navigate('/order-history')}>Order History</span>
                 <span>•</span>
-                <span>Đơn hàng #{order?.id}</span>
+                <span>Order #{order?.id}</span>
             </div>
             
-            <h1 className="page-title">Chi tiết đơn hàng</h1>
+            <h1 className="page-title">Order Details</h1>
             
             <div className="delivery-content">
-                {/* Cột trái - Danh sách món ăn và Thông tin khách hàng */}
-                <div style={{display: 'flex', flexDirection: 'column', gap: 16, flex: 1}}>
-                    <div className="content-section order-details-section">
-                        <h2 className="section-title">Danh sách món ăn</h2>
-                        {renderOrderItems()}
-                    </div>
-                    {/* Thông tin khách hàng */}
+                                    {/* Left column - Food list and Customer information */}
+                    <div style={{display: 'flex', flexDirection: 'column', gap: 16, flex: 1}}>
+                        <div className="content-section order-details-section">
+                            <h2 className="section-title">Food Items</h2>
+                            {renderOrderItems()}
+                        </div>
+                        {/* Customer information */}
                     <div className="content-section customer-info-section">
-                        <h2 className="section-title">Thông tin khách hàng</h2>
+                        <h2 className="section-title">Customer Information</h2>
                         <div className="info-card">
                             <div className="info-item">
-                                <div className="info-label">Tên:</div>
-                                <div className="info-value">{order?.customer?.fullName || 'Chưa cập nhật tên'}</div>
+                                <div className="info-label">Name:</div>
+                                <div className="info-value">{order?.customer?.fullName || 'Name not updated'}</div>
                             </div>
                             <div className="info-item">
-                                <div className="info-label">Số điện thoại:</div>
-                                <div className="info-value">{order?.customer?.phoneNumber || 'Không có'}</div>
+                                <div className="info-label">Phone Number:</div>
+                                <div className="info-value">{order?.customer?.phoneNumber || 'No phone number'}</div>
                             </div>
                             <div className="info-item">
                                 <div className="info-label">Email:</div>
-                                <div className="info-value">{order?.customer?.email || 'Không có'}</div>
+                                <div className="info-value">{order?.customer?.email || 'No email'}</div>
                             </div>
                         </div>
                     </div>
@@ -450,23 +450,23 @@ const DetailDelivery = () => {
                     {/* Thông tin địa chỉ giao hàng */}
                     {order?.deliveryAddress && (
                         <div className="content-section delivery-info-section">
-                            <h2 className="section-title">Thông tin địa chỉ giao hàng</h2>
+                            <h2 className="section-title">Delivery Address</h2>
                             <div className="info-card">
                                 <div className="info-item">
-                                    <div className="info-label">Người nhận:</div>
-                                    <div className="info-value">{order?.recipientName || 'Không có'}</div>
+                                    <div className="info-label">Recipient:</div>
+                                    <div className="info-value">{order?.recipientName || 'No recipient'}</div>
                                 </div>
                                 <div className="info-item">
-                                    <div className="info-label">Số điện thoại giao hàng:</div>
-                                    <div className="info-value">{order?.recipientPhone || 'Không có'}</div>
+                                    <div className="info-label">Delivery Phone:</div>
+                                    <div className="info-value">{order?.recipientPhone || 'No phone'}</div>
                                 </div>
                                 <div className="info-item">
-                                    <div className="info-label">Địa chỉ giao hàng:</div>
-                                    <div className="info-value">{order?.deliveryAddress || 'Không có'}</div>
+                                    <div className="info-label">Address:</div>
+                                    <div className="info-value">{order?.deliveryAddress || 'No address'}</div>
                                 </div>
                                 {order?.deliveryLatitude && order?.deliveryLongitude && (
                                     <div className="info-item">
-                                        <div className="info-label">Tọa độ:</div>
+                                        <div className="info-label">Coordinates:</div>
                                         <div className="info-value">{order?.deliveryLatitude}, {order?.deliveryLongitude}</div>
                                 </div>
                             )}
@@ -474,24 +474,24 @@ const DetailDelivery = () => {
                     </div>
                     )}
                 </div>
-                {/* Cột phải - Trạng thái và tóm tắt đơn hàng */}
+                                    {/* Right column - Status and order summary */}
                 <div className="right-column">
                     {/* Card trạng thái giao hàng */}
                     <div className="content-section delivery-status-section">
-                        <h2 className="section-title">Trạng thái giao hàng</h2>
+                        <h2 className="section-title">Delivery Status</h2>
                         <div className="delivery-status-card">
                             <div className="current-status-header">
-                                <span className="current-status-label">Trạng thái hiện tại:</span>
+                                <span className="current-status-label">Current Status:</span>
                                 <span className="current-status-value">
                                     {(() => {
                                         if (!deliveryStatus) {
-                                            return 'Đang tải...';
+                                            return 'Loading...';
                                         }
                                         if (deliveryStatus.deliveryStatus === 'PAID') {
-                                            return 'Đã thanh toán';
+                                            return 'Paid';
                                         } else {
                                             const currentStatusIndex = statusSteps.findIndex(s => s.status === deliveryStatus.deliveryStatus);
-                                            return currentStatusIndex !== -1 ? statusSteps[currentStatusIndex].label : deliveryStatus.deliveryStatus || 'Không xác định';
+                                            return currentStatusIndex !== -1 ? statusSteps[currentStatusIndex].label : deliveryStatus.deliveryStatus || 'Unknown';
                                         }
                                     })()}
                                 </span>
@@ -507,7 +507,7 @@ const DetailDelivery = () => {
                                     borderRadius: '4px',
                                     border: '1px solid #f5c6cb'
                                 }}>
-                                    Có lỗi xảy ra vui lòng tải lại trang!
+                                    An error occurred, please reload the page!
                                 </div>
                             )}
                             
@@ -550,7 +550,7 @@ const DetailDelivery = () => {
                                                 key={index}
                                                 className={`progress-step ${isActive ? 'active' : ''} ${isCurrent ? 'current' : ''}`}
                                                 onClick={() => setShowStatusDetails(true)}
-                                                title="Xem lịch sử trạng thái"
+                                                title="View status history"
                                             >
                                                 <div className="step-icon">{step.icon}</div>
                                                 <div className="step-label">{step.label}</div>
@@ -565,39 +565,39 @@ const DetailDelivery = () => {
                                     className="history-button"
                                     onClick={() => setShowStatusDetails(true)}
                                 >
-                                    Xem lịch sử
+                                    View History
                                 </button>
                                 {deliveryStatus?.deliveryStatus === 'DELIVERED' && (
                                     <button 
                                         className="rating-button"
                                         onClick={() => setShowRatingModal(true)}
                                     >
-                                        Đánh giá
+                                        Rate Order
                                     </button>
                                 )}
                             </div>
                         </div>
                     </div>
                     
-                    {/* Card tóm tắt đơn hàng */}
+                                            {/* Order summary card */}
                     <div className="content-section order-summary-section">
-                        <h2 className="section-title">Tóm tắt đơn hàng</h2>
+                        <h2 className="section-title">Order Summary</h2>
                         <div className="summary-card">
                             <div className="summary-item">
-                                <div className="summary-label">Mã đơn hàng:</div>
+                                <div className="summary-label">Order ID:</div>
                                 <div className="summary-value">#{order?.orderNumber || order?.id}</div>
                             </div>
                             <div className="summary-item">
-                                <div className="summary-label">Ngày đặt:</div>
+                                <div className="summary-label">Order Date:</div>
                                 <div className="summary-value">{new Date(order?.createdAt).toLocaleString('vi-VN')}</div>
                             </div>
                             {/* <div className="summary-item">
-                                <div className="summary-label">Trạng thái:</div>
+                                <div className="summary-label">Status:</div>
                                 <div className="summary-value">{getStatusTag(order?.status)}</div>
                             </div> */}
                             {order?.paymentMethod && (
                                 <div className="summary-item">
-                                    <div className="summary-label">Phương thức thanh toán:</div>
+                                    <div className="summary-label">Payment Method:</div>
                                     <div className="summary-value">{order.paymentMethod.name}</div>
                                 </div>
                             )}
@@ -605,7 +605,7 @@ const DetailDelivery = () => {
                             <div className="summary-divider"></div>
                             
                             {/* <div className="summary-total">
-                                <div className="summary-label">Tổng cộng:</div>
+                                <div className="summary-label">Total:</div>
                                 <div className="summary-value total-value">${Number(order?.totalPrice).toLocaleString()}</div>
                             </div> */}
                             
@@ -614,21 +614,21 @@ const DetailDelivery = () => {
                                     className="back-btn"
                                     onClick={() => navigate('/order-history')}
                                 >
-                                    Quay lại
+                                    Back
                                 </button>
                                 <button
                                     className="home-btn"
                                     onClick={() => navigate('/')}
                                 >
-                                    Trang chủ
+                                    Home
                                 </button>
                             </div>
                         </div>
                         
-                        {/* Ghi chú đơn hàng */}
+                        {/* Order note */}
                         {order?.note && (
                             <div className="note-card">
-                                <h3 className="note-title">Ghi chú đơn hàng</h3>
+                                <h3 className="note-title">Order Note</h3>
                                 <p className="note-content">{order.note}</p>
                             </div>
                         )}
@@ -641,7 +641,7 @@ const DetailDelivery = () => {
                 <div className="modal-overlay" onClick={() => setShowRatingModal(false)}>
                     <div className="modal-container" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h3>Đánh giá đơn hàng</h3>
+                            <h3>Rate Order</h3>
                             <button className="modal-close" onClick={() => setShowRatingModal(false)}>×</button>
                         </div>
                         <div className="modal-content">

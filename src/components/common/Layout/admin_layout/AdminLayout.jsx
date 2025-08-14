@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate, NavLink } from 'react-router-dom';
 import { validatePhoneNumber } from '../../../../utils/phoneValidation';
+import { DashboardProvider } from '../../../../contexts/DashboardContext';
 import {
   AppBar,
   Toolbar,
@@ -48,6 +49,12 @@ import RequestPageIcon from '@mui/icons-material/RequestPage';
 import PersonIcon from '@mui/icons-material/Person';
 import EditIcon from '@mui/icons-material/Edit';
 import LogoutIcon from '@mui/icons-material/Logout';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
+import TakeoutDiningIcon from '@mui/icons-material/TakeoutDining';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LockIcon from '@mui/icons-material/Lock';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
@@ -58,7 +65,7 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import CheckIcon from '@mui/icons-material/Check';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PaymentIcon from '@mui/icons-material/Payment';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import SellIcon from '@mui/icons-material/Sell';
 import KeyIcon from '@mui/icons-material/Key';
 import axios from 'axios';
 import './AdminLayout.css';
@@ -228,6 +235,9 @@ function AdminLayoutContent() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
   const intervalRef = useRef(null);
+
+  // Submenu states
+  const [ordersSubmenuOpen, setOrdersSubmenuOpen] = useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -590,12 +600,35 @@ function AdminLayoutContent() {
         {
           label: 'Orders',
           icon: <ReceiptLongIcon />,
-          to: '/admin/orders',
-
+          hasSubmenu: true,
+          submenuOpen: ordersSubmenuOpen,
+          toggleSubmenu: () => setOrdersSubmenuOpen(!ordersSubmenuOpen),
+          submenuItems: [
+            // {
+            //   label: 'Overview',
+            //   icon: <ReceiptLongIcon />,
+            //   to: '/admin/orders',
+            // },
+            {
+              label: 'Delivery',
+              icon: <DeliveryDiningIcon />,
+              to: '/admin/orders',
+            },
+            {
+              label: 'Dine-In',
+              icon: <RestaurantIcon />,
+              to: '/admin/orders/dine-in',
+            },
+            {
+              label: 'Take-Away',
+              icon: <TakeoutDiningIcon />,
+              to: '/admin/orders/take-away',
+            },
+          ],
         },
         {
           label: 'Vouchers',
-          icon: <LocalOfferIcon />,
+          icon: <SellIcon />,
           to: '/admin/vouchers',
           new: true,
         },
@@ -651,47 +684,93 @@ function AdminLayoutContent() {
             <Typography variant="caption" sx={{ pl: sidebarOpen ? 3 : 1, pt: 2, color: '#8e99af', fontWeight: 600, letterSpacing: 1, display: sidebarOpen ? 'block' : 'none' }}>{group.label}</Typography>
             <List dense>
               {group.items.map((item) => (
-                item.to ? (
-                  <ListItemButton
-                    key={item.label}
-                    component={NavLink}
-                    to={item.to}
-                    sx={{
-                      borderRadius: 2,
-                      mx: 1,
-                      my: 0.5,
-                      minHeight: 44,
-                      justifyContent: sidebarOpen ? 'flex-start' : 'center',
-                      px: sidebarOpen ? 2 : 1,
-                      '&.active': {
-                        bgcolor: '#e6f4ef',
-                        color: '#2ecc7a',
-                        fontWeight: 700,
-                        '& .MuiListItemIcon-root': { color: '#2ecc7a' },
-                      },
-                    }}
-                  >
-                    <ListItemIcon sx={{ minWidth: 0, mr: sidebarOpen ? 2 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
-                    {sidebarOpen && <ListItemText primary={item.label} />}
-                    {item.new && sidebarOpen && <Chip label="New" color="success" size="small" icon={<FiberNewIcon />} sx={{ ml: 1 }} />}
-                  </ListItemButton>
-                ) : (
-                  <ListItemButton
-                    key={item.label}
-                    onClick={item.action}
-                    sx={{
-                      borderRadius: 2,
-                      mx: 1,
-                      my: 0.5,
-                      minHeight: 44,
-                      justifyContent: sidebarOpen ? 'flex-start' : 'center',
-                      px: sidebarOpen ? 2 : 1,
-                    }}
-                  >
-                    <ListItemIcon sx={{ minWidth: 0, mr: sidebarOpen ? 2 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
-                    {sidebarOpen && <ListItemText primary={item.label} />}
-                  </ListItemButton>
-                )
+                <React.Fragment key={item.label}>
+                  {item.hasSubmenu ? (
+                    <>
+                      <ListItemButton
+                        onClick={item.toggleSubmenu}
+                        sx={{
+                          borderRadius: 2,
+                          mx: 1,
+                          my: 0.5,
+                          minHeight: 44,
+                          justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                          px: sidebarOpen ? 2 : 1,
+                        }}
+                      >
+                        <ListItemIcon sx={{ minWidth: 0, mr: sidebarOpen ? 2 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
+                        {sidebarOpen && <ListItemText primary={item.label} />}
+                        {sidebarOpen && (item.submenuOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />)}
+                      </ListItemButton>
+                      <MuiCollapse in={item.submenuOpen && sidebarOpen} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                          {item.submenuItems.map((subItem) => (
+                            <ListItemButton
+                              key={subItem.label}
+                              component={NavLink}
+                              to={subItem.to}
+                              sx={{
+                                borderRadius: 2,
+                                mx: 1,
+                                my: 0.5,
+                                minHeight: 40,
+                                pl: 4,
+                                pr: 2,
+                                '&.active': {
+                                  bgcolor: '#e6f4ef',
+                                  color: '#2ecc7a',
+                                  fontWeight: 700,
+                                  '& .MuiListItemIcon-root': { color: '#2ecc7a' },
+                                },
+                              }}
+                            >
+                              <ListItemIcon sx={{ minWidth: 0, mr: 2, justifyContent: 'center' }}>{subItem.icon}</ListItemIcon>
+                              <ListItemText primary={subItem.label} />
+                            </ListItemButton>
+                          ))}
+                        </List>
+                      </MuiCollapse>
+                    </>
+                  ) : item.to ? (
+                    <ListItemButton
+                      component={NavLink}
+                      to={item.to}
+                      sx={{
+                        borderRadius: 2,
+                        mx: 1,
+                        my: 0.5,
+                        minHeight: 44,
+                        justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                        px: sidebarOpen ? 2 : 1,
+                        '&.active': {
+                          bgcolor: '#e6f4ef',
+                          color: '#2ecc7a',
+                          fontWeight: 700,
+                          '& .MuiListItemIcon-root': { color: '#2ecc7a' },
+                        },
+                      }}
+                    >
+                      <ListItemIcon sx={{ minWidth: 0, mr: sidebarOpen ? 2 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
+                      {sidebarOpen && <ListItemText primary={item.label} />}
+                      {item.new && sidebarOpen && <Chip label="New" color="success" size="small" icon={<FiberNewIcon />} sx={{ ml: 1 }} />}
+                    </ListItemButton>
+                  ) : (
+                    <ListItemButton
+                      onClick={item.action}
+                      sx={{
+                        borderRadius: 2,
+                        mx: 1,
+                        my: 0.5,
+                        minHeight: 44,
+                        justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                        px: sidebarOpen ? 2 : 1,
+                      }}
+                    >
+                      <ListItemIcon sx={{ minWidth: 0, mr: sidebarOpen ? 2 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
+                      {sidebarOpen && <ListItemText primary={item.label} />}
+                    </ListItemButton>
+                  )}
+                </React.Fragment>
               ))}
             </List>
           </Box>
@@ -867,12 +946,12 @@ function AdminLayoutContent() {
               </ListItemIcon>
               Profile
             </MenuItem>
-            <MenuItem onClick={handleMenuClose}>
+            {/* <MenuItem onClick={handleMenuClose}>
               <ListItemIcon>
                 <SettingsIcon fontSize="small" />
               </ListItemIcon>
               Settings
-            </MenuItem>
+            </MenuItem> */}
             <Divider sx={{ my: 1 }} />
             <MenuItem onClick={handleLogout}>
               <ListItemIcon>
@@ -1372,7 +1451,9 @@ function AdminLayoutContent() {
         }}
       >
         <Toolbar />
-        <Outlet />
+        <DashboardProvider>
+          <Outlet />
+        </DashboardProvider>
       </Box>
     </Box>
   );

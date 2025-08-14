@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Delivery.css";
-import { FaCheck, FaTimes, FaTruck, FaMotorcycle, FaUtensils, FaSpinner, FaSearch, FaSync } from "react-icons/fa";
+import { FaCheck, FaTimes, FaTruck, FaMotorcycle, FaUtensils, FaSpinner, FaSearch, FaSync, FaUser, FaDollarSign, FaClock, FaMapMarkerAlt } from "react-icons/fa";
 import { useNotification } from "../../../../contexts/NotificationContext";
 
 const DELIVERY_STATUS = [
-    { key: "PREPARING", label: "Đang chuẩn bị", color: "#ffa502", icon: <FaUtensils /> },
-    { key: "WAITING_FOR_SHIPPER", label: "Chờ shipper", color: "#2980b9", icon: <FaTruck /> },
-    { key: "DELIVERING", label: "Đang giao hàng", color: "#2196f3", icon: <FaMotorcycle /> },
-    { key: "DELIVERED", label: "Đã giao hàng", color: "#4caf50", icon: <FaCheck /> },
-    { key: "CANCELLED", label: "Đã hủy", color: "#f44336", icon: <FaTimes /> }
+    { key: "PREPARING", label: "Preparing", color: "#ffa502", icon: <FaUtensils /> },
+    { key: "WAITING_FOR_SHIPPER", label: "Waiting for Shipper", color: "#2980b9", icon: <FaTruck /> },
+    { key: "DELIVERING", label: "Delivering", color: "#2196f3", icon: <FaMotorcycle /> },
+    { key: "DELIVERED", label: "Delivered", color: "#4caf50", icon: <FaCheck /> },
+    { key: "CANCELLED", label: "Cancelled", color: "#f44336", icon: <FaTimes /> }
 ];
 
 export default function Delivery_Status() {
@@ -25,9 +25,11 @@ export default function Delivery_Status() {
     const [filter, setFilter] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
     const [refreshInterval, setRefreshInterval] = useState(60); // seconds
+    const [currentUser, setCurrentUser] = useState(null);
     const token = localStorage.getItem("token");
 
     useEffect(() => {
+        fetchCurrentUser();
         fetchOrders();
         const interval = setInterval(() => {
             fetchOrders(false);
@@ -36,15 +38,26 @@ export default function Delivery_Status() {
         // eslint-disable-next-line
     }, [refreshInterval]);
 
+    const fetchCurrentUser = async () => {
+        try {
+            const response = await axios.get("http://localhost:8080/api/auth/me", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setCurrentUser(response.data);
+        } catch (error) {
+            console.error("Failed to fetch current user:", error);
+        }
+    };
+
     const fetchOrders = async (showLoading = true) => {
         if (showLoading) setLoading(true);
         try {
-            // Lấy tất cả đơn hàng
+            // Get all orders
             const response = await axios.get("http://localhost:8080/api/orders", {
                 headers: { Authorization: `Bearer ${token}` }
             });
             
-            // Lọc các đơn hàng có deliveryStatus thuộc 3 trạng thái giao hàng
+            // Filter orders with delivery status in 3 delivery states
             const allOrders = response.data.filter(order => 
                 order.deliveryStatus === "PREPARING" || 
                 order.deliveryStatus === "WAITING_FOR_SHIPPER" || 
@@ -59,7 +72,7 @@ export default function Delivery_Status() {
         } catch (error) {
             console.error("Failed to fetch orders:", error);
             if (showLoading) {
-                showError("Không thể tải danh sách đơn hàng!");
+                showError("Unable to load order list!");
             }
         } finally {
             if (showLoading) setLoading(false);
@@ -88,6 +101,17 @@ export default function Delivery_Status() {
 
     const handleUpdateDeliveryStatus = async () => {
         if (!selectedOrder || !actionToConfirm) return;
+        
+        // Check if staff is the creator/manager of this order
+        if (selectedOrder.staff && currentUser && selectedOrder.staff.id !== currentUser.id) {
+            const confirmMessage = `⚠️ WARNING: This order is managed by ${selectedOrder.staff.name} (${selectedOrder.staff.email}). Are you sure you want to update the status?`;
+            if (!window.confirm(confirmMessage)) {
+                setShowConfirmation(false);
+                setActionToConfirm(null);
+                return;
+            }
+        }
+        
         setUpdating(true);
         try {
             const params = {
@@ -96,7 +120,7 @@ export default function Delivery_Status() {
             };
             if (actionToConfirm === "CANCELLED") {
                 if (!cancelReason.trim()) {
-                    showWarning("Vui lòng nhập lý do hủy đơn hàng!");
+                    showWarning("Please enter a reason for cancelling the order!");
                     setUpdating(false);
                     return;
                 }
@@ -115,13 +139,13 @@ export default function Delivery_Status() {
             setShowConfirmation(false);
             setActionToConfirm(null);
 
-            // Refresh danh sách đơn hàng sau khi cập nhật
+            // Refresh order list after update
             await fetchOrders(false);
 
-            showSuccess(`Đã cập nhật trạng thái đơn hàng thành ${getStatusLabel(actionToConfirm)}!`);
+            showSuccess(`Order status updated to ${getStatusLabel(actionToConfirm)}!`);
         } catch (error) {
             console.error("Failed to update order status:", error);
-            showError("Không thể cập nhật trạng thái đơn hàng!");
+            showError("Unable to update order status!");
         } finally {
             setUpdating(false);
         }
@@ -145,7 +169,7 @@ export default function Delivery_Status() {
     const formatDate = (dateString) => {
         if (!dateString) return "-";
         const date = new Date(dateString);
-        return date.toLocaleString("vi-VN", {
+        return date.toLocaleString("en-US", {
             day: "2-digit",
             month: "2-digit",
             year: "numeric",
@@ -171,53 +195,53 @@ export default function Delivery_Status() {
             case "PREPARING":
                 return (
                     <button
-                        className="action-btn"
-                        title="Chuyển sang trạng thái chờ shipper"
+                        className="staff-action-btn waiting"
+                        title="Move to waiting for shipper status"
                         onClick={(e) => {
                             e.stopPropagation();
                             confirmAction("WAITING_FOR_SHIPPER", order);
                         }}
                     >
-                        <FaTruck /> Chờ shipper
+                        <FaTruck /> Wait for Shipper
                     </button>
                 );
             case "WAITING_FOR_SHIPPER":
                 return (
                     <button
-                        className="action-btn"
-                        title="Shipper đã lấy hàng, bắt đầu giao"
+                        className="staff-action-btn delivering"
+                        title="Shipper has picked up, start delivery"
                         onClick={(e) => {
                             e.stopPropagation();
                             confirmAction("DELIVERING", order);
                         }}
                     >
-                        <FaMotorcycle /> Đang giao
+                        <FaMotorcycle /> Delivering
                     </button>
                 );
             case "DELIVERING":
                 return (
-                    <>
+                    <div className="staff-action-group">
                         <button
-                            className="action-btn success-btn"
-                            title="Xác nhận đã giao hàng thành công"
+                            className="staff-action-btn success"
+                            title="Confirm successful delivery"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 confirmAction("DELIVERED", order);
                             }}
                         >
-                            <FaCheck /> Đã giao
+                            <FaCheck /> Delivered
                         </button>
                         <button
-                            className="action-btn cancel-btn"
-                            title="Hủy đơn hàng"
+                            className="staff-action-btn cancel"
+                            title="Cancel order"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 confirmAction("CANCELLED", order);
                             }}
                         >
-                            <FaTimes /> Hủy đơn
+                            <FaTimes /> Cancel
                         </button>
-                    </>
+                    </div>
                 );
             default:
                 return null;
@@ -230,67 +254,67 @@ export default function Delivery_Status() {
         let actionText = "";
         switch (actionToConfirm) {
             case "PREPARING":
-                actionText = "chuyển sang Đang chuẩn bị";
+                actionText = "change to Preparing";
                 break;
             case "WAITING_FOR_SHIPPER":
-                actionText = "chuyển sang Chờ shipper";
+                actionText = "change to Waiting for Shipper";
                 break;
             case "DELIVERING":
-                actionText = "chuyển sang Đang giao hàng";
+                actionText = "change to Delivering";
                 break;
             case "DELIVERED":
-                actionText = "xác nhận Đã giao hàng";
+                actionText = "confirm as Delivered";
                 break;
             case "CANCELLED":
-                actionText = "hủy đơn hàng";
+                actionText = "cancel the order";
                 break;
             default:
                 actionText = actionToConfirm;
         }
 
         return (
-            <div className="confirmation-dialog-overlay" onClick={cancelAction}>
-                <div className="confirmation-dialog" onClick={(e) => e.stopPropagation()}>
-                    <div className="confirmation-dialog-title">
-                        {actionToConfirm === "CANCELLED" ? "Xác nhận hủy đơn hàng" : "Xác nhận cập nhật trạng thái"}
+            <div className="staff-confirmation-overlay" onClick={cancelAction}>
+                <div className="staff-confirmation-dialog" onClick={(e) => e.stopPropagation()}>
+                    <div className="staff-confirmation-header">
+                        {actionToConfirm === "CANCELLED" ? "Confirm Order Cancellation" : "Confirm Status Update"}
                     </div>
-                    <div className="confirmation-dialog-content">
-                        <p>Bạn có chắc chắn muốn {actionText} cho đơn hàng <strong>#{selectedOrder?.orderNumber}</strong>?</p>
+                    <div className="staff-confirmation-content">
+                        <p>Are you sure you want to {actionText} for order <strong>#{selectedOrder?.orderNumber}</strong>?</p>
 
                         {actionToConfirm === "CANCELLED" ? (
-                            <div className="form-group mt-15">
-                                <label htmlFor="cancelReason">Lý do hủy đơn:</label>
+                            <div className="staff-form-group">
+                                <label htmlFor="cancelReason">Cancellation Reason:</label>
                                 <textarea
                                     id="cancelReason"
                                     value={cancelReason}
                                     onChange={(e) => setCancelReason(e.target.value)}
-                                    placeholder="Nhập lý do hủy đơn hàng..."
+                                    placeholder="Enter reason for cancelling the order..."
                                     rows="3"
                                     className={!cancelReason.trim() ? "required-field" : ""}
                                 />
                                 {!cancelReason.trim() && (
-                                    <small className="text-error">Vui lòng nhập lý do hủy đơn hàng</small>
+                                    <small className="staff-text-error">Please enter a reason for cancelling the order</small>
                                 )}
                             </div>
                         ) : (
-                            <div className="form-group mt-15">
-                                <label htmlFor="deliveryNote">Ghi chú giao hàng:</label>
+                            <div className="staff-form-group">
+                                <label htmlFor="deliveryNote">Delivery Note:</label>
                                 <textarea
                                     id="deliveryNote"
                                     value={deliveryNote}
                                     onChange={(e) => setDeliveryNote(e.target.value)}
-                                    placeholder="Ghi chú giao hàng (nếu có)..."
+                                    placeholder="Delivery note (if any)..."
                                     rows="3"
                                 />
                             </div>
                         )}
                     </div>
-                    <div className="confirmation-dialog-actions">
-                        <button className="btn-cancel" onClick={cancelAction} disabled={updating}>
-                            Hủy bỏ
+                    <div className="staff-confirmation-actions">
+                        <button className="staff-btn-cancel" onClick={cancelAction} disabled={updating}>
+                            Cancel
                         </button>
                         <button
-                            className="btn-confirm"
+                            className="staff-btn-confirm"
                             style={{ backgroundColor: actionToConfirm === "CANCELLED" ? "#f44336" : "#4caf50" }}
                             onClick={handleUpdateDeliveryStatus}
                             disabled={
@@ -299,11 +323,11 @@ export default function Delivery_Status() {
                             }
                         >
                             {updating ? (
-                                <><div className="spinner-small"></div> Đang xử lý...</>
+                                <><div className="staff-spinner-small"></div> Processing...</>
                             ) : (
                                 <>
                                     {actionToConfirm === "CANCELLED" ? <FaTimes /> : <FaCheck />}
-                                    {" Xác nhận"}
+                                    {" Confirm"}
                                 </>
                             )}
                         </button>
@@ -313,23 +337,23 @@ export default function Delivery_Status() {
         );
     };
 
-    // Lọc đơn hàng theo trạng thái và từ khóa tìm kiếm
+    // Filter orders by status and search term
     const ALLOWED_STATUS = ["PREPARING", "WAITING_FOR_SHIPPER", "DELIVERING"];
 
     const filteredOrders = orders.filter(order => {
-        // Lọc theo trạng thái giao hàng
+        // Filter by delivery status
         let statusMatch = false;
         if (filter === "all") {
-            // Hiển thị tất cả đơn hàng có deliveryStatus thuộc 3 trạng thái giao hàng
+            // Show all orders with delivery status in 3 delivery states
             statusMatch = ALLOWED_STATUS.includes(order.deliveryStatus);
         } else {
-            // Lọc theo trạng thái cụ thể
+            // Filter by specific status
             statusMatch = order.deliveryStatus === filter;
         }
         
         if (!statusMatch) return false;
 
-        // Lọc theo từ khóa tìm kiếm (nếu có)
+        // Filter by search term (if any)
         if (searchTerm.trim()) {
             const searchLower = searchTerm.toLowerCase();
             const searchMatch = (
@@ -343,237 +367,330 @@ export default function Delivery_Status() {
         return true;
     });
 
+    const getOrderStats = () => {
+        const preparing = orders.filter(o => o.deliveryStatus === 'PREPARING').length;
+        const waiting = orders.filter(o => o.deliveryStatus === 'WAITING_FOR_SHIPPER').length;
+        const delivering = orders.filter(o => o.deliveryStatus === 'DELIVERING').length;
+        
+        return { preparing, waiting, delivering };
+    };
 
+    const stats = getOrderStats();
 
     return (
-        <div className="delivery-container">
-            <div className="delivery-header">
-                <h2>Quản lý trạng thái giao hàng</h2>
-                <p style={{color: '#666', margin: '5px 0 0 0', fontSize: '14px'}}>
-                    Cập nhật trạng thái giao hàng cho khách hàng
-                </p>
-
-                <div className="delivery-controls">
-                    <div className="search-box">
-                        <FaSearch className="search-icon" />
-                        <input
-                            type="text"
-                            placeholder="Tìm kiếm theo mã đơn, khách hàng..."
-                            value={searchTerm}
-                            onChange={handleSearchChange}
-                            className="search-input"
-                        />
-                    </div>
-
-                    <div className="refresh-controls">
-                        <button className="refresh-btn" onClick={handleManualRefresh} title="Làm mới dữ liệu">
-                            <FaSync className={loading ? "spinning" : ""} /> Làm mới
-                        </button>
-
-                        <div className="refresh-interval">
-                            <span>Tự động làm mới:</span>
-                            <select
-                                value={refreshInterval}
-                                onChange={(e) => handleRefreshIntervalChange(Number(e.target.value))}
-                            >
-                                <option value="30">30 giây</option>
-                                <option value="60">1 phút</option>
-                                <option value="300">5 phút</option>
-                                <option value="0">Tắt</option>
-                            </select>
-                        </div>
-                    </div>
+        <div className="staff-delivery-container">
+            {/* Header */}
+            <div className="staff-delivery-header">
+                <div className="staff-header-content">
+                    <h1 className="staff-page-title">
+                        <FaTruck className="staff-title-icon" />
+                        Delivery Status Management
+                    </h1>
+                    <p className="staff-subtitle">Update delivery status for customers</p>
                 </div>
-
-                <div className="delivery-filters">
-                    <button
-                        className={`filter-btn ${filter === "all" ? "active" : ""}`}
-                        onClick={() => setFilter("all")}
+                <div className="staff-header-actions">
+                    <button 
+                        className="staff-refresh-btn"
+                        onClick={handleManualRefresh}
+                        disabled={loading}
                     >
-                        Tất cả ({orders.length})
-                    </button>
-                    <button
-                        className={`filter-btn ${filter === "PREPARING" ? "active" : ""}`}
-                        onClick={() => setFilter("PREPARING")}
-                    >
-                        Đang chuẩn bị ({orders.filter(o => o.deliveryStatus === "PREPARING").length})
-                    </button>
-                    <button
-                        className={`filter-btn ${filter === "WAITING_FOR_SHIPPER" ? "active" : ""}`}
-                        onClick={() => setFilter("WAITING_FOR_SHIPPER")}
-                    >
-                        Chờ shipper ({orders.filter(o => o.deliveryStatus === "WAITING_FOR_SHIPPER").length})
-                    </button>
-                    <button
-                        className={`filter-btn ${filter === "DELIVERING" ? "active" : ""}`}
-                        onClick={() => setFilter("DELIVERING")}
-                    >
-                        Đang giao ({orders.filter(o => o.deliveryStatus === "DELIVERING").length})
+                        <FaSync className={loading ? 'spinning' : ''} />
+                        Refresh
                     </button>
                 </div>
             </div>
 
-            <div className="delivery-content">
-                <div className="orders-list">
-                    <div className="table-container">
-                        {loading ? (
-                            <div className="loading-state">
-                                <div className="spinner"></div>
-                                <div>Đang tải dữ liệu...</div>
-                            </div>
-                        ) : filteredOrders.length === 0 ? (
-                            <div className="empty-state">
-                                <div className="empty-state-icon">🚚</div>
-                                <div className="empty-state-text">
-                                    {searchTerm ? "Không tìm thấy đơn hàng nào phù hợp" : "Không có đơn hàng nào"}
-                                </div>
-                            </div>
-                        ) : (
-                            <table className="delivery-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Mã đơn</th>
-                                        <th>Khách hàng</th>
-                                        <th>Sản phẩm</th>
-                                        <th>Tổng tiền</th>
-                                        <th>Trạng thái</th>
-                                        <th>Thời gian</th>
-                                        <th>Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredOrders.map((order, idx) => (
-                                        <tr
-                                            key={order.id}
-                                            className={selectedOrder && selectedOrder.id === order.id ? "selected-row" : ""}
-                                            onClick={() => handleSelectOrder(order)}
-                                        >
-                                            <td>{idx + 1}</td>
-                                            <td>#{order.orderNumber}</td>
-                                            <td>
-                                                <div className="customer-info">
-                                                    <div className="customer-name">{order.customer?.fullName || 'Không có tên'}</div>
-                                                    <div className="customer-email">{order.customer?.email || 'Không có email'}</div>
-                                                    {order.customer?.phoneNumber && (
-                                                        <div className="customer-phone">{order.customer.phoneNumber}</div>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <ul className="food-list">
-                                                    {order.foodList?.map(food => (
-                                                        <li key={food.id}>
-                                                            {food.name} <b>x{food.quantity}</b>
-                                                            <span className="food-price"> ({Number(food.price).toLocaleString()} $)</span>
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </td>
-                                            <td className="price-column">${Number(order.totalPrice).toFixed(2)}</td>
-                                            <td>
-                                                <span
-                                                    className="status-badge"
-                                                    style={{ backgroundColor: getStatusColor(order.deliveryStatus) }}
-                                                >
-                                                    {getStatusIcon(order.deliveryStatus)} {getStatusLabel(order.deliveryStatus)}
-                                                </span>
-                                            </td>
-                                            <td className="date-column">{formatDate(order.createdAt)}</td>
-                                            <td className="actions-column">
-                                                {renderActions(order)}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
+            {/* Stats Overview */}
+            <div className="staff-stats-overview">
+                <div className="staff-stat-card preparing">
+                    <div className="staff-stat-icon">
+                        <FaUtensils />
+                    </div>
+                    <div className="staff-stat-content">
+                        <div className="staff-stat-number">{stats.preparing}</div>
+                        <div className="staff-stat-label">Preparing</div>
+                    </div>
+                </div>
+                <div className="staff-stat-card waiting">
+                    <div className="staff-stat-icon">
+                        <FaTruck />
+                    </div>
+                    <div className="staff-stat-content">
+                        <div className="staff-stat-number">{stats.waiting}</div>
+                        <div className="staff-stat-label">Waiting for Shipper</div>
+                    </div>
+                </div>
+                <div className="staff-stat-card delivering">
+                    <div className="staff-stat-icon">
+                        <FaMotorcycle />
+                    </div>
+                    <div className="staff-stat-content">
+                        <div className="staff-stat-number">{stats.delivering}</div>
+                        <div className="staff-stat-label">Delivering</div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Filters */}
+            <div className="staff-filters">
+                <div className="staff-filter-group">
+                    <div className="staff-search-wrapper">
+                        <FaSearch className="staff-search-icon" />
+                        <input
+                            type="text"
+                            placeholder="Search by order number, customer..."
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            className="staff-search-input"
+                        />
                     </div>
                 </div>
 
-                {selectedOrder && (
-                    <div className="order-detail">
-                        <div className="order-detail-header">
-                            <h3>Chi tiết đơn hàng #{selectedOrder.orderNumber}</h3>
-                        </div>
-                        <div className="order-detail-content">
-                            <div className="customer-info">
-                                <h4>Thông tin khách hàng</h4>
-                                <div className="info-row"><span>Họ tên:</span> {selectedOrder.customer?.fullName || "Không có tên"}</div>
-                                <div className="info-row"><span>Email:</span> {selectedOrder.customer?.email || "Không có email"}</div>
-                                <div className="info-row"><span>Điện thoại:</span> {selectedOrder.customer?.phoneNumber || "Không có số điện thoại"}</div>
-                                
-                                <h4 style={{marginTop: '15px', marginBottom: '10px', color: '#333'}}>Thông tin giao hàng</h4>
-                                <div className="info-row"><span>Người nhận:</span> {selectedOrder.recipientName || "Không có tên người nhận"}</div>
-                                <div className="info-row"><span>SĐT giao hàng:</span> {selectedOrder.recipientPhone || "Không có SĐT"}</div>
-                                <div className="info-row"><span>Địa chỉ giao hàng:</span> {selectedOrder.deliveryAddress || "Không có địa chỉ giao hàng"}</div>
+                <div className="staff-filter-group">
+                    <label className="staff-filter-label">Auto Refresh:</label>
+                    <select
+                        value={refreshInterval}
+                        onChange={(e) => handleRefreshIntervalChange(Number(e.target.value))}
+                        className="staff-filter-select"
+                    >
+                        <option value="30">30 seconds</option>
+                        <option value="60">1 minute</option>
+                        <option value="300">5 minutes</option>
+                        <option value="0">Off</option>
+                    </select>
+                </div>
+            </div>
+
+            {/* Status Tabs */}
+            <div className="staff-status-tabs">
+                <button
+                    className={`staff-status-tab ${filter === "all" ? "active" : ""}`}
+                    onClick={() => setFilter("all")}
+                >
+                    All ({orders.length})
+                </button>
+                <button
+                    className={`staff-status-tab preparing ${filter === "PREPARING" ? "active" : ""}`}
+                    onClick={() => setFilter("PREPARING")}
+                >
+                    <FaUtensils /> Preparing ({stats.preparing})
+                </button>
+                <button
+                    className={`staff-status-tab waiting ${filter === "WAITING_FOR_SHIPPER" ? "active" : ""}`}
+                    onClick={() => setFilter("WAITING_FOR_SHIPPER")}
+                >
+                    <FaTruck /> Waiting for Shipper ({stats.waiting})
+                </button>
+                <button
+                    className={`staff-status-tab delivering ${filter === "DELIVERING" ? "active" : ""}`}
+                    onClick={() => setFilter("DELIVERING")}
+                >
+                    <FaMotorcycle /> Delivering ({stats.delivering})
+                </button>
+            </div>
+
+            {/* Content */}
+            <div className="staff-content">
+                <div className="staff-content-layout">
+                    {/* Orders List */}
+                    <div className="staff-orders-section">
+                        {loading ? (
+                            <div className="staff-loading-state">
+                                <div className="staff-spinner"></div>
+                                <div>Loading data...</div>
                             </div>
-                            <div className="order-info">
-                                <h4>Thông tin đơn hàng</h4>
-                                <div className="info-row"><span>Mã đơn:</span> #{selectedOrder.orderNumber}</div>
-                                <div className="info-row"><span>Tổng tiền:</span> ${Number(selectedOrder.totalPrice).toFixed(2)}</div>
-                                {selectedOrder.voucherCode && (
-                                    <div className="info-row voucher-info">
-                                        <span>Voucher:</span> 
-                                        <span className="voucher-code">{selectedOrder.voucherCode}</span>
-                                        {selectedOrder.voucherDiscount > 0 && (
-                                            <span className="voucher-discount">(-${selectedOrder.voucherDiscount})</span>
-                                        )}
+                        ) : filteredOrders.length === 0 ? (
+                            <div className="staff-empty-state">
+                                <FaTruck className="staff-empty-icon" />
+                                <h3>No orders found</h3>
+                                <p>{searchTerm ? "No orders match your search" : "No orders need processing"}</p>
+                            </div>
+                        ) : (
+                            <div className="staff-orders-grid">
+                                {filteredOrders.map((order) => (
+                                    <div
+                                        key={order.id}
+                                        className={`staff-order-card ${selectedOrder?.id === order.id ? 'selected' : ''}`}
+                                        onClick={() => handleSelectOrder(order)}
+                                    >
+                                        <div className="staff-order-header">
+                                            <div className="staff-order-number">#{order.orderNumber}</div>
+                                            <span 
+                                                className="staff-status-badge"
+                                                style={{ backgroundColor: getStatusColor(order.deliveryStatus) }}
+                                            >
+                                                {getStatusIcon(order.deliveryStatus)} {getStatusLabel(order.deliveryStatus)}
+                                            </span>
+                                        </div>
+
+                                        <div className="staff-order-body">
+                                            <div className="staff-order-info-row">
+                                                <FaUser className="staff-info-icon" />
+                                                <span>{order.customer?.fullName || 'No name'}</span>
+                                            </div>
+                                            
+                                            <div className="staff-order-info-row">
+                                                <FaMapMarkerAlt className="staff-info-icon" />
+                                                <span className="staff-address">{order.deliveryAddress || 'No address'}</span>
+                                            </div>
+
+                                            {order.staff && currentUser && order.staff.id !== currentUser.id && (
+                                                <div className="staff-order-info-row staff-warning-row">
+                                                    <FaUser className="staff-info-icon" />
+                                                    <span>Managed by: {order.staff.name}</span>
+                                                    <span className="staff-warning-badge">⚠️</span>
+                                                </div>
+                                            )}
+
+                                            <div className="staff-order-info-row">
+                                                <FaDollarSign className="staff-info-icon" />
+                                                <span className="staff-price">${Number(order.totalPrice).toFixed(2)}</span>
+                                            </div>
+
+                                            <div className="staff-order-info-row">
+                                                <FaClock className="staff-info-icon" />
+                                                <span className="staff-date">{formatDate(order.createdAt)}</span>
+                                            </div>
+
+                                            <div className="staff-order-actions">
+                                                {renderActions(order)}
+                                            </div>
+                                        </div>
                                     </div>
-                                )}
-                                <div className="info-row"><span>Thanh toán:</span> {selectedOrder.paymentMethod?.name || "Chưa chọn phương thức"}</div>
-                                <div className="info-row">
-                                    <span>Trạng thái giao hàng:</span>
-                                    <span
-                                        className="status-badge-small"
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Order Details */}
+                    <div className="staff-details-section">
+                        {selectedOrder ? (
+                            <div className="staff-order-details">
+                                <div className="staff-details-header">
+                                    <h3>Order Details #{selectedOrder.orderNumber}</h3>
+                                    <span 
+                                        className="staff-status-badge"
                                         style={{ backgroundColor: getStatusColor(selectedOrder.deliveryStatus) }}
                                     >
                                         {getStatusIcon(selectedOrder.deliveryStatus)} {getStatusLabel(selectedOrder.deliveryStatus)}
                                     </span>
                                 </div>
-                                <div className="info-row">
-                                    <span>Trạng thái thanh toán:</span>
-                                    <span
-                                        className="status-badge-small"
-                                        style={{ backgroundColor: selectedOrder.status === 'PAID' ? '#4caf50' : '#ff9800' }}
-                                    >
-                                        {selectedOrder.status === 'PAID' ? 'Đã thanh toán' : 'Chờ thanh toán'}
-                                    </span>
-                                </div>
-                                <div className="info-row"><span>Thời gian:</span> {formatDate(selectedOrder.createdAt)}</div>
-                                {selectedOrder.deliveryNote && (
-                                    <div className="delivery-note">
-                                        <h4>Ghi chú giao hàng</h4>
-                                        <p>{selectedOrder.deliveryNote}</p>
-                                    </div>
-                                )}
-                            </div>
-
-                            {selectedOrder.statusHistory && selectedOrder.statusHistory.length > 0 && (
-                                <div className="order-history">
-                                    <h4>Lịch sử trạng thái</h4>
-                                    <div className="history-timeline">
-                                        {selectedOrder.statusHistory.map((history, idx) => (
-                                            <div key={idx} className="history-item">
-                                                <div className="history-time">{formatDate(history.changedAt)}</div>
-                                                <div className="history-status">{history.status}</div>
-                                                {history.note && <div className="history-note">{history.note}</div>}
-                                                <div className="history-by">Bởi: {history.changedBy}</div>
+                                
+                                <div className="staff-details-content">
+                                    <div className="staff-detail-section">
+                                        <h4>Customer Information</h4>
+                                        <div className="staff-detail-grid">
+                                            <div className="staff-detail-item">
+                                                <label>Full Name:</label>
+                                                <span>{selectedOrder.customer?.fullName || "No name"}</span>
                                             </div>
-                                        ))}
+                                            <div className="staff-detail-item">
+                                                <label>Email:</label>
+                                                <span>{selectedOrder.customer?.email || "No email"}</span>
+                                            </div>
+                                            <div className="staff-detail-item">
+                                                <label>Phone:</label>
+                                                <span>{selectedOrder.customer?.phoneNumber || "No phone number"}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="staff-detail-section">
+                                        <h4>Delivery Information</h4>
+                                        <div className="staff-detail-grid">
+                                            <div className="staff-detail-item">
+                                                <label>Recipient:</label>
+                                                <span>{selectedOrder.recipientName || "No recipient name"}</span>
+                                            </div>
+                                            <div className="staff-detail-item">
+                                                <label>Delivery Phone:</label>
+                                                <span>{selectedOrder.recipientPhone || "No phone"}</span>
+                                            </div>
+                                            <div className="staff-detail-item full-width">
+                                                <label>Delivery Address:</label>
+                                                <span>{selectedOrder.deliveryAddress || "No delivery address"}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="staff-detail-section">
+                                        <h4>Order Information</h4>
+                                        <div className="staff-detail-grid">
+                                            <div className="staff-detail-item">
+                                                <label>Total Amount:</label>
+                                                <span className="staff-price">${Number(selectedOrder.totalPrice).toFixed(2)}</span>
+                                            </div>
+                                            <div className="staff-detail-item">
+                                                <label>Payment Method:</label>
+                                                <span>{selectedOrder.paymentMethod?.name || "No payment method selected"}</span>
+                                            </div>
+                                            <div className="staff-detail-item">
+                                                <label>Order Time:</label>
+                                                <span>{formatDate(selectedOrder.createdAt)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {selectedOrder.staff && (
+                                        <div className="staff-detail-section">
+                                            <h4>Managing Staff</h4>
+                                            <div className="staff-detail-grid">
+                                                <div className="staff-detail-item">
+                                                    <label>Name:</label>
+                                                    <span>{selectedOrder.staff.name}</span>
+                                                </div>
+                                                <div className="staff-detail-item">
+                                                    <label>Email:</label>
+                                                    <span>{selectedOrder.staff.email}</span>
+                                                </div>
+                                                {currentUser && selectedOrder.staff.id !== currentUser.id && (
+                                                    <div className="staff-detail-item full-width">
+                                                        <div className="staff-warning-message">
+                                                            ⚠️ This is not your order. Please be careful when updating the status.
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="staff-detail-section">
+                                        <h4>Items</h4>
+                                        <div className="staff-items-list">
+                                            {selectedOrder.foodList?.map((food, idx) => (
+                                                <div key={idx} className="staff-item-row">
+                                                    <span className="staff-item-name">{food.name}</span>
+                                                    <span className="staff-item-quantity">×{food.quantity}</span>
+                                                    <span className="staff-item-price">${(food.price * food.quantity).toFixed(2)}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {selectedOrder.deliveryNote && (
+                                        <div className="staff-detail-section">
+                                            <h4>Delivery Note</h4>
+                                            <p className="staff-delivery-note">{selectedOrder.deliveryNote}</p>
+                                        </div>
+                                    )}
+
+                                    <div className="staff-detail-section">
+                                        <h4>Update Status</h4>
+                                        <div className="staff-action-buttons">
+                                            {renderActions(selectedOrder)}
+                                        </div>
                                     </div>
                                 </div>
-                            )}
-
-                            <div className="order-actions">
-                                <h4>Cập nhật trạng thái</h4>
-                                <div className="action-buttons">
-                                    {renderActions(selectedOrder)}
-                                </div>
                             </div>
-                        </div>
+                        ) : (
+                            <div className="staff-no-selection">
+                                <FaTruck className="staff-no-selection-icon" />
+                                <h3>Select an Order</h3>
+                                <p>Select an order from the list to view details</p>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
 
             {renderConfirmationDialog()}

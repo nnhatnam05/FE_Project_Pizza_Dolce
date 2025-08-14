@@ -1,0 +1,213 @@
+.interactive-chart {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+/* Chart Header */
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.chart-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+  color: #1d4ed8;
+}
+
+/* Chart Container */
+.chart-container {
+  position: relative;
+}
+
+/* Custom Tooltip */
+.custom-tooltip {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  min-width: 200px;
+}
+
+.tooltip-header {
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.tooltip-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.tooltip-content {
+  margin-bottom: 8px;
+}
+
+.tooltip-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.tooltip-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.tooltip-name {
+  font-size: 12px;
+  color: #6b7280;
+  flex: 1;
+}
+
+.tooltip-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.tooltip-footer {
+  border-top: 1px solid #f3f4f6;
+  padding-top: 8px;
+}
+
+.drill-down-btn {
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid #3b82f6;
+  border-radius: 4px;
+  background: #3b82f6;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.drill-down-btn:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+/* Data Point Info */
+.data-point-info {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.data-point-info h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 12px 0;
+}
+
+.info-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.info-label {
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: capitalize;
+}
+
+.info-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .interactive-chart {
+    padding: 16px;
+  }
+  
+  .chart-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .back-btn {
+    align-self: flex-end;
+  }
+  
+  .info-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .interactive-chart {
+    padding: 12px;
+  }
+  
+  .chart-title {
+    font-size: 16px;
+  }
+  
+  .custom-tooltip {
+    min-width: 150px;
+    padding: 8px;
+  }
+  
+  .tooltip-label {
+    font-size: 12px;
+  }
+  
+  .tooltip-name,
+  .tooltip-value {
+    font-size: 11px;
+  }
+  
+  .drill-down-btn {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+} 

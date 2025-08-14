@@ -429,19 +429,19 @@ const EditUser = () => {
       // Sử dụng FormData thay vì JSON
       const formDataToSend = new FormData();
       
-      // Thêm các trường cơ bản
+      // Add basic fields
       formDataToSend.append('username', formData.username);
       formDataToSend.append('name', formData.name);
       formDataToSend.append('email', formData.email);
       formDataToSend.append('phone', formData.phone);
       formDataToSend.append('role', formData.role);
       
-      // Thêm mật khẩu nếu đã nhập
+      // Add password if entered
       if (password && password.trim() !== '') {
         formDataToSend.append('password', password);
       }
       
-      // Thêm thông tin staffProfile nếu là STAFF
+      // Add staffProfile information if STAFF
       if (formData.role === 'STAFF') {
         formDataToSend.append('position', formData.position);
         formDataToSend.append('shiftType', formData.shiftType);
@@ -451,7 +451,7 @@ const EditUser = () => {
         formDataToSend.append('workLocation', formData.workLocation);
       }
       
-      // Thêm ảnh nếu có
+      // Add image if available
       if (selectedImage) {
         formDataToSend.append('image', selectedImage);
       }
@@ -470,7 +470,7 @@ const EditUser = () => {
       console.log("Update successful:", response.data);
       setMessage('User updated successfully!');
       
-      // Sử dụng biến để kiểm tra component đã unmounted chưa
+      // Use variable to check if component has unmounted
       let isComponentMounted = true;
       setTimeout(() => {
         if (isComponentMounted) {
@@ -491,12 +491,12 @@ const EditUser = () => {
         const errorResponse = err.response.data;
         console.log("Error response data:", errorResponse);
         
-        // Xử lý các loại lỗi cụ thể
+        // Handle specific error types
         if (typeof errorResponse === 'string') {
-          // Nếu backend trả về lỗi dạng string
+          // If backend returns error as string
           setMessage(errorResponse);
         } else if (errorResponse.error) {
-          // Nếu backend trả về lỗi dạng {error: "message"}
+          // If backend returns error as {error: "message"}
           const errorMessage = errorResponse.error;
           
           if (errorMessage.includes("Username already exists")) {
@@ -512,7 +512,7 @@ const EditUser = () => {
             setMessage(errorMessage);
           }
         } else if (errorResponse.message) {
-          // Nếu backend trả về lỗi dạng {message: "error"}
+          // If backend returns error as {message: "error"}
           setMessage(errorResponse.message);
         } else {
           setMessage('Update failed: Unknown error');

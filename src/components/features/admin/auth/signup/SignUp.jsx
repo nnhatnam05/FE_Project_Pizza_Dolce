@@ -20,7 +20,7 @@ const SignUp = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
 
-  // 1: form đăng ký, 2: nhập code, 3: claiming points
+  // 1: form registration, 2: enter code, 3: claiming points
   const [step, setStep] = useState(1);
   const [verifyCode, setVerifyCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ const SignUp = () => {
 
   const navigate = useNavigate();
 
-  // Khởi tạo Google Login
+  // Initialize Google Login
   useEffect(() => {
     // Clear any potential Google auth cookies/state
     const iframe = document.createElement('iframe');
@@ -47,7 +47,7 @@ const SignUp = () => {
     }, 1000);
   }, []);
 
-  // Đếm ngược 30s mỗi lần re-send code
+  // Countdown 30s each time resend code
   React.useEffect(() => {
     let timer;
     if (resendTimer > 0) {
@@ -58,7 +58,7 @@ const SignUp = () => {
     return () => clearTimeout(timer);
   }, [resendTimer]);
 
-  // Validate form đăng ký
+  // Validate registration form
   const validateForm = () => {
     if (!formData.fullName.trim()) {
       setError('Name is required');
@@ -84,7 +84,7 @@ const SignUp = () => {
     return true;
   };
 
-  // Gửi thông tin đăng ký
+  // Send registration information
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -99,7 +99,7 @@ const SignUp = () => {
       if (response.data && response.data.message?.includes('Verification code')) {
         setStep(2);
         setCanResend(false);
-        setResendTimer(30); // Chặn re-send 30s sau khi đăng ký
+        setResendTimer(30); // Block resend for 30s after registration
       } else {
         setError(response.data.message || 'Registration failed');
       }
@@ -111,7 +111,7 @@ const SignUp = () => {
     }
   };
 
-  // Xử lý đăng ký qua Google
+  // Handle Google registration
   const handleGoogleSignupSuccess = async (credentialResponse) => {
     setLoading(true);
     setError('');
@@ -153,7 +153,7 @@ const SignUp = () => {
     }
   };
 
-  // Gửi lại mã xác nhận (Re-send code)
+  // Resend verification code
   const handleResendCode = async () => {
     setLoading(true);
     setError('');
@@ -174,7 +174,7 @@ const SignUp = () => {
         setResendTimer(0);
       }
     } catch (err) {
-      // Nếu BE trả về lỗi gửi quá 3 lần sẽ vào đây
+              // If BE returns error for sending more than 3 times, it will come here
       if (err.response?.data?.message) setError(err.response.data.message);
       else setError('Could not resend code. Please try again.');
       setCanResend(false);
@@ -257,11 +257,11 @@ const SignUp = () => {
           }
         } else {
           // Normal flow without claiming
-          setShowLoadingScreen(true);
-          setTimeout(() => {
-            setShowLoadingScreen(false);
-            navigate('/login/customer');
-          }, 2000);
+        setShowLoadingScreen(true);
+        setTimeout(() => {
+          setShowLoadingScreen(false);
+          navigate('/login/customer');
+        }, 2000);
         }
       } else {
         setError(response.data.message || 'Verification failed');
@@ -389,7 +389,7 @@ const SignUp = () => {
                 </span>
               </div>
               <div className="terms-container">
-                <div className="checkbox-container">
+                <div className="checkbox-container-signup">
                   <input
                     type="checkbox"
                     id="terms"
@@ -474,18 +474,18 @@ const SignUp = () => {
               <div className="claiming-icon">
                 <div className="points-animation">🎁</div>
               </div>
-              <h2>Đang nhận điểm thưởng...</h2>
+              <h2>Claiming reward points...</h2>
               <p className="claiming-message">
-                Tài khoản của bạn đã được tạo thành công!<br/>
-                Chúng tôi đang tự động nhận điểm thưởng cho bạn...
+                Your account has been created successfully!<br/>
+                We are automatically claiming reward points for you...
               </p>
               <div className="claiming-loader">
                 <div className="spinner"></div>
-                <p>Vui lòng đợi trong giây lát...</p>
+                <p>Please wait a moment...</p>
               </div>
               {claimToken && (
                 <div className="claim-info">
-                  <p>🎉 Bạn sẽ nhận được điểm thưởng từ đơn hàng vừa thanh toán!</p>
+                  <p>🎉 You will receive reward points from your recent payment!</p>
                 </div>
               )}
             </div>

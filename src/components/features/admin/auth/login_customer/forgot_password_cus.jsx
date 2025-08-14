@@ -32,7 +32,7 @@ const ForgotPasswordCustomer = () => {
     return () => clearTimeout(timer);
   }, [resendTimer, codeSent]);
 
-  // Timer cho redirect sau khi đổi mật khẩu thành công
+  // Timer for redirect after successful password reset
   useEffect(() => {
     let timer;
     if (resetSuccess && redirectTimer > 0) {
@@ -43,7 +43,7 @@ const ForgotPasswordCustomer = () => {
     return () => clearTimeout(timer);
   }, [resetSuccess, redirectTimer, navigate]);
 
-  // Gửi code
+          // Send code
   const handleSendCode = async (e) => {
     e.preventDefault();
     setSending(true);
@@ -93,7 +93,7 @@ const ForgotPasswordCustomer = () => {
     }
   };
 
-  // Đặt lại mật khẩu
+  // Reset password
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setError('');

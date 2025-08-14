@@ -52,6 +52,7 @@ import axios from 'axios';
 import './StaffLayout.css';
 import LockIcon from '@mui/icons-material/Lock';
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 
 
 const drawerWidth = 240;
@@ -548,13 +549,24 @@ function StaffLayoutContent() {
   // Sidebar menu cấu hình
   const menuGroups = [
     {
-      label: 'HOME',
+      label: 'DASHBOARD',
       items: [
         {
-          label: 'Dashboard',
-          icon: <DashboardIcon />,
-          to: '/staff/dashboard',
+          label: 'TAKE-AWAY',
+          icon: <ShoppingBagIcon />,
+          to: '/staff/takeaway-dashboard', 
         },
+        {
+          label: 'DINE-IN',
+          icon: <DashboardIcon />,
+          to: '/staff/dinein-dashboard',
+        },
+        {
+          label: 'DELIVERY',
+          icon: <DeliveryDiningIcon />,
+          to: '/staff/delivery-status',
+        },
+        
       ],
     },
     {
@@ -575,12 +587,8 @@ function StaffLayoutContent() {
           icon: <ReceiptLongIcon />,
           to: '/staff/orders',
         },
-        {
-          label: 'Delivery Status',
-          icon: <DeliveryDiningIcon />,
-          to: '/staff/delivery-status',
-        },
-
+        
+        
 
       ],
     },
@@ -591,6 +599,7 @@ function StaffLayoutContent() {
           label: 'Request',
           icon: <RequestPageIcon />,
           to: '/staff/request',
+          new: true,
         },
         {
           label: 'Collapse',
@@ -834,12 +843,12 @@ function StaffLayoutContent() {
               </ListItemIcon>
               Profile
             </MenuItem>
-            <MenuItem onClick={handleMenuClose}>
+            {/* <MenuItem onClick={handleMenuClose}>
               <ListItemIcon>
                 <SettingsIcon fontSize="small" />
               </ListItemIcon>
               Settings
-            </MenuItem>
+            </MenuItem> */}
             <Divider sx={{ my: 1 }} />
             <MenuItem onClick={handleLogout}>
               <ListItemIcon>

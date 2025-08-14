@@ -45,16 +45,35 @@ const CustomerVouchers = () => {
 
     const formatDateTime = (dateTime) => {
         if (!dateTime) return 'No expiry';
-        return new Date(dateTime).toLocaleString();
+        
+        try {
+            const date = new Date(dateTime);
+            if (isNaN(date.getTime())) return 'Invalid date';
+            
+            const now = new Date();
+            const diffTime = date.getTime() - now.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) return 'Expired';
+            if (diffDays === 0) return 'Expires today';
+            if (diffDays === 1) return 'Expires tomorrow';
+            if (diffDays <= 7) return `Expires in ${diffDays} days`;
+            
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric',
+                year: 'numeric'
+            });
+        } catch (error) {
+            return 'Invalid date';
+        }
     };
 
     const getTypeLabel = (type) => {
         const types = {
             'PERCENTAGE': 'Giảm theo %',
             'FIXED_AMOUNT': 'Giảm số tiền cố định',
-            'FREE_SHIPPING': 'Miễn phí ship',
-            'BUY_ONE_GET_ONE': 'Mua 1 tặng 1',
-            'FREE_ITEM': 'Tặng món'
+            'FREE_ITEM': 'Tặng nước bất kì'
         };
         return types[type] || type;
     };
@@ -65,10 +84,36 @@ const CustomerVouchers = () => {
                 return `${voucher.value}% OFF`;
             case 'FIXED_AMOUNT':
                 return `$${voucher.value} OFF`;
-            case 'FREE_SHIPPING':
-                return 'FREE SHIPPING';
+            case 'FREE_ITEM':
+                return 'TẶNG NƯỚC';
             default:
                 return voucher.type;
+        }
+    };
+
+    const getVoucherIcon = (type) => {
+        switch (type) {
+            case 'PERCENTAGE':
+                return '🎯';
+            case 'FIXED_AMOUNT':
+                return '💰';
+            case 'FREE_ITEM':
+                return '🥤';
+            default:
+                return '🎫';
+        }
+    };
+
+    const getVoucherColor = (type) => {
+        switch (type) {
+            case 'PERCENTAGE':
+                return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            case 'FIXED_AMOUNT':
+                return 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+            case 'FREE_ITEM':
+                return 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+            default:
+                return 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
         }
     };
 
@@ -105,8 +150,13 @@ const CustomerVouchers = () => {
         return (
             <div className="customer-vouchers-container">
                 <div className="vouchers-loading">
-                    <div className="loading-spinner"></div>
-                    <p>Loading your vouchers...</p>
+                    <div className="loading-animation">
+                        <div className="loading-circle"></div>
+                        <div className="loading-circle"></div>
+                        <div className="loading-circle"></div>
+                    </div>
+                    <h3>Loading your vouchers...</h3>
+                    <p>Please wait while we fetch your amazing deals</p>
                 </div>
             </div>
         );
@@ -114,26 +164,52 @@ const CustomerVouchers = () => {
 
     return (
         <div className="customer-vouchers-container">
-            <div className="vouchers-header">
-                <h1>My Vouchers</h1>
-                <p>Manage and use your discount vouchers</p>
+            <div className="vouchers-hero">
+                <div className="hero-content">
+                    <h1>🎫 My Vouchers</h1>
+                    <p>Discover and manage your exclusive discount vouchers</p>
+                </div>
+                <div className="hero-stats">
+                    <div className="stat-item">
+                        <span className="stat-number">{myVouchers.length}</span>
+                        <span className="stat-label">My Vouchers</span>
+                    </div>
+                    <div className="stat-item">
+                        <span className="stat-number">{publicVouchers.length}</span>
+                        <span className="stat-label">Available</span>
+                    </div>
+                </div>
             </div>
 
-            {error && <div className="alert alert-error">{error}</div>}
-            {success && <div className="alert alert-success">{success}</div>}
+            {error && (
+                <div className="alert alert-error">
+                    <span className="alert-icon">⚠️</span>
+                    {error}
+                </div>
+            )}
+            {success && (
+                <div className="alert alert-success">
+                    <span className="alert-icon">✅</span>
+                    {success}
+                </div>
+            )}
 
             <div className="vouchers-tabs">
                 <button 
                     className={`tab-button ${activeTab === 'my-vouchers' ? 'active' : ''}`}
                     onClick={() => setActiveTab('my-vouchers')}
                 >
-                    My Vouchers ({myVouchers.length})
+                    <span className="tab-icon">🎁</span>
+                    <span className="tab-text">My Collection</span>
+                    <span className="tab-count">({myVouchers.length})</span>
                 </button>
                 <button 
                     className={`tab-button ${activeTab === 'public-vouchers' ? 'active' : ''}`}
                     onClick={() => setActiveTab('public-vouchers')}
                 >
-                    Available Vouchers ({publicVouchers.length})
+                    <span className="tab-icon">🌟</span>
+                    <span className="tab-text">Available Now</span>
+                    <span className="tab-count">({publicVouchers.length})</span>
                 </button>
             </div>
 
@@ -141,26 +217,31 @@ const CustomerVouchers = () => {
                 {activeTab === 'my-vouchers' && (
                     <div className="vouchers-grid">
                         {myVouchers.length === 0 ? (
-                            <div className="no-vouchers">
-                                <div className="no-vouchers-icon">🎫</div>
+                            <div className="empty-state">
+                                <div className="empty-icon">🎫</div>
                                 <h3>No vouchers yet</h3>
-                                <p>You don't have any vouchers. Check out available vouchers to get started!</p>
+                                <p>You don't have any vouchers in your collection yet. Start building your savings!</p>
                                 <button 
                                     className="btn-primary"
                                     onClick={() => setActiveTab('public-vouchers')}
                                 >
+                                    <span className="btn-icon">🌟</span>
                                     Browse Available Vouchers
                                 </button>
                             </div>
                         ) : (
                             myVouchers.map(voucher => (
                                 <div key={voucher.id} className={`voucher-card ${isVoucherExpired(voucher.expiresAt) ? 'expired' : ''}`}>
-                                    <div className="voucher-header">
+                                    <div className="voucher-header" style={{ background: getVoucherColor(voucher.type) }}>
+                                        <div className="voucher-icon">{getVoucherIcon(voucher.type)}</div>
                                         <div className="voucher-discount">
                                             {getDiscountText(voucher)}
                                         </div>
                                         {isVoucherExpired(voucher.expiresAt) && (
-                                            <div className="expired-badge">EXPIRED</div>
+                                            <div className="expired-badge">
+                                                <span className="badge-icon">⏰</span>
+                                                EXPIRED
+                                            </div>
                                         )}
                                     </div>
                                     
@@ -169,40 +250,54 @@ const CustomerVouchers = () => {
                                         <p className="voucher-description">{voucher.description}</p>
                                         
                                         <div className="voucher-details">
-                                            <div className="detail-item">
-                                                <span className="label">Type:</span>
-                                                <span className="value">{getTypeLabel(voucher.type)}</span>
+                                            <div className="detail-row">
+                                                <div className="detail-item">
+                                                    <span className="detail-icon">🏷️</span>
+                                                    <span className="detail-label">Type</span>
+                                                    <span className="detail-value">{getTypeLabel(voucher.type)}</span>
+                                                </div>
+                                                {voucher.minOrderAmount && (
+                                                    <div className="detail-item">
+                                                        <span className="detail-icon">💰</span>
+                                                        <span className="detail-label">Min Order</span>
+                                                        <span className="detail-value">${voucher.minOrderAmount}</span>
+                                                    </div>
+                                                )}
                                             </div>
-                                            {voucher.minOrderAmount && (
+                                            
+                                            <div className="detail-row">
+                                                {voucher.maxDiscountAmount && (
+                                                    <div className="detail-item">
+                                                        <span className="detail-icon">🎯</span>
+                                                        <span className="detail-label">Max Discount</span>
+                                                        <span className="detail-value">${voucher.maxDiscountAmount}</span>
+                                                    </div>
+                                                )}
                                                 <div className="detail-item">
-                                                    <span className="label">Min Order:</span>
-                                                    <span className="value">${voucher.minOrderAmount}</span>
+                                                    <span className="detail-icon">⏰</span>
+                                                    <span className="detail-label">Expires</span>
+                                                    <span className="detail-value">{formatDateTime(voucher.expiresAt)}</span>
                                                 </div>
-                                            )}
-                                            {voucher.maxDiscountAmount && (
-                                                <div className="detail-item">
-                                                    <span className="label">Max Discount:</span>
-                                                    <span className="value">${voucher.maxDiscountAmount}</span>
-                                                </div>
-                                            )}
-                                            <div className="detail-item">
-                                                <span className="label">Expires:</span>
-                                                <span className="value">{formatDateTime(voucher.expiresAt)}</span>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <div className="voucher-footer">
                                         <div className="voucher-code-section">
-                                            <span className="code-label">Code:</span>
-                                            <span className="voucher-code">{voucher.code}</span>
-                                            <button 
-                                                className="copy-button"
-                                                onClick={() => copyVoucherCode(voucher.code)}
-                                                disabled={isVoucherExpired(voucher.expiresAt)}
-                                            >
-                                                📋 Copy
-                                            </button>
+                                            <div className="code-display">
+                                                <span className="code-label">Voucher Code</span>
+                                                <div className="code-container">
+                                                    <span className="voucher-code">{voucher.code}</span>
+                                                    <button 
+                                                        className="copy-button"
+                                                        onClick={() => copyVoucherCode(voucher.code)}
+                                                        disabled={isVoucherExpired(voucher.expiresAt)}
+                                                        title="Copy voucher code"
+                                                    >
+                                                        <span className="copy-icon">📋</span>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -214,21 +309,28 @@ const CustomerVouchers = () => {
                 {activeTab === 'public-vouchers' && (
                     <div className="vouchers-grid">
                         {publicVouchers.length === 0 ? (
-                            <div className="no-vouchers">
-                                <div className="no-vouchers-icon">🎁</div>
+                            <div className="empty-state">
+                                <div className="empty-icon">🎁</div>
                                 <h3>No public vouchers available</h3>
-                                <p>There are currently no public vouchers available. Check back later!</p>
+                                <p>There are currently no public vouchers available. Check back later for amazing deals!</p>
                             </div>
                         ) : (
                             publicVouchers.map(voucher => (
                                 <div key={voucher.id} className={`voucher-card public ${!voucher.isAvailable ? 'unavailable' : ''}`}>
-                                    <div className="voucher-header">
+                                    <div className="voucher-header" style={{ background: getVoucherColor(voucher.type) }}>
+                                        <div className="voucher-icon">{getVoucherIcon(voucher.type)}</div>
                                         <div className="voucher-discount">
                                             {getDiscountText(voucher)}
                                         </div>
-                                        <div className="public-badge">PUBLIC</div>
+                                        <div className="public-badge">
+                                            <span className="badge-icon">🌟</span>
+                                            PUBLIC
+                                        </div>
                                         {!voucher.isAvailable && (
-                                            <div className="unavailable-badge">UNAVAILABLE</div>
+                                            <div className="unavailable-badge">
+                                                <span className="badge-icon">❌</span>
+                                                UNAVAILABLE
+                                            </div>
                                         )}
                                     </div>
                                     
@@ -237,54 +339,78 @@ const CustomerVouchers = () => {
                                         <p className="voucher-description">{voucher.description}</p>
                                         
                                         <div className="voucher-details">
-                                            <div className="detail-item">
-                                                <span className="label">Type:</span>
-                                                <span className="value">{getTypeLabel(voucher.type)}</span>
-                                            </div>
-                                            {voucher.minOrderAmount && (
+                                            <div className="detail-row">
                                                 <div className="detail-item">
-                                                    <span className="label">Min Order:</span>
-                                                    <span className="value">${voucher.minOrderAmount}</span>
+                                                    <span className="detail-icon">🏷️</span>
+                                                    <span className="detail-label">Type</span>
+                                                    <span className="detail-value">{getTypeLabel(voucher.type)}</span>
                                                 </div>
-                                            )}
-                                            {voucher.maxDiscountAmount && (
-                                                <div className="detail-item">
-                                                    <span className="label">Max Discount:</span>
-                                                    <span className="value">${voucher.maxDiscountAmount}</span>
-                                                </div>
-                                            )}
-                                            <div className="detail-item">
-                                                <span className="label">Remaining:</span>
-                                                <span className="value">{voucher.remainingQuantity}/{voucher.totalQuantity}</span>
+                                                {voucher.minOrderAmount && (
+                                                    <div className="detail-item">
+                                                        <span className="detail-icon">💰</span>
+                                                        <span className="detail-label">Min Order</span>
+                                                        <span className="detail-value">${voucher.minOrderAmount}</span>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <div className="detail-item">
-                                                <span className="label">Expires:</span>
-                                                <span className="value">{formatDateTime(voucher.expiresAt)}</span>
+                                            
+                                            <div className="detail-row">
+                                                {voucher.maxDiscountAmount && (
+                                                    <div className="detail-item">
+                                                        <span className="detail-icon">🎯</span>
+                                                        <span className="detail-label">Max Discount</span>
+                                                        <span className="detail-value">${voucher.maxDiscountAmount}</span>
+                                                    </div>
+                                                )}
+                                                <div className="detail-item">
+                                                    <span className="detail-icon">📊</span>
+                                                    <span className="detail-label">Remaining</span>
+                                                    <span className="detail-value">{voucher.remainingQuantity}/{voucher.totalQuantity}</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="detail-row">
+                                                <div className="detail-item">
+                                                    <span className="detail-icon">⏰</span>
+                                                    <span className="detail-label">Expires</span>
+                                                    <span className="detail-value">{formatDateTime(voucher.expiresAt)}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <div className="voucher-footer">
                                         <div className="voucher-code-section">
-                                            <span className="code-label">Code:</span>
-                                            <span className="voucher-code">{voucher.code}</span>
-                                            <button 
-                                                className="copy-button"
-                                                onClick={() => copyVoucherCode(voucher.code)}
-                                                disabled={!voucher.isAvailable}
-                                            >
-                                                📋 Copy
-                                            </button>
+                                            <div className="code-display">
+                                                <span className="code-label">Voucher Code</span>
+                                                <div className="code-container">
+                                                    <span className="voucher-code">{voucher.code}</span>
+                                                    <button 
+                                                        className="copy-button"
+                                                        onClick={() => copyVoucherCode(voucher.code)}
+                                                        disabled={!voucher.isAvailable}
+                                                        title="Copy voucher code"
+                                                    >
+                                                        <span className="copy-icon">📋</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="voucher-actions">
                                             <button 
                                                 className="claim-button"
                                                 onClick={() => claimVoucher(voucher.code)}
                                                 disabled={!voucher.isAvailable}
                                             >
-                                                🎁 Claim
+                                                <span className="claim-icon">🎁</span>
+                                                Claim Voucher
                                             </button>
                                         </div>
+                                        
                                         <div className="voucher-note">
-                                            <small>Note: Click "Claim" to add this voucher to your collection</small>
+                                            <span className="note-icon">💡</span>
+                                            Click "Claim" to add this voucher to your collection
                                         </div>
                                     </div>
                                 </div>

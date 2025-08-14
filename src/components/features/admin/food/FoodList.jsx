@@ -198,10 +198,10 @@ export default function FoodList() {
                                 e.stopPropagation();
                                 const parent = e.target.closest('.description-wrapper');
                                 parent.classList.toggle('expanded');
-                                e.target.textContent = parent.classList.contains('expanded') ? 'Thu gọn' : 'Xem thêm';
+                                e.target.textContent = parent.classList.contains('expanded') ? 'Collapse' : 'View More';
                               }}
                             >
-                              Xem thêm
+                              View More
                             </button>
                           )}
                         </div>

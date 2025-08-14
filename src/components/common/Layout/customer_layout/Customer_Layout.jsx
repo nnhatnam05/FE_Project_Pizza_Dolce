@@ -318,7 +318,7 @@ const CustomerLayout = ({ children }) => {
     // Open the change password modal
     const openChangePasswordModal = () => {
         console.log('Opening change password modal, customer provider:', customer?.customer?.provider); // Debug log
-        // Kiểm tra nếu user đăng nhập bằng Google thì không cho phép đổi mật khẩu
+        // Check if user logged in with Google then don't allow password change
         if (customer && customer.customer && (customer.customer.provider === 'GOOGLE' || customer.customer.provider === 'google')) {
             console.log('Google login detected, showing notice instead of password form'); // Debug log
             setShowChangePassword(true);
@@ -354,9 +354,9 @@ const CustomerLayout = ({ children }) => {
                 {/* Header */}
                 <header className="p4-header">
                     <div className="p4-logo" onClick={() => navigate('/')}>DOLCE</div>
-                    <div className="p4-search">
+                    {/* <div className="p4-search">
                         <input type="text" placeholder="Search" />
-                    </div>
+                    </div> */}
                     <div className="p4-header-actions">
                                                 {/* Personal data */}
                         <div className="p4-profile">
@@ -403,11 +403,11 @@ const CustomerLayout = ({ children }) => {
                                     <span onClick={() => checkLoginAndRedirect(showCustomerInfo)}>😊 Personal Information</span>
                                     <span onClick={() => checkLoginAndRedirect(() => navigate('/addresses'))}>📍 Manage Addresses</span>
                                     <span onClick={() => checkLoginAndRedirect(() => navigate('/vouchers'))}>🎫 My Vouchers</span>
-                                    {/* Chỉ hiển thị nút đổi mật khẩu nếu không đăng nhập bằng Google */}
+                                    {/* Only show change password button if not logged in with Google */}
                                     {customer && customer.customer && customer.customer.provider !== 'GOOGLE' && customer.customer.provider !== 'google' && (
                                         <span onClick={() => checkLoginAndRedirect(openChangePasswordModal)}>🔑 Change Password</span>
                                     )}
-                                    {/* Hiển thị thông báo cho Google login */}
+                                    {/* Show notice for Google login */}
                                     {customer && customer.customer && (customer.customer.provider === 'GOOGLE' || customer.customer.provider === 'google') && (
                                         <span style={{ color: '#888', fontSize: '0.9rem', cursor: 'default' }}>
                                             🔑 Password (Google Account)
@@ -461,10 +461,10 @@ const CustomerLayout = ({ children }) => {
 
                 {/* Navigation links */}
                 <div className="p4-nav-links">
-                    <span>Dolce eGift-voucher</span>
-                    <span>Delivery Policy</span>
-                    <span>Returns & Refund Policy</span>
-                    <span>Hotline: +1-800-DOLCE</span>
+                    <span onClick={() => navigate('/voucher-policy')}>Dolce eGift-voucher</span>
+                    <span onClick={() => navigate('/delivery-policy')}>Delivery Policy</span>
+                    <span onClick={() => navigate('/about-us')}>About Us</span>
+                    <span onClick={() => navigate('/contact-us')}>Contact Us</span>
                 </div>
 
                 {/* Profile modal */}
@@ -511,7 +511,7 @@ const CustomerLayout = ({ children }) => {
                                     </div>
                                 ) : showChangePassword ? (
                                     <div className="p4-change-password">
-                                        {/* Kiểm tra nếu user đăng nhập bằng Google */}
+                                        {/* Check if user logged in with Google */}
                                         {customer && customer.customer && (customer.customer.provider === 'GOOGLE' || customer.customer.provider === 'google') ? (
                                             <div className="p4-google-login-notice">
                                                 <h3>🔐 Google Account Login</h3>
@@ -659,7 +659,7 @@ const CustomerLayout = ({ children }) => {
                                                     <label>Vouchers</label>
                                                     <p className="readonly">{customer?.voucher || 0} vouchers</p>
                                                 </div>
-                                                {/* Hiển thị thông tin về loại đăng nhập */}
+                                                {/* Display information about login type */}
                                                 {customer && customer.customer && customer.customer.provider && (
                                                     <div className="p4-form-group">
                                                         <label>Login Method</label>
@@ -690,7 +690,7 @@ const CustomerLayout = ({ children }) => {
                                             ) : (
                                                 <>
                                                     <button className="p4-btn-main" onClick={() => setEditMode(true)}>Edit</button>
-                                                    {/* Chỉ hiển thị nút đổi mật khẩu nếu không đăng nhập bằng Google */}
+                                                    {/* Only show change password button if not logged in with Google */}
                                                     {customer && customer.customer && customer.customer.provider !== 'GOOGLE' && customer.customer.provider !== 'google' && (
                                                         <button className="p4-btn-secondary" onClick={openChangePasswordModal}>Change Password</button>
                                                     )}
@@ -746,13 +746,13 @@ const CustomerLayout = ({ children }) => {
                                 <input type="email" placeholder="Enter your email here" />
                                 <button>Subscribe</button>
                             </div>
-                            <div className="p4-footer-title">Follow us on social media</div>
+                            {/* <div className="p4-footer-title">Follow us on social media</div>
                             <div className="p4-social-icons">
                                 <span className="p4-social facebook"></span>
                                 <span className="p4-social instagram"></span>
                                 <span className="p4-social youtube"></span>
                                 <span className="p4-trusted-badge"></span>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                     <div className="p4-footer-bottom">

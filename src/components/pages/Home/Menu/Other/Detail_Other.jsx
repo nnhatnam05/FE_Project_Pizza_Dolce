@@ -12,7 +12,7 @@ const Detail_Other = () => {
     const [error, setError] = useState('');
     const [quantity, setQuantity] = useState(1);
     
-    // 使用CartContext
+    // Sử dụng CartContext
     const { handleAddToCart } = useContext(CartContext);
     
     // API URL - replace with your actual API endpoint
@@ -48,7 +48,7 @@ const Detail_Other = () => {
     };
 
     const addToCart = () => {
-        // 使用CartContext中的handleAddToCart函数
+        // Sử dụng hàm handleAddToCart từ CartContext
         if (other && other.status !== 'UNAVAILABLE') {
             handleAddToCart({
                 id: other.id,

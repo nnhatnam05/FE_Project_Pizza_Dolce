@@ -13,7 +13,7 @@ const HomePage = () => {
 
   return (
     <div className="pizza4ps-home">
-      {/* Header Section */}
+      {/* Phần Header */}
       <header className="navbar">
         <div className="logo">
           PIZZA <span style={{ fontSize: '0.7rem', marginLeft: '0.5rem' }}>VIETNAM</span>
@@ -27,7 +27,7 @@ const HomePage = () => {
         </div>
       </header>
 
-      {/* Section 1 - Hero with Video Background */}
+      {/* Phần 1 - Hero với Video Background */}
       
       <section className="hero-video-section" data-aos="fade">
         {/* Video Background */}
@@ -55,9 +55,9 @@ const HomePage = () => {
           <div className="counter">17,327,653</div>
         </div>
       </section>
-      {/* End Section 1 */}
+      {/* Kết thúc Phần 1 */}
 
-      {/* Section 2 Oneness*/}
+      {/* Phần 2 Oneness*/}
 
       <section className="zero-waste-section" data-aos="fade-up" style={{ backgroundColor: '#763d00' }}>
         <h1>"Oneness"</h1>
@@ -67,12 +67,12 @@ const HomePage = () => {
           Through our zero-waste journey, we aim to inspire people to cultivate a deep sense of compassion for something greater than ourselves.
         </p>
       </section>
-      {/* End Section 2 */}
+      {/* Kết thúc Phần 2 */}
 
-      {/* Section 3 - Location & Menu */}
+      {/* Phần 3 - Location & Menu */}
       <section className="location-menu-section" data-aos="fade-up">
         <div className="location-menu-container">
-          {/* Left Column: Location */}
+          {/* Cột trái: Location */}
           <div className="location-column">
             <h2>Location</h2>
             <div className="country-tabs">
@@ -92,7 +92,7 @@ const HomePage = () => {
             </div>
           </div>
 
-          {/* Right Column: Menu */}
+          {/* Cột phải: Menu */}
           <div className="menu-column">
             <h2>Menu</h2>
             <div className="menu-image-container">
@@ -104,9 +104,9 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-      {/* End Section 3 */}
+      {/* Kết thúc Phần 3 */}
 
-      {/* Section 4 - Video Background with Stats */}
+      {/* Phần 4 - Video Background với Stats */}
       <section className="video-stats-section" data-aos="fade">
         {/* Video Background */}
         <video
@@ -139,9 +139,9 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-      {/* End Section 4 */}
+      {/* Kết thúc Phần 4 */}
 
-      {/* Section 5 - Sustainability Report */}
+      {/* Phần 5 - Sustainability Report */}
       <section
         className="sustainability-section"
         data-aos="fade-up"
@@ -161,9 +161,9 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-      {/* End Section 5 */}
+      {/* Kết thúc Phần 5 */}
 
-      {/* Section 6 - Social Media Grid */}
+      {/* Phần 6 - Social Media Grid */}
       <section className="social-media-section" data-aos="fade-up">
         <div className="social-columns">
 
@@ -204,9 +204,9 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-      {/* End Section 6 */}
+      {/* Kết thúc Phần 6 */}
 
-      {/* Section 7 - Make the World Smile for Peace */}
+      {/* Phần 7 - Make the World Smile for Peace */}
       <section className="vision-true-layout" data-aos="fade-up">
         {/* Top Red Banner */}
         <div className="vision-banner">
@@ -228,7 +228,7 @@ const HomePage = () => {
               poster="/images/ex.png"
             >
               <source src="/videos/preview.mp4" type="video/mp4" />
-              Trình duyệt của bạn không hỗ trợ video.
+              Your browser does not support video.
             </video>
           </div>
           <div className="vision-cta-box">
@@ -238,9 +238,9 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-      {/* End Section 7 */}
+      {/* Kết thúc Phần 7 */}
 
-      {/* Section 8 - Original Products */}
+      {/* Phần 8 - Original Products */}
       <section className="original-products-section" data-aos="fade-up">
         <div className="original-products-header">
           <div className="header-left">
@@ -269,9 +269,9 @@ const HomePage = () => {
           ))}
         </div>
       </section>
-      {/* End Section 8 */}
+      {/* Kết thúc Phần 8 */}
 
-      {/* Section 9 - News */}
+      {/* Phần 9 - News */}
       <section className="news-section" data-aos="fade-up">
         <h2 className="news-title">News</h2>
         <div className="news-grid">
@@ -302,7 +302,7 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-      {/* End Section 9 */}
+      {/* Kết thúc Phần 9 */}
 
 
       {/* Footer */}

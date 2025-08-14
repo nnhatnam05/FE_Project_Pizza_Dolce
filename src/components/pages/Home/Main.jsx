@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import '../../styles/main.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import CustomerLayout, { CartContext } from '../../common/Layout/customer_layout';
 
 const Main = () => {
     const navigate = useNavigate();
+    const { handleAddToCart } = useContext(CartContext);
     const [activeSlide, setActiveSlide] = useState(0);
     const [allFoods, setAllFoods] = useState([]);
     const [displayedFoods, setDisplayedFoods] = useState([]);
@@ -29,9 +31,9 @@ const Main = () => {
         axios.get('http://localhost:8080/api/foods')
             .then(res => {
                 setAllFoods(res.data || []);
-                // Filter pizza items and limit to 8
+                // Filter pizza items and limit to 9
                 const pizzaItems = (res.data || []).filter(food => food.type === 'PIZZA');
-                setDisplayedFoods(pizzaItems.slice(0, 8));
+                setDisplayedFoods(pizzaItems.slice(0, 9));
                 setFoodsLoading(false);
             })
             .catch(err => {
@@ -50,7 +52,7 @@ const Main = () => {
             setDisplayMode('all_pizza');
         } else {
             const pizzaItems = allFoods.filter(food => food.type === 'PIZZA');
-            setDisplayedFoods(pizzaItems.slice(0, 8));
+            setDisplayedFoods(pizzaItems.slice(0, 9));
             setDisplayMode('limited');
         }
     };
@@ -225,15 +227,29 @@ const Main = () => {
                                 </div>
                                 <div className="p4-food-info">
                                     <div className="p4-food-title">{food.name}</div>
-                                    <div className="p4-food-price">
-                                        ${food.price?.toFixed ? food.price.toFixed(2) : food.price}
+                                    <div className="p4-food-footer">
+                                        <div className="p4-food-price">
+                                            ${food.price?.toFixed ? food.price.toFixed(2) : food.price}
+                                        </div>
+                                        <button 
+                                            className="p4-food-add" 
+                                            disabled={food.status === 'UNAVAILABLE'}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Prevent triggering the parent onClick
+                                                if (food.status !== 'UNAVAILABLE') {
+                                                    handleAddToCart({
+                                                        id: food.id,
+                                                        name: food.name,
+                                                        price: food.price,
+                                                        quantity: 1,
+                                                        imageUrl: food.imageUrl,
+                                                    });
+                                                }
+                                            }}
+                                        >
+                                            +
+                                        </button>
                                     </div>
-                                    <button 
-                                        className="p4-food-add" 
-                                        disabled={food.status === 'UNAVAILABLE'}
-                                    >
-                                        +
-                                    </button>
                                 </div>
                             </div>
                         ))

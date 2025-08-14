@@ -12,7 +12,7 @@ const Detail_Appetizers = () => {
     const [error, setError] = useState('');
     const [quantity, setQuantity] = useState(1);
     
-    // 使用CartContext进行购物车操作
+    // Sử dụng CartContext để thao tác giỏ hàng
     const { handleAddToCart } = useContext(CartContext);
     
     // API URL - replace with your actual API endpoint
@@ -47,7 +47,7 @@ const Detail_Appetizers = () => {
     };
 
     const addToCart = () => {
-        // 使用CartContext中的handleAddToCart函数
+        // Sử dụng hàm handleAddToCart từ CartContext
         if (appetizer && appetizer.status !== 'UNAVAILABLE') {
             handleAddToCart({
                 id: appetizer.id,

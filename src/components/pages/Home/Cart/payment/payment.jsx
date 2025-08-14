@@ -95,7 +95,7 @@ const PaymentDetails = () => {
         return () => clearInterval(timer);
     }, [timerActive, timeLeft, order]);
 
-    // Thêm hàm lấy QR code từ PayOS
+    // Add function to get QR code from PayOS
     const fetchQRCode = async (orderId) => {
         const token = localStorage.getItem('token');
         if (!token || !orderId) return null;
@@ -120,7 +120,7 @@ const PaymentDetails = () => {
             setQrLoading(false);
             return url;
         } catch (error) {
-            setQrError('Không thể lấy mã QR thanh toán. Vui lòng thử lại hoặc liên hệ hỗ trợ.');
+            setQrError('Cannot get payment QR code. Please try again or contact support.');
             setQrLoading(false);
             setQrCodeUrl(null);
             setIsTestQr(false);
@@ -347,7 +347,7 @@ const PaymentDetails = () => {
         setShowTimeoutModal(false);
     };
 
-    // useEffect tự động redirect đã được xóa để user có quyền kiểm soát
+            // useEffect tự động redirect đã được xóa để user có quyền kiểm soát (giữ nguyên comment tiếng Việt)
 
     return (
         earlyReturn ? earlyReturn : (

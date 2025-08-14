@@ -1,0 +1,460 @@
+/* Bill Detail Modal Styles */
+.bill-detail-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.bill-detail-modal {
+    background: white;
+    border-radius: 12px;
+    width: 95%;
+    max-width: 800px;
+    max-height: 95vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.bill-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 12px 12px 0 0;
+}
+
+.bill-modal-header h2 {
+    margin: 0;
+    color: #495057;
+    font-size: 24px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.print-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.print-btn:hover {
+    background: #0056b3;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.close-btn:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+/* Bill Content */
+.bill-content {
+    padding: 30px;
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    color: #333;
+    background: white;
+}
+
+/* Restaurant Header */
+.restaurant-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.restaurant-header h1 {
+    margin: 0 0 10px 0;
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+    letter-spacing: 2px;
+}
+
+.restaurant-header p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Divider */
+.divider {
+    border-top: 2px dashed #ccc;
+    margin: 20px 0;
+}
+
+/* Order Information */
+.order-info-section {
+    margin-bottom: 20px;
+}
+
+.order-header-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.order-details h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: center;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.order-details p, .customer-details p {
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.customer-details h4 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: #495057;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 5px;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.status-badge.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.paid {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.status-badge.ready {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.completed {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Items Section */
+.items-section {
+    margin-bottom: 20px;
+}
+
+.items-section h4 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: #495057;
+    text-align: center;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.items-table th {
+    background: #f8f9fa;
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: bold;
+    color: #495057;
+}
+
+.items-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: top;
+}
+
+.item-name {
+    font-weight: 500;
+}
+
+.item-description {
+    font-size: 12px;
+    color: #6c757d;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+.quantity, .unit-price, .item-total {
+    text-align: right;
+    font-family: 'Courier New', monospace;
+}
+
+.item-total {
+    font-weight: bold;
+}
+
+/* Payment Summary */
+.payment-summary {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.total-row {
+    border-top: 2px solid #dee2e6;
+    padding-top: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.payment-method-info {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #dee2e6;
+}
+
+.payment-method-info p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+/* Points Section */
+.points-section {
+    background: #d4edda;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.points-section h4 {
+    margin: 0 0 10px 0;
+    color: #155724;
+}
+
+.points-section p {
+    margin: 5px 0;
+    color: #155724;
+}
+
+/* Receipt Footer */
+.receipt-footer {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.thank-you {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 15px 0;
+}
+
+.footer-note {
+    font-size: 12px;
+    color: #6c757d;
+    margin: 5px 0;
+}
+
+.feedback-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.feedback-section p {
+    margin: 0 0 10px 0;
+    font-size: 12px;
+    color: #495057;
+}
+
+.qr-placeholder {
+    width: 80px;
+    height: 80px;
+    border: 2px dashed #ccc;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #999;
+    background: white;
+}
+
+/* Modal Actions */
+.bill-modal-actions {
+    padding: 20px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    background: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+}
+
+.action-btn {
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.action-btn.secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.action-btn.secondary:hover {
+    background: #5a6268;
+}
+
+.action-btn.primary {
+    background: #007bff;
+    color: white;
+}
+
+.action-btn.primary:hover {
+    background: #0056b3;
+}
+
+/* Print Styles */
+@media print {
+    .bill-detail-overlay {
+        position: static;
+        background: none;
+    }
+    
+    .bill-detail-modal {
+        width: 100%;
+        max-width: none;
+        max-height: none;
+        box-shadow: none;
+        border-radius: 0;
+    }
+    
+    .bill-modal-header,
+    .bill-modal-actions,
+    .no-print {
+        display: none !important;
+    }
+    
+    .bill-content {
+        padding: 0;
+        font-size: 12px;
+    }
+    
+    .restaurant-header h1 {
+        font-size: 24px;
+    }
+    
+    .items-table {
+        font-size: 12px;
+    }
+    
+    .items-table th,
+    .items-table td {
+        padding: 6px 4px;
+    }
+    
+    .divider {
+        border-top: 1px dashed #000;
+        margin: 15px 0;
+    }
+    
+    .order-header-info {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .feedback-section {
+        page-break-inside: avoid;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .bill-detail-modal {
+        width: 98%;
+        margin: 10px;
+    }
+    
+    .bill-content {
+        padding: 20px;
+    }
+    
+    .order-header-info {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .bill-modal-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .restaurant-header h1 {
+        font-size: 24px;
+    }
+    
+    .items-table {
+        font-size: 12px;
+    }
+    
+    .items-table th,
+    .items-table td {
+        padding: 8px 4px;
+    }
+} 

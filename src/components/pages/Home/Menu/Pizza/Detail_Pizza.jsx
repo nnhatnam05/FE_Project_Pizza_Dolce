@@ -12,7 +12,7 @@ const Detail_Pizza = () => {
     const [error, setError] = useState('');
     const [quantity, setQuantity] = useState(1);
     
-    // 使用CartContext中的handleAddToCart函数
+    // Sử dụng hàm handleAddToCart từ CartContext
     const { handleAddToCart } = useContext(CartContext);
     
     // API URL - replace with your actual API endpoint
@@ -47,7 +47,7 @@ const Detail_Pizza = () => {
     };
 
     const addToCart = () => {
-        // 使用从CartContext获取的handleAddToCart函数
+        // Sử dụng hàm handleAddToCart từ CartContext
         if (pizza && pizza.status !== 'UNAVAILABLE') {
             handleAddToCart({
                 id: pizza.id,

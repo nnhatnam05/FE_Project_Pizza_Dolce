@@ -16,12 +16,12 @@ const PointClaimModal = ({ claimToken, tokenInfo, tableNumber, onClose, onSucces
 
   const handleExistingCustomer = async () => {
     if (!email.trim()) {
-      setError('Vui lòng nhập email');
+      setError('Please enter email');
       return;
     }
 
     if (!validateEmail(email.trim())) {
-      setError('Email không hợp lệ');
+      setError('Invalid email');
       return;
     }
 
@@ -41,16 +41,16 @@ const PointClaimModal = ({ claimToken, tokenInfo, tableNumber, onClose, onSucces
         setSuccessMessage(response.data.message);
         setStep('success');
         
-        // Auto close and trigger success callback after 3 seconds
+        // Tự động đóng và kích hoạt callback thành công sau 3 giây (giữ nguyên comment tiếng Việt)
         setTimeout(() => {
           onSuccess();
         }, 3000);
       } else {
-        setError(response.data.message || 'Không thể nhận điểm');
+        setError(response.data.message || 'Cannot claim points');
       }
     } catch (err) {
       console.error('Claim error:', err);
-      const errorMessage = err.response?.data?.message || 'Không thể nhận điểm. Vui lòng thử lại.';
+      const errorMessage = err.response?.data?.message || 'Cannot claim points. Please try again.';
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -58,7 +58,7 @@ const PointClaimModal = ({ claimToken, tokenInfo, tableNumber, onClose, onSucces
   };
 
   const handleSignUp = () => {
-    // Redirect to sign up page with return URL and claim token
+    // Chuyển hướng đến trang đăng ký với URL trả về và claim token
     const returnUrl = encodeURIComponent(`/dinein/thank-you?token=${claimToken}&table=${tableNumber}`);
     const signupUrl = `/signup?return_url=${returnUrl}&claim_token=${claimToken}`;
     console.log('Redirecting to signup:', signupUrl);
@@ -81,7 +81,7 @@ const PointClaimModal = ({ claimToken, tokenInfo, tableNumber, onClose, onSucces
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content point-claim-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h3>🎁 Nhận điểm thưởng</h3>
+          <h3>🎁 Earn Reward Points</h3>
           <button className="close-btn" onClick={onClose} disabled={loading}>×</button>
         </div>
 
@@ -90,13 +90,13 @@ const PointClaimModal = ({ claimToken, tokenInfo, tableNumber, onClose, onSucces
             <div className="points-info">
               <div className="points-display">
                 <span className="points-number">{tokenInfo.pointsToEarn}</span>
-                <span className="points-label">điểm</span>
+                <span className="points-label">points</span>
               </div>
               <p className="points-description">
-                Bạn sẽ nhận được <strong>{tokenInfo.pointsToEarn} điểm</strong> từ đơn hàng này!
+                You will receive <strong>{tokenInfo.pointsToEarn} points</strong> from this order!
               </p>
               <div className="points-rule">
-                <small>💡 Quy tắc: Mỗi $10 = 10 điểm (làm tròn xuống)</small>
+                <small>💡 Rules: $10 = 10 points (rounded down)</small>
               </div>
             </div>
             
@@ -108,8 +108,8 @@ const PointClaimModal = ({ claimToken, tokenInfo, tableNumber, onClose, onSucces
                 <div className="option-content">
                   <span className="option-icon">📧</span>
                   <div className="option-text">
-                    <span className="option-title">Tôi đã có tài khoản</span>
-                    <span className="option-desc">Nhập email để nhận điểm ngay</span>
+                    <span className="option-title">I have an account</span>
+                    <span className="option-desc">Enter email to claim points now</span>
                   </div>
                 </div>
               </button>
@@ -121,8 +121,8 @@ const PointClaimModal = ({ claimToken, tokenInfo, tableNumber, onClose, onSucces
                 <div className="option-content">
                   <span className="option-icon">✨</span>
                   <div className="option-text">
-                    <span className="option-title">Tạo tài khoản mới</span>
-                    <span className="option-desc">Đăng ký để nhận điểm và nhiều ưu đãi</span>
+                    <span className="option-title">Create new account</span>
+                    <span className="option-desc">Register to earn points and many benefits</span>
                   </div>
                 </div>
               </button>
@@ -133,9 +133,9 @@ const PointClaimModal = ({ claimToken, tokenInfo, tableNumber, onClose, onSucces
         {step === 'existing' && (
           <div className="modal-body">
             <div className="existing-customer-section">
-              <h4>Nhập email của bạn</h4>
+              <h4>Enter your email</h4>
               <p className="section-description">
-                Nhập email đã đăng ký để nhận <strong>{tokenInfo.pointsToEarn} điểm</strong>
+                Enter your registered email to claim <strong>{tokenInfo.pointsToEarn} points</strong>
               </p>
               
               <div className="input-group">
@@ -167,7 +167,7 @@ const PointClaimModal = ({ claimToken, tokenInfo, tableNumber, onClose, onSucces
                   disabled={loading}
                 >
                   <span className="btn-icon">←</span>
-                  Quay lại
+                  Back to choose
                 </button>
                 <button 
                   className="btn btn-primary"
@@ -177,12 +177,12 @@ const PointClaimModal = ({ claimToken, tokenInfo, tableNumber, onClose, onSucces
                   {loading ? (
                     <>
                       <span className="btn-spinner"></span>
-                      Đang xử lý...
+                      Processing...
                     </>
                   ) : (
                     <>
                       <span className="btn-icon">🎁</span>
-                      Nhận điểm
+                      Claim points
                     </>
                   )}
                 </button>
@@ -202,14 +202,14 @@ const PointClaimModal = ({ claimToken, tokenInfo, tableNumber, onClose, onSucces
                 <span>⭐</span>
               </div>
             </div>
-            <h4>Thành công!</h4>
+            <h4>Success!</h4>
             <p className="success-message">{successMessage}</p>
             <div className="success-details">
-              <p>📧 Email xác nhận đã được gửi đến: <strong>{email}</strong></p>
+              <p>📧 Confirmation email has been sent to: <strong>{email}</strong></p>
             </div>
             <p className="auto-close">
               <span className="auto-close-icon">⏱️</span>
-              Tự động đóng sau 3 giây...
+              Closing in 3 seconds...
             </p>
           </div>
         )}

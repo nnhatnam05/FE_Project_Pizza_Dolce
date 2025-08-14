@@ -106,7 +106,7 @@ export default function User() {
   const handleConfirmDelete = async () => {
     if (isDeleting) return;
     
-    // Kiểm tra lại quyền trước khi xóa
+            // Check permissions again before deleting
     if (currentUserRole !== 'ADMIN') {
       setDeleteError("Access forbidden: Only ADMIN users can delete other users.");
       return;

@@ -152,7 +152,7 @@ const TableMenu = ({ tableNumber, table, allOrders, onOrderUpdate }) => {
       {/* Food Grid */}
       <div className="food-grid">
         {filteredFoods.map(food => (
-          <div key={food.id} className="food-card">
+          <div key={food.id} className={`food-card ${food.status === 'UNAVAILABLE' ? 'sold-out' : ''}`}>
             <div className="food-image">
               {food.imageUrl ? (
                 <img 
@@ -167,6 +167,11 @@ const TableMenu = ({ tableNumber, table, allOrders, onOrderUpdate }) => {
               <div className="no-image" style={{ display: food.imageUrl ? 'none' : 'flex' }}>
                 🍽️
               </div>
+              {food.status === 'UNAVAILABLE' && (
+                <div className="sold-out-badge">
+                  <span>Sold Out</span>
+                </div>
+              )}
             </div>
             
             <div className="food-info">
@@ -175,10 +180,11 @@ const TableMenu = ({ tableNumber, table, allOrders, onOrderUpdate }) => {
               <div className="food-price">${food.price?.toFixed(2)}</div>
               
               <button 
-                className="add-to-cart-btn"
+                className={`add-to-cart-btn ${food.status === 'UNAVAILABLE' ? 'disabled' : ''}`}
                 onClick={() => addToCart(food)}
+                disabled={food.status === 'UNAVAILABLE'}
               >
-                Add to Order
+                {food.status === 'UNAVAILABLE' ? 'Out of Stock' : 'Add to Order'}
               </button>
             </div>
           </div>

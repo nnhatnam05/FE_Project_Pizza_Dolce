@@ -25,7 +25,7 @@ const Cart = () => {
     const [redirectCount, setRedirectCount] = useState(10); 
 
 
-    // Modal states
+    // Trạng thái modal
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showIncompleteInfoModal, setShowIncompleteInfoModal] = useState(false);
     const [showExistingOrderModal, setShowExistingOrderModal] = useState(false);
@@ -34,7 +34,7 @@ const Cart = () => {
     const [showAddressSelection, setShowAddressSelection] = useState(false);
     const [selectedDeliveryAddress, setSelectedDeliveryAddress] = useState(null);
 
-    // shipping fee
+    // phí vận chuyển
     const shippingFee = 0;
 
     useEffect(() => {
@@ -82,7 +82,7 @@ const Cart = () => {
     }, []);
 
     useEffect(() => {
-        // Get user information
+        // Lấy thông tin người dùng
         const token = localStorage.getItem('token');
         setIsTokenValid(Boolean(token));
         if (token) {
@@ -92,7 +92,7 @@ const Cart = () => {
             setCustomer(null);
         }
 
-        // Load products of type OTHER
+        // Tải sản phẩm loại OTHER
         fetchOtherItems();
     }, []);
 
@@ -132,14 +132,14 @@ const Cart = () => {
                     localStorage.removeItem('token');
                     setIsTokenValid(false);
                     setCustomer(null);
-                    console.log("Token không hợp lệ và đã bị xóa");
+                    console.log("Token invalid and has been removed");
                 }
                 return;
             }
             const data = await response.json();
             setCustomer(data);
             setIsTokenValid(true);
-            console.log("Đã thu thập thành công dữ liệu khách hàng:", data);
+            console.log("Successfully collected customer data:", data);
         } catch (error) {
             console.error('Failed to fetch customer data:', error);
         }
@@ -480,6 +480,13 @@ const Cart = () => {
     const handlePlaceOrder = async () => {
         console.log("Start the payment process and complete verification");
     
+        // Kiểm tra tổng giá trị đơn hàng tối thiểu
+        const totalAmount = calculateTotal();
+        if (totalAmount < 15) {
+            showError(`Order total must be at least $15. Current total: $${totalAmount.toFixed(2)}`);
+            return;
+        }
+    
         try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -514,7 +521,7 @@ const Cart = () => {
                 return;
             }
 
-            // Hiển thị modal xác nhận thanh toán
+            // Hiển thị modal xác nhận thanh toán (giữ nguyên comment tiếng Việt)
             console.log("Showing confirmation modal");
             setShowConfirmPaymentModal(true);
         } catch (error) {
@@ -526,6 +533,13 @@ const Cart = () => {
     const confirmPayment = async () => {
         console.log("Confirm payment clicked");
         setShowConfirmPaymentModal(false);
+        
+        // Kiểm tra lại tổng giá trị đơn hàng tối thiểu
+        const totalAmount = calculateTotal();
+        if (totalAmount < 15) {
+            showError(`Order total must be at least $15. Current total: $${totalAmount.toFixed(2)}`);
+            return;
+        }
         
         try {
             const token = localStorage.getItem('token');
@@ -694,7 +708,7 @@ const Cart = () => {
                         <span className="confetti-item"></span>
                     </div>
                     <p className="redirect-message">
-                        Đơn hàng đã được khởi tạo, bạn sẽ được chuyển hướng đến trang thanh toán sau <span className="countdown">{redirectCount}s</span>
+                        Order has been created, you will be redirected to payment page in <span className="countdown">{redirectCount}s</span>
                     </p>
                     <div className="order-decoration">
                         <span className="decoration-item">🍕</span>
@@ -879,7 +893,7 @@ const Cart = () => {
                                 {needInvoice && (
                                     <div className="invoice-notice">
                                         <i className="notice-icon">📧</i>
-                                        <span>Hóa đơn điện tử sẽ được gửi đến email của bạn sau khi thanh toán thành công</span>
+                                        <span>Electronic invoice will be sent to your email after successful payment</span>
                                     </div>
                                 )}
                             </div>
@@ -918,10 +932,25 @@ const Cart = () => {
                                     <span>Total:</span>
                                     <span className="price">{calculateTotal().toLocaleString()} $</span>
                                 </div>
+                                
+                                {/* Minimum order amount warning */}
+                                {calculateTotal() < 15 && (
+                                    <div className="minimum-order-warning">
+                                        <div className="warning-icon">⚠️</div>
+                                        <div className="warning-text">
+                                            <strong>Minimum order amount:</strong> $15.00
+                                            <br />
+                                            <span className="warning-detail">
+                                                Add ${(15 - calculateTotal()).toFixed(2)} more to your order
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                                
                                 <button
-                                    className="checkout-btn"
+                                    className={`checkout-btn ${calculateTotal() < 15 ? 'disabled' : ''}`}
                                     onClick={handlePlaceOrder}
-                                    disabled={cart.length === 0 && selectedOtherItems.length === 0}
+                                    disabled={cart.length === 0 && selectedOtherItems.length === 0 || calculateTotal() < 15}
                                 >
                                     Confirm Payment
                                 </button>
@@ -986,25 +1015,25 @@ const Cart = () => {
                 <div className="modal-overlay">
                     <div className="modal-container">
                         <div className="modal-header">
-                            <h3>Xác nhận thanh toán</h3>
+                            <h3>Payment Confirmation</h3>
                             <button className="modal-close" onClick={() => setShowConfirmPaymentModal(false)}>×</button>
                         </div>
                         <div className="modal-content">
                             <div className="warning-icon">
                                 <i>⚠️</i>
                             </div>
-                            <h4 className="warning-title">Bạn có chắc chắn muốn tiến hành thanh toán?</h4>
-                            <p>Đơn hàng sẽ được tạo và bạn sẽ không thể hoàn tác sau khi xác nhận.</p>
+                            <h4 className="warning-title">Are you sure you want to proceed with payment?</h4>
+                            <p>The order will be created and you cannot undo it after confirmation.</p>
                             <div className="order-summary">
-                                <p><strong>Tổng tiền:</strong> {calculateTotal().toLocaleString()} $</p>
-                                <p><strong>Số lượng món:</strong> {cart.length + selectedOtherItems.length}</p>
+                                <p><strong>Total Amount:</strong> {calculateTotal().toLocaleString()} $</p>
+                                <p><strong>Number of Items:</strong> {cart.length + selectedOtherItems.length}</p>
                             </div>
                             <div className="modal-actions">
                                 <button className="modal-btn secondary" onClick={() => setShowConfirmPaymentModal(false)}>
-                                    Hủy
+                                    Cancel
                                 </button>
                                 <button className="modal-btn primary" onClick={confirmPayment}>
-                                    Xác nhận thanh toán
+                                    Confirm Payment
                                 </button>
                             </div>
                         </div>

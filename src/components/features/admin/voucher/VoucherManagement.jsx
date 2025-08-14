@@ -14,6 +14,12 @@ const VoucherManagement = () => {
     const [customers, setCustomers] = useState([]);
     const [selectedCustomer, setSelectedCustomer] = useState('');
     
+    // New states for enhanced give voucher functionality
+    const [giveVoucherMode, setGiveVoucherMode] = useState(''); // 'top10', 'top50', 'all', 'specific', 'multiple'
+    const [selectedCustomers, setSelectedCustomers] = useState([]);
+    const [customerSearchTerm, setCustomerSearchTerm] = useState('');
+    const [filteredCustomers, setFilteredCustomers] = useState([]);
+    
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -30,11 +36,9 @@ const VoucherManagement = () => {
     const [success, setSuccess] = useState('');
 
     const voucherTypes = [
-        { value: 'PERCENTAGE', label: 'Giảm theo %' },
-        { value: 'FIXED_AMOUNT', label: 'Giảm số tiền cố định' },
-        { value: 'FREE_SHIPPING', label: 'Miễn phí ship' },
-        { value: 'BUY_ONE_GET_ONE', label: 'Mua 1 tặng 1' },
-        { value: 'FREE_ITEM', label: 'Tặng món' }
+        { value: 'PERCENTAGE', label: 'Giảm giá theo phần trăm (%)' },
+        { value: 'FIXED_AMOUNT', label: 'Giảm số tiền cố định ($)' },
+        { value: 'FREE_ITEM', label: 'Tặng nước bất kì' }
     ];
 
     useEffect(() => {
@@ -64,17 +68,58 @@ const VoucherManagement = () => {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setCustomers(response.data);
+            setFilteredCustomers(response.data);
         } catch (error) {
             console.error('Error fetching customers:', error);
         }
     };
 
+    // Filter customers based on search term
+    useEffect(() => {
+        if (!customerSearchTerm) {
+            setFilteredCustomers(customers);
+        } else {
+            const filtered = customers.filter(customer =>
+                customer.fullName.toLowerCase().includes(customerSearchTerm.toLowerCase()) ||
+                customer.email.toLowerCase().includes(customerSearchTerm.toLowerCase()) ||
+                (customer.phoneNumber && customer.phoneNumber.includes(customerSearchTerm))
+            );
+            setFilteredCustomers(filtered);
+        }
+    }, [customerSearchTerm, customers]);
+
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
+        const newFormData = {
+            ...formData,
             [name]: type === 'checkbox' ? checked : value
-        }));
+        };
+        
+        // Clear fields when changing voucher type
+        if (name === 'type') {
+            newFormData.value = '';
+            newFormData.minOrderAmount = '';
+            newFormData.maxDiscountAmount = '';
+        }
+        
+        setFormData(newFormData);
+
+        // Real-time validation for voucher logic
+        if (['type', 'value', 'minOrderAmount', 'maxDiscountAmount'].includes(name)) {
+            const voucherData = {
+                type: newFormData.type,
+                value: parseFloat(newFormData.value) || 0,
+                minOrderAmount: parseFloat(newFormData.minOrderAmount) || null,
+                maxDiscountAmount: parseFloat(newFormData.maxDiscountAmount) || null
+            };
+            
+            const validationError = validateVoucherLogic(voucherData);
+            if (validationError) {
+                setError(validationError);
+            } else {
+                setError(''); // Clear error if validation passes
+            }
+        }
     };
 
     const resetForm = () => {
@@ -93,6 +138,60 @@ const VoucherManagement = () => {
         setSuccess('');
     };
 
+    // Validation function for voucher logic
+    const validateVoucherLogic = (voucherData) => {
+        const { type, value, minOrderAmount, maxDiscountAmount } = voucherData;
+
+        if (type === 'FIXED_AMOUNT') {
+            // For fixed amount vouchers: minOrderAmount must be >= voucher value
+            if (minOrderAmount && value && minOrderAmount < value) {
+                return `❌ Logic Error: Đơn hàng tối thiểu ($${minOrderAmount}) phải lớn hơn hoặc bằng số tiền giảm ($${value}) để tránh tổng âm!`;
+            }
+            if (!minOrderAmount && value > 0) {
+                return `❌ Logic Error: Voucher giảm số tiền cố định phải có đơn hàng tối thiểu ít nhất bằng số tiền giảm ($${value}) để tránh tổng âm.`;
+            }
+        } else if (type === 'PERCENTAGE') {
+            // For percentage vouchers: validate percentage value
+            if (value && (value <= 0 || value > 100)) {
+                return `❌ Logic Error: Phần trăm giảm phải từ 0 đến 100%`;
+            }
+            // For percentage vouchers: if maxDiscountAmount is set, minOrderAmount should be >= maxDiscountAmount
+            if (maxDiscountAmount && minOrderAmount && minOrderAmount < maxDiscountAmount) {
+                return `❌ Logic Error: Đơn hàng tối thiểu ($${minOrderAmount}) nên lớn hơn hoặc bằng giảm tối đa ($${maxDiscountAmount}) để tránh tổng âm.`;
+            }
+            if (maxDiscountAmount && !minOrderAmount) {
+                return `⚠️ Gợi ý: Nên đặt đơn hàng tối thiểu ít nhất $${maxDiscountAmount} để tránh đơn hàng nhỏ được giảm quá nhiều.`;
+            }
+        } else if (type === 'FREE_ITEM') {
+            // For free item vouchers: value should not be negative
+            if (value && value < 0) {
+                return `❌ Logic Error: Giá trị ly nước không thể âm`;
+            }
+        }
+
+        return null; // No validation errors
+    };
+
+    // Helper function to check if a field has validation error
+    const hasValidationError = (fieldName) => {
+        const voucherData = {
+            type: formData.type,
+            value: parseFloat(formData.value) || 0,
+            minOrderAmount: parseFloat(formData.minOrderAmount) || null,
+            maxDiscountAmount: parseFloat(formData.maxDiscountAmount) || null
+        };
+        
+        const validationError = validateVoucherLogic(voucherData);
+        if (!validationError) return false;
+
+        // Check if the error is related to this field
+        if (fieldName === 'minOrderAmount' && validationError.includes('Minimum order amount')) return true;
+        if (fieldName === 'value' && validationError.includes('voucher value')) return true;
+        if (fieldName === 'maxDiscountAmount' && validationError.includes('max discount amount')) return true;
+        
+        return false;
+    };
+
     const handleCreateVoucher = async (e) => {
         e.preventDefault();
         try {
@@ -105,8 +204,15 @@ const VoucherManagement = () => {
                 minOrderAmount: formData.minOrderAmount ? parseFloat(formData.minOrderAmount) : null,
                 maxDiscountAmount: formData.maxDiscountAmount ? parseFloat(formData.maxDiscountAmount) : null,
                 totalQuantity: parseInt(formData.totalQuantity),
-                expiresAt: formData.expiresAt ? formData.expiresAt + ':00' : null
+                expiresAt: formData.expiresAt ? formatDateTimeForBackend(formData.expiresAt) : null
             };
+
+            // Validation: Check voucher logic
+            const validationError = validateVoucherLogic(voucherData);
+            if (validationError) {
+                setError(validationError);
+                return;
+            }
 
             const response = await axios.post('http://localhost:8080/api/admin/vouchers', voucherData, {
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -134,8 +240,15 @@ const VoucherManagement = () => {
                 minOrderAmount: formData.minOrderAmount ? parseFloat(formData.minOrderAmount) : null,
                 maxDiscountAmount: formData.maxDiscountAmount ? parseFloat(formData.maxDiscountAmount) : null,
                 totalQuantity: parseInt(formData.totalQuantity),
-                expiresAt: formData.expiresAt ? formData.expiresAt + ':00' : null
+                expiresAt: formData.expiresAt ? formatDateTimeForBackend(formData.expiresAt) : null
             };
+
+            // Validation: Check voucher logic
+            const validationError = validateVoucherLogic(voucherData);
+            if (validationError) {
+                setError(validationError);
+                return;
+            }
 
             const response = await axios.put(`http://localhost:8080/api/admin/vouchers/${selectedVoucher.id}`, voucherData, {
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -203,6 +316,118 @@ const VoucherManagement = () => {
         }
     };
 
+    // New enhanced give voucher functions
+    const handleGiveVoucherToTopCustomers = async (topCount) => {
+        if (!selectedVoucher) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.post(
+                `http://localhost:8080/api/admin/vouchers/${selectedVoucher.id}/give-to-top-customers?topCount=${topCount}`,
+                {},
+                { headers: { 'Authorization': `Bearer ${token}` } }
+            );
+
+            if (response.data.success) {
+                setSuccess(response.data.message);
+                resetGiveVoucherModal();
+            } else {
+                setError(response.data.message);
+            }
+        } catch (error) {
+            setError('Failed to give voucher to top customers: ' + (error.response?.data?.message || error.message));
+        }
+    };
+
+    const handleGiveVoucherToAllCustomers = async () => {
+        if (!selectedVoucher) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.post(
+                `http://localhost:8080/api/admin/vouchers/${selectedVoucher.id}/give-to-all-customers`,
+                {},
+                { headers: { 'Authorization': `Bearer ${token}` } }
+            );
+
+            if (response.data.success) {
+                setSuccess(response.data.message);
+                resetGiveVoucherModal();
+            } else {
+                setError(response.data.message);
+            }
+        } catch (error) {
+            setError('Failed to give voucher to all customers: ' + (error.response?.data?.message || error.message));
+        }
+    };
+
+    const handleGiveVoucherToMultipleCustomers = async () => {
+        if (!selectedVoucher || selectedCustomers.length === 0) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.post(
+                `http://localhost:8080/api/admin/vouchers/${selectedVoucher.id}/give-to-multiple-customers`,
+                selectedCustomers,
+                { headers: { 'Authorization': `Bearer ${token}` } }
+            );
+
+            if (response.data.success) {
+                setSuccess(response.data.message);
+                resetGiveVoucherModal();
+            } else {
+                setError(response.data.message);
+            }
+        } catch (error) {
+            setError('Failed to give voucher to multiple customers: ' + (error.response?.data?.message || error.message));
+        }
+    };
+
+    const resetGiveVoucherModal = () => {
+        setShowGiveModal(false);
+        setSelectedVoucher(null);
+        setGiveVoucherMode('');
+        setSelectedCustomers([]);
+        setSelectedCustomer('');
+        setCustomerSearchTerm('');
+    };
+
+    const handleCustomerSelection = (customerId) => {
+        if (giveVoucherMode === 'specific') {
+            setSelectedCustomer(customerId);
+        } else if (giveVoucherMode === 'multiple') {
+            setSelectedCustomers(prev => {
+                if (prev.includes(customerId)) {
+                    return prev.filter(id => id !== customerId);
+                } else {
+                    return [...prev, customerId];
+                }
+            });
+        }
+    };
+
+    const executeGiveVoucher = async () => {
+        switch (giveVoucherMode) {
+            case 'top10':
+                await handleGiveVoucherToTopCustomers(10);
+                break;
+            case 'top50':
+                await handleGiveVoucherToTopCustomers(50);
+                break;
+            case 'all':
+                await handleGiveVoucherToAllCustomers();
+                break;
+            case 'specific':
+                await handleGiveVoucher({ preventDefault: () => {} });
+                break;
+            case 'multiple':
+                await handleGiveVoucherToMultipleCustomers();
+                break;
+            default:
+                setError('Please select a give voucher option');
+        }
+    };
+
     const openEditModal = (voucher) => {
         setSelectedVoucher(voucher);
         setFormData({
@@ -226,7 +451,46 @@ const VoucherManagement = () => {
 
     const formatDateTime = (dateTime) => {
         if (!dateTime) return 'No expiry';
-        return new Date(dateTime).toLocaleString();
+        
+        try {
+            const date = new Date(dateTime);
+            if (isNaN(date.getTime())) return 'Invalid date';
+            
+            const now = new Date();
+            const diffTime = date.getTime() - now.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) return 'Expired';
+            if (diffDays === 0) return 'Expires today';
+            if (diffDays === 1) return 'Expires tomorrow';
+            if (diffDays <= 7) return `Expires in ${diffDays} days`;
+            
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric',
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } catch (error) {
+            return 'Invalid date';
+        }
+    };
+
+    const formatDateTimeForBackend = (dateTimeString) => {
+        if (!dateTimeString) return null;
+        
+        try {
+            // Convert local datetime to ISO string and send to backend
+            const date = new Date(dateTimeString);
+            if (isNaN(date.getTime())) return null;
+            
+            // Format as ISO string without timezone (backend will handle as local time)
+            return date.toISOString().slice(0, 19); // yyyy-MM-ddTHH:mm:ss
+        } catch (error) {
+            console.error('Error formatting datetime:', error);
+            return null;
+        }
     };
 
     const getTypeLabel = (type) => {
@@ -289,7 +553,9 @@ const VoucherManagement = () => {
                                 <td>{voucher.name}</td>
                                 <td>{getTypeLabel(voucher.type)}</td>
                                 <td>
-                                    {voucher.type === 'PERCENTAGE' ? `${voucher.value}%` : `$${voucher.value}`}
+                                    {voucher.type === 'PERCENTAGE' ? `${voucher.value}%` : 
+                                     voucher.type === 'FREE_ITEM' ? 'Tặng nước' : 
+                                     `$${voucher.value}`}
                                 </td>
                                 <td>
                                     {voucher.usedQuantity}/{voucher.totalQuantity}
@@ -387,56 +653,228 @@ const VoucherManagement = () => {
                                 />
                             </div>
 
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label>Value *</label>
-                                    <input
-                                        type="number"
-                                        name="value"
-                                        value={formData.value}
-                                        onChange={handleInputChange}
-                                        step="0.01"
-                                        min="0"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Total Quantity *</label>
-                                    <input
-                                        type="number"
-                                        name="totalQuantity"
-                                        value={formData.totalQuantity}
-                                        onChange={handleInputChange}
-                                        min="1"
-                                        required
-                                    />
-                                </div>
-                            </div>
+                            {/* Dynamic form fields based on voucher type */}
+                            {formData.type === 'PERCENTAGE' && (
+                                <>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Phần Trăm Giảm (%) *</label>
+                                            <input
+                                                type="number"
+                                                name="value"
+                                                value={formData.value}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                max="100"
+                                                placeholder="Ví dụ: 20"
+                                                required
+                                                className={hasValidationError('value') ? 'validation-error' : ''}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Số Lượng Voucher *</label>
+                                            <input
+                                                type="number"
+                                                name="totalQuantity"
+                                                value={formData.totalQuantity}
+                                                onChange={handleInputChange}
+                                                min="1"
+                                                placeholder="Ví dụ: 100"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
 
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label>Min Order Amount</label>
-                                    <input
-                                        type="number"
-                                        name="minOrderAmount"
-                                        value={formData.minOrderAmount}
-                                        onChange={handleInputChange}
-                                        step="0.01"
-                                        min="0"
-                                    />
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Đơn Hàng Tối Thiểu ($)</label>
+                                            <input
+                                                type="number"
+                                                name="minOrderAmount"
+                                                value={formData.minOrderAmount}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Ví dụ: 25"
+                                                className={hasValidationError('minOrderAmount') ? 'validation-error' : ''}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Giảm Tối Đa ($)</label>
+                                            <input
+                                                type="number"
+                                                name="maxDiscountAmount"
+                                                value={formData.maxDiscountAmount}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Ví dụ: 5"
+                                                className={hasValidationError('maxDiscountAmount') ? 'validation-error' : ''}
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {formData.type === 'FIXED_AMOUNT' && (
+                                <>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Số Tiền Giảm ($) *</label>
+                                            <input
+                                                type="number"
+                                                name="value"
+                                                value={formData.value}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Ví dụ: 10"
+                                                required
+                                                className={hasValidationError('value') ? 'validation-error' : ''}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Số Lượng Voucher *</label>
+                                            <input
+                                                type="number"
+                                                name="totalQuantity"
+                                                value={formData.totalQuantity}
+                                                onChange={handleInputChange}
+                                                min="1"
+                                                placeholder="Ví dụ: 100"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Đơn Hàng Tối Thiểu ($) *</label>
+                                            <input
+                                                type="number"
+                                                name="minOrderAmount"
+                                                value={formData.minOrderAmount}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Phải >= số tiền giảm"
+                                                required
+                                                className={hasValidationError('minOrderAmount') ? 'validation-error' : ''}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Giảm Tối Đa ($)</label>
+                                            <input
+                                                type="number"
+                                                name="maxDiscountAmount"
+                                                value={formData.maxDiscountAmount}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Không cần thiết cho loại này"
+                                                disabled
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {formData.type === 'FREE_ITEM' && (
+                                <>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Giá Trị Ly Nước ($)</label>
+                                            <input
+                                                type="number"
+                                                name="value"
+                                                value={formData.value}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Ví dụ: 3 (có thể để 0)"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Số Lượng Voucher *</label>
+                                            <input
+                                                type="number"
+                                                name="totalQuantity"
+                                                value={formData.totalQuantity}
+                                                onChange={handleInputChange}
+                                                min="1"
+                                                placeholder="Ví dụ: 100"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Đơn Hàng Tối Thiểu ($)</label>
+                                            <input
+                                                type="number"
+                                                name="minOrderAmount"
+                                                value={formData.minOrderAmount}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Không bắt buộc"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Giảm Tối Đa ($)</label>
+                                            <input
+                                                type="number"
+                                                name="maxDiscountAmount"
+                                                value={formData.maxDiscountAmount}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Không cần thiết cho loại này"
+                                                disabled
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {/* Validation Hint for Create Form */}
+                            {formData.type === 'FIXED_AMOUNT' && (
+                                <div className="validation-hint">
+                                    💡 <strong>Voucher Giảm Số Tiền Cố Định:</strong> 
+                                    <br />
+                                    • Số tiền đơn hàng tối thiểu phải lớn hơn hoặc bằng số tiền giảm
+                                    <br />
+                                    • Ví dụ: Giảm $10 cho đơn hàng từ $15 trở lên
+                                    <br />
+                                    • Trường "Giảm Tối Đa" không cần thiết cho loại này
                                 </div>
-                                <div className="form-group">
-                                    <label>Max Discount Amount</label>
-                                    <input
-                                        type="number"
-                                        name="maxDiscountAmount"
-                                        value={formData.maxDiscountAmount}
-                                        onChange={handleInputChange}
-                                        step="0.01"
-                                        min="0"
-                                    />
+                            )}
+                            
+                            {formData.type === 'PERCENTAGE' && (
+                                <div className="validation-hint">
+                                    💡 <strong>Voucher Giảm Theo Phần Trăm:</strong>
+                                    <br />
+                                    • Phần trăm giảm từ 0-100%
+                                    <br />
+                                    • Có thể đặt giới hạn giảm tối đa để kiểm soát
+                                    <br />
+                                    • Ví dụ: Giảm 20% tối đa $5 cho đơn hàng từ $25
                                 </div>
-                            </div>
+                            )}
+
+                            {formData.type === 'FREE_ITEM' && (
+                                <div className="validation-hint">
+                                    💡 <strong>Voucher Tặng Nước:</strong>
+                                    <br />
+                                    • Khách hàng được tặng một ly nước bất kì
+                                    <br />
+                                    • Giá trị có thể đặt là 0 hoặc giá ly nước để tính toán
+                                    <br />
+                                    • Đơn hàng tối thiểu và giảm tối đa không bắt buộc
+                                </div>
+                            )}
 
                             <div className="form-row">
                                 <div className="form-group">
@@ -446,6 +884,7 @@ const VoucherManagement = () => {
                                         name="expiresAt"
                                         value={formData.expiresAt}
                                         onChange={handleInputChange}
+                                        min={new Date().toISOString().slice(0, 16)}
                                     />
                                 </div>
                                 <div className="form-group checkbox-group">
@@ -525,56 +964,228 @@ const VoucherManagement = () => {
                                 />
                             </div>
 
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label>Value *</label>
-                                    <input
-                                        type="number"
-                                        name="value"
-                                        value={formData.value}
-                                        onChange={handleInputChange}
-                                        step="0.01"
-                                        min="0"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Total Quantity *</label>
-                                    <input
-                                        type="number"
-                                        name="totalQuantity"
-                                        value={formData.totalQuantity}
-                                        onChange={handleInputChange}
-                                        min="1"
-                                        required
-                                    />
-                                </div>
-                            </div>
+                            {/* Dynamic form fields based on voucher type */}
+                            {formData.type === 'PERCENTAGE' && (
+                                <>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Phần Trăm Giảm (%) *</label>
+                                            <input
+                                                type="number"
+                                                name="value"
+                                                value={formData.value}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                max="100"
+                                                placeholder="Ví dụ: 20"
+                                                required
+                                                className={hasValidationError('value') ? 'validation-error' : ''}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Số Lượng Voucher *</label>
+                                            <input
+                                                type="number"
+                                                name="totalQuantity"
+                                                value={formData.totalQuantity}
+                                                onChange={handleInputChange}
+                                                min="1"
+                                                placeholder="Ví dụ: 100"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
 
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label>Min Order Amount</label>
-                                    <input
-                                        type="number"
-                                        name="minOrderAmount"
-                                        value={formData.minOrderAmount}
-                                        onChange={handleInputChange}
-                                        step="0.01"
-                                        min="0"
-                                    />
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Đơn Hàng Tối Thiểu ($)</label>
+                                            <input
+                                                type="number"
+                                                name="minOrderAmount"
+                                                value={formData.minOrderAmount}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Ví dụ: 25"
+                                                className={hasValidationError('minOrderAmount') ? 'validation-error' : ''}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Giảm Tối Đa ($)</label>
+                                            <input
+                                                type="number"
+                                                name="maxDiscountAmount"
+                                                value={formData.maxDiscountAmount}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Ví dụ: 5"
+                                                className={hasValidationError('maxDiscountAmount') ? 'validation-error' : ''}
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {formData.type === 'FIXED_AMOUNT' && (
+                                <>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Số Tiền Giảm ($) *</label>
+                                            <input
+                                                type="number"
+                                                name="value"
+                                                value={formData.value}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Ví dụ: 10"
+                                                required
+                                                className={hasValidationError('value') ? 'validation-error' : ''}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Số Lượng Voucher *</label>
+                                            <input
+                                                type="number"
+                                                name="totalQuantity"
+                                                value={formData.totalQuantity}
+                                                onChange={handleInputChange}
+                                                min="1"
+                                                placeholder="Ví dụ: 100"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Đơn Hàng Tối Thiểu ($) *</label>
+                                            <input
+                                                type="number"
+                                                name="minOrderAmount"
+                                                value={formData.minOrderAmount}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Phải >= số tiền giảm"
+                                                required
+                                                className={hasValidationError('minOrderAmount') ? 'validation-error' : ''}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Giảm Tối Đa ($)</label>
+                                            <input
+                                                type="number"
+                                                name="maxDiscountAmount"
+                                                value={formData.maxDiscountAmount}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Không cần thiết cho loại này"
+                                                disabled
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {formData.type === 'FREE_ITEM' && (
+                                <>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Giá Trị Ly Nước ($)</label>
+                                            <input
+                                                type="number"
+                                                name="value"
+                                                value={formData.value}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Ví dụ: 3 (có thể để 0)"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Số Lượng Voucher *</label>
+                                            <input
+                                                type="number"
+                                                name="totalQuantity"
+                                                value={formData.totalQuantity}
+                                                onChange={handleInputChange}
+                                                min="1"
+                                                placeholder="Ví dụ: 100"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Đơn Hàng Tối Thiểu ($)</label>
+                                            <input
+                                                type="number"
+                                                name="minOrderAmount"
+                                                value={formData.minOrderAmount}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Không bắt buộc"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Giảm Tối Đa ($)</label>
+                                            <input
+                                                type="number"
+                                                name="maxDiscountAmount"
+                                                value={formData.maxDiscountAmount}
+                                                onChange={handleInputChange}
+                                                step="0.01"
+                                                min="0"
+                                                placeholder="Không cần thiết cho loại này"
+                                                disabled
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {/* Validation Hint for Edit Form */}
+                            {formData.type === 'FIXED_AMOUNT' && (
+                                <div className="validation-hint">
+                                    💡 <strong>Voucher Giảm Số Tiền Cố Định:</strong> 
+                                    <br />
+                                    • Số tiền đơn hàng tối thiểu phải lớn hơn hoặc bằng số tiền giảm
+                                    <br />
+                                    • Ví dụ: Giảm $10 cho đơn hàng từ $15 trở lên
+                                    <br />
+                                    • Trường "Giảm Tối Đa" không cần thiết cho loại này
                                 </div>
-                                <div className="form-group">
-                                    <label>Max Discount Amount</label>
-                                    <input
-                                        type="number"
-                                        name="maxDiscountAmount"
-                                        value={formData.maxDiscountAmount}
-                                        onChange={handleInputChange}
-                                        step="0.01"
-                                        min="0"
-                                    />
+                            )}
+                            
+                            {formData.type === 'PERCENTAGE' && (
+                                <div className="validation-hint">
+                                    💡 <strong>Voucher Giảm Theo Phần Trăm:</strong>
+                                    <br />
+                                    • Phần trăm giảm từ 0-100%
+                                    <br />
+                                    • Có thể đặt giới hạn giảm tối đa để kiểm soát
+                                    <br />
+                                    • Ví dụ: Giảm 20% tối đa $5 cho đơn hàng từ $25
                                 </div>
-                            </div>
+                            )}
+
+                            {formData.type === 'FREE_ITEM' && (
+                                <div className="validation-hint">
+                                    💡 <strong>Voucher Tặng Nước:</strong>
+                                    <br />
+                                    • Khách hàng được tặng một ly nước bất kì
+                                    <br />
+                                    • Giá trị có thể đặt là 0 hoặc giá ly nước để tính toán
+                                    <br />
+                                    • Đơn hàng tối thiểu và giảm tối đa không bắt buộc
+                                </div>
+                            )}
 
                             <div className="form-row">
                                 <div className="form-group">
@@ -584,6 +1195,7 @@ const VoucherManagement = () => {
                                         name="expiresAt"
                                         value={formData.expiresAt}
                                         onChange={handleInputChange}
+                                        min={new Date().toISOString().slice(0, 16)}
                                     />
                                 </div>
                                 <div className="form-group checkbox-group">
@@ -610,49 +1222,212 @@ const VoucherManagement = () => {
                 </div>
             )}
 
-            {/* Give Voucher Modal */}
+            {/* Enhanced Give Voucher Modal */}
             {showGiveModal && (
                 <div className="modal-overlay">
-                    <div className="modal-container">
+                    <div className="modal-container large-modal">
                         <div className="modal-header">
-                            <h2>Give Voucher to Customer</h2>
+                            <h2>🎁 Give Voucher to Customers</h2>
                             <button 
                                 className="modal-close"
-                                onClick={() => { setShowGiveModal(false); setSelectedCustomer(''); setSelectedVoucher(null); }}
+                                onClick={resetGiveVoucherModal}
                             >
                                 ×
                             </button>
                         </div>
-                        <form onSubmit={handleGiveVoucher} className="give-voucher-form">
+                        
+                        <div className="give-voucher-content">
+                            {/* Voucher Info */}
                             <div className="voucher-info">
-                                <h3>Voucher: {selectedVoucher?.name}</h3>
-                                <p>Code: {selectedVoucher?.code}</p>
-                                <p>Remaining: {selectedVoucher?.remainingQuantity}</p>
+                                <h3>📋 Voucher: {selectedVoucher?.name}</h3>
+                                <div className="voucher-details">
+                                    <span className="voucher-code">Code: {selectedVoucher?.code}</span>
+                                    <span className="voucher-remaining">Remaining: {selectedVoucher?.remainingQuantity}</span>
+                                    <span className="voucher-value">
+                                        Value: {selectedVoucher?.type === 'PERCENTAGE' ? `${selectedVoucher?.value}%` : `$${selectedVoucher?.value}`}
+                                    </span>
+                                </div>
                             </div>
 
-                            <div className="form-group">
-                                <label>Select Customer *</label>
-                                <select
-                                    value={selectedCustomer}
-                                    onChange={(e) => setSelectedCustomer(e.target.value)}
-                                    required
-                                >
-                                    <option value="">Choose a customer...</option>
-                                    {customers.map(customer => (
-                                        <option key={customer.id} value={customer.id}>
-                                            {customer.fullName} ({customer.email})
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                            {/* Give Options */}
+                            {!giveVoucherMode && (
+                                <div className="give-options">
+                                    <h3>🎯 Choose Distribution Method:</h3>
+                                    <div className="option-buttons">
+                                        <button 
+                                            className="option-btn top-customers"
+                                            onClick={() => setGiveVoucherMode('top10')}
+                                        >
+                                            🏆 Top 10 Customers
+                                            <small>Highest points</small>
+                                        </button>
+                                        <button 
+                                            className="option-btn top-customers"
+                                            onClick={() => setGiveVoucherMode('top50')}
+                                        >
+                                            🥇 Top 50 Customers
+                                            <small>Highest points</small>
+                                        </button>
+                                        <button 
+                                            className="option-btn all-customers"
+                                            onClick={() => setGiveVoucherMode('all')}
+                                        >
+                                            👥 All Customers
+                                            <small>Everyone gets it</small>
+                                        </button>
+                                        <button 
+                                            className="option-btn specific-customer"
+                                            onClick={() => setGiveVoucherMode('specific')}
+                                        >
+                                            👤 Specific Customer
+                                            <small>Choose one customer</small>
+                                        </button>
+                                        <button 
+                                            className="option-btn multiple-customers"
+                                            onClick={() => setGiveVoucherMode('multiple')}
+                                        >
+                                            ✅ Multiple Customers
+                                            <small>Select multiple</small>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
 
-                            <div className="form-actions">
-                                <button type="button" onClick={() => { setShowGiveModal(false); setSelectedCustomer(''); setSelectedVoucher(null); }}>
-                                    Cancel
-                                </button>
-                                <button type="submit">Give Voucher</button>
-                            </div>
-                        </form>
+                            {/* Customer Selection for specific/multiple modes */}
+                            {(giveVoucherMode === 'specific' || giveVoucherMode === 'multiple') && (
+                                <div className="customer-selection">
+                                    <div className="selection-header">
+                                        <h3>
+                                            {giveVoucherMode === 'specific' ? '👤 Select One Customer:' : '✅ Select Multiple Customers:'}
+                                        </h3>
+                                        <button 
+                                            className="back-btn"
+                                            onClick={() => setGiveVoucherMode('')}
+                                        >
+                                            ← Back to Options
+                                        </button>
+                                    </div>
+
+                                    {/* Search Bar */}
+                                    <div className="search-bar">
+                                        <input
+                                            type="text"
+                                            placeholder="🔍 Search customers by name, email, or phone..."
+                                            value={customerSearchTerm}
+                                            onChange={(e) => setCustomerSearchTerm(e.target.value)}
+                                            className="search-input"
+                                        />
+                                    </div>
+
+                                    {/* Customer List */}
+                                    <div className="customer-list">
+                                        <div className="customer-list-header">
+                                            <span>Customer</span>
+                                            <span>Points</span>
+                                            <span>Contact</span>
+                                            <span>Select</span>
+                                        </div>
+                                        <div className="customer-list-body">
+                                            {filteredCustomers.map(customer => (
+                                                <div 
+                                                    key={customer.id} 
+                                                    className={`customer-item ${
+                                                        (giveVoucherMode === 'specific' && selectedCustomer == customer.id) ||
+                                                        (giveVoucherMode === 'multiple' && selectedCustomers.includes(customer.id))
+                                                        ? 'selected' : ''
+                                                    }`}
+                                                    onClick={() => handleCustomerSelection(customer.id)}
+                                                >
+                                                    <div className="customer-info">
+                                                        <div className="customer-name">{customer.fullName}</div>
+                                                        <div className="customer-email">{customer.email}</div>
+                                                    </div>
+                                                    <div className="customer-points">
+                                                        <span className="points-badge">{customer.points || 0} pts</span>
+                                                    </div>
+                                                    <div className="customer-contact">
+                                                        {customer.phoneNumber || 'N/A'}
+                                                    </div>
+                                                    <div className="customer-select">
+                                                        {giveVoucherMode === 'specific' ? (
+                                                            <input
+                                                                type="radio"
+                                                                name="selectedCustomer"
+                                                                checked={selectedCustomer == customer.id}
+                                                                onChange={() => {}}
+                                                            />
+                                                        ) : (
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={selectedCustomers.includes(customer.id)}
+                                                                onChange={() => {}}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {giveVoucherMode === 'multiple' && selectedCustomers.length > 0 && (
+                                        <div className="selected-count">
+                                            ✅ Selected: {selectedCustomers.length} customers
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Confirmation for top/all modes */}
+                            {(giveVoucherMode === 'top10' || giveVoucherMode === 'top50' || giveVoucherMode === 'all') && (
+                                <div className="confirmation-section">
+                                    <div className="confirmation-header">
+                                        <h3>⚠️ Confirm Distribution</h3>
+                                        <button 
+                                            className="back-btn"
+                                            onClick={() => setGiveVoucherMode('')}
+                                        >
+                                            ← Back to Options
+                                        </button>
+                                    </div>
+                                    <div className="confirmation-message">
+                                        {giveVoucherMode === 'top10' && (
+                                            <p>🏆 This will give the voucher to the <strong>Top 10 customers</strong> with the highest points.</p>
+                                        )}
+                                        {giveVoucherMode === 'top50' && (
+                                            <p>🥇 This will give the voucher to the <strong>Top 50 customers</strong> with the highest points.</p>
+                                        )}
+                                        {giveVoucherMode === 'all' && (
+                                            <p>👥 This will give the voucher to <strong>ALL customers</strong> in the system.</p>
+                                        )}
+                                        <p className="warning">⚠️ This action cannot be undone!</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Action Buttons */}
+                            {giveVoucherMode && (
+                                <div className="form-actions">
+                                    <button 
+                                        type="button" 
+                                        className="cancel-btn"
+                                        onClick={resetGiveVoucherModal}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button 
+                                        type="button"
+                                        className="execute-btn"
+                                        onClick={executeGiveVoucher}
+                                        disabled={
+                                            (giveVoucherMode === 'specific' && !selectedCustomer) ||
+                                            (giveVoucherMode === 'multiple' && selectedCustomers.length === 0)
+                                        }
+                                    >
+                                        🎁 Give Voucher
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

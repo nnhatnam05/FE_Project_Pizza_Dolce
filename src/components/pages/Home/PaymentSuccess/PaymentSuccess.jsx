@@ -57,7 +57,7 @@ const PaymentSuccess = () => {
                         orderNumber: orderData.orderNumber,
                         status: orderData.status,
                         totalPrice: orderData.totalPrice,
-                        message: 'Thanh toán thành công!'
+                        message: 'Payment successful!'
                     });
                     
                     // Fetch points earned
@@ -69,7 +69,7 @@ const PaymentSuccess = () => {
                     setOrderDetails({
                         orderCode: orderCode,
                         status: 'PAID',
-                        message: 'Thanh toán thành công! (Không thể tìm thông tin chi tiết)'
+                        message: 'Payment successful! (Could not find details)'
                     });
                 } finally {
                     setLoading(false);
@@ -81,7 +81,7 @@ const PaymentSuccess = () => {
             setOrderDetails({
                 orderCode: orderCode,
                 status: 'FAILED',
-                message: 'Thanh toán thất bại!'
+                message: 'Payment failed!'
             });
             setLoading(false);
         }
@@ -110,7 +110,7 @@ const PaymentSuccess = () => {
             <div className="payment-success-container">
                 <div className="loading-spinner">
                     <div className="spinner"></div>
-                    <p>Đang xử lý kết quả thanh toán...</p>
+                    <p>Processing payment result...</p>
                 </div>
             </div>
         );
@@ -129,16 +129,16 @@ const PaymentSuccess = () => {
                                 </path>
                             </svg>
                         </div>
-                        <h1>Thanh toán thành công!</h1>
-                        <p className="success-message">
-                            Cảm ơn bạn đã thanh toán. Đơn hàng của bạn đã được xác nhận và đang được chuẩn bị.
-                        </p>
+                        <h1>Payment Successful!</h1>
+                        <div className="success-message">
+                            <p>Thank you for your payment. Your order has been confirmed and is being prepared.</p>
+                        </div>
                         {orderDetails && (
                             <div className="order-info">
-                                <p><strong>Mã đơn hàng:</strong> {orderDetails.orderNumber || orderDetails.orderCode}</p>
-                                <p><strong>Trạng thái:</strong> Đã thanh toán</p>
+                                <p><strong>Order Code:</strong> {orderDetails.orderCode}</p>
+                                <p><strong>Status:</strong> Paid</p>
                                 {orderDetails.totalPrice && (
-                                    <p><strong>Tổng tiền:</strong> {Number(orderDetails.totalPrice).toLocaleString()} $</p>
+                                    <p><strong>Total Price:</strong> {Number(orderDetails.totalPrice).toLocaleString()} $</p>
                                 )}
                             </div>
                         )}
@@ -147,12 +147,12 @@ const PaymentSuccess = () => {
                             <div className="points-notification">
                                 <div className="points-icon">🎉</div>
                                 <div className="points-content">
-                                    <h3 className="points-title">Chúc mừng! Bạn đã nhận được điểm thưởng!</h3>
-                                    <p className="points-message">
-                                        Bạn đã nhận được <strong>{pointsEarned} điểm</strong> từ đơn hàng này!
-                                    </p>
+                                    <h3 className="points-title">Congratulations! You have earned reward points!</h3>
+                                    <div className="points-info">
+                                        <p>You have earned <strong>{pointsEarned} points</strong> from this order!</p>
+                                    </div>
                                     <p className="points-detail">
-                                        Quy tắc: Mỗi 10$ = 10 điểm (làm tròn xuống)
+                                        Rule: 10$ = 10 points (rounded down)
                                     </p>
                                 </div>
                             </div>
@@ -166,14 +166,14 @@ const PaymentSuccess = () => {
                                 <path d="M25 25 L55 55 M55 25 L25 55" stroke="#dc3545" strokeWidth="4" strokeLinecap="round" />
                             </svg>
                         </div>
-                        <h1>Thanh toán thất bại!</h1>
-                        <p className="error-message">
-                            Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại hoặc liên hệ hỗ trợ.
-                        </p>
+                        <h1>Payment Failed!</h1>
+                        <div className="error-message">
+                            <p>An error occurred during payment. Please try again or contact support.</p>
+                        </div>
                         {orderDetails && (
                             <div className="order-info">
-                                <p><strong>Mã đơn hàng:</strong> {orderDetails.orderCode}</p>
-                                <p><strong>Trạng thái:</strong> Thanh toán thất bại</p>
+                                <p><strong>Order Code:</strong> {orderDetails.orderCode}</p>
+                                <p><strong>Status:</strong> Payment Failed</p>
                             </div>
                         )}
                     </>
@@ -184,19 +184,19 @@ const PaymentSuccess = () => {
                         className="continue-shopping-btn"
                         onClick={handleContinueShopping}
                     >
-                        Tiếp tục mua sắm
+                        Continue shopping
                     </button>
                     <button 
                         className="view-delivery-btn"
                         onClick={handleViewDelivery}
                     >
-                        Xem trạng thái giao hàng
+                        View delivery status
                     </button>
                     <button 
                         className="view-orders-btn"
                         onClick={handleViewOrders}
                     >
-                        Xem thông tin đơn hàng
+                        View order details
                     </button>
                 </div>
             </div>

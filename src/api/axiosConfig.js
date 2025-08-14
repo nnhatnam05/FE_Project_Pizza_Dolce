@@ -20,8 +20,8 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
     
-    // Log outgoing requests for debugging if needed
-    console.debug(`[API Request] ${config.method.toUpperCase()} ${config.url}`, config.data || '');
+    // Log outgoing requests for debugging if needed (disabled in production)
+    // console.debug(`[API Request] ${config.method.toUpperCase()} ${config.url}`, config.data || '');
     
     return config;
   },
@@ -34,8 +34,8 @@ api.interceptors.request.use(
 // Response interceptor for error handling
 api.interceptors.response.use(
   response => {
-    // Log successful responses if needed
-    console.debug(`[API Response] ${response.status} ${response.config.method.toUpperCase()} ${response.config.url}`);
+    // Log successful responses if needed (disabled in production)
+    // console.debug(`[API Response] ${response.status} ${response.config.method.toUpperCase()} ${response.config.url}`);
     return response;
   },
   error => {

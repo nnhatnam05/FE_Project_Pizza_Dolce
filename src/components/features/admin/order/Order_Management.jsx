@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { MdOutlinePending, MdLocalShipping, MdDoneAll } from 'react-icons/md';
+import { FaUtensils, FaShoppingBag, FaChartLine, FaSync } from 'react-icons/fa';
 import axios from 'axios';
 import OrderList from './OrderList';
 import OrderDeliveryStatus from './Order_DeliveryStatus';
+import AdminDineInOrders from './AdminDineInOrders';
+import AdminTakeAwayOrders from './AdminTakeAwayOrders';
 import './Order.css';
 
 const OrderManagement = () => {
-  const [activeTab, setActiveTab] = useState('waiting');
+  const [activeTab, setActiveTab] = useState('delivery');
   const [orderStats, setOrderStats] = useState({
-    waiting: 0,
     delivery: 0,
+    dineIn: 0,
+    takeAway: 0,
     completed: 0
   });
   const [loading, setLoading] = useState(true);
@@ -26,7 +30,7 @@ const OrderManagement = () => {
     try {
       const token = localStorage.getItem('token');
       
-      // Lấy số lượng đơn hàng đang giao
+      // Get number of orders being delivered
       const deliveryRes = await Promise.all([
         axios.get('http://localhost:8080/api/orders/filter?deliveryStatus=PREPARING', {
           headers: { Authorization: `Bearer ${token}` }
@@ -39,7 +43,7 @@ const OrderManagement = () => {
         })
       ]);
       
-      // Lấy số lượng đơn hàng hoàn thành hoặc đã hủy
+      // Get number of completed or cancelled orders
       const completedRes = await Promise.all([
         axios.get('http://localhost:8080/api/orders/filter?status=DELIVERED', {
           headers: { Authorization: `Bearer ${token}` }
@@ -49,15 +53,29 @@ const OrderManagement = () => {
         })
       ]);
       
-      // Tính tổng số đơn hàng đang giao
+      // Calculate total number of orders being delivered
       const deliveryCount = deliveryRes.reduce((total, res) => total + res.data.length, 0);
       
-      // Tính tổng số đơn hàng hoàn thành/hủy
+      // Calculate total number of completed/cancelled orders
       const completedCount = completedRes.reduce((total, res) => total + res.data.length, 0);
       
+              // Get DINE-IN orders
+      const dineInRes = await axios.get('http://localhost:8080/api/admin/orders/dine-in', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+              // Get TAKE-AWAY orders
+      const takeAwayRes = await axios.get('http://localhost:8080/api/admin/orders/take-away', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const dineInCount = dineInRes.data.filter(order => !['COMPLETED', 'CANCELLED'].includes(order.status)).length;
+      const takeAwayCount = takeAwayRes.data.filter(order => !['COMPLETED', 'CANCELLED'].includes(order.status)).length;
+
       setOrderStats({
-        waiting: 0,
         delivery: deliveryCount,
+        dineIn: dineInCount,
+        takeAway: takeAwayCount,
         completed: completedCount
       });
     } catch (error) {
@@ -71,6 +89,10 @@ const OrderManagement = () => {
     switch (activeTab) {
       case 'delivery':
         return <OrderDeliveryStatus />;
+      case 'dineIn':
+        return <AdminDineInOrders />;
+      case 'takeAway':
+        return <AdminTakeAwayOrders />;
       case 'completed':
         return <OrderList />;
       default:
@@ -79,56 +101,111 @@ const OrderManagement = () => {
   };
 
   return (
-    <div className="order-management-container">
-      <div className="order-management-header">
-        <h1>Quản lý đơn hàng</h1>
-        <div className="order-stats">
-          {/* <div className="stat-item">
-            <span className="stat-count waiting">
-              {loading ? '...' : orderStats.waiting}
-            </span>
-            <span className="stat-label">Chờ xác nhận</span>
-          </div> */}
-          <div className="stat-item">
-            <span className="stat-count delivery">
-              {loading ? '...' : orderStats.delivery}
-            </span>
-            <span className="stat-label">Đang giao</span>
+    <div className="modern-order-management">
+      {/* Header */}
+      <div className="management-header">
+        <div className="header-content">
+          <div className="header-title">
+            <FaChartLine className="title-icon" />
+            <h1>Order Management</h1>
           </div>
-          <div className="stat-item">
-            <span className="stat-count completed">
-              {loading ? '...' : orderStats.completed}
-            </span>
-            <span className="stat-label">Hoàn thành/Hủy</span>
+          <button 
+            className="refresh-btn"
+            onClick={fetchOrderStats}
+            disabled={loading}
+          >
+            <FaSync className={loading ? 'spinning' : ''} />
+            Refresh
+          </button>
+        </div>
+        
+        {/* Stats Overview */}
+        <div className="order-stats-modern">
+          <div className="stat-card-modern delivery">
+            <div className="stat-icon-modern">
+              <MdLocalShipping />
+            </div>
+            <div className="stat-content-modern">
+              <div className="stat-number-modern">
+                {loading ? '...' : orderStats.delivery}
+              </div>
+              <div className="stat-label-modern">Being Delivered</div>
+            </div>
+          </div>
+          {/* <div className="stat-card-modern dine-in">
+            <div className="stat-icon-modern">
+              <FaUtensils />
+            </div>
+            <div className="stat-content-modern">
+              <div className="stat-number-modern">
+                {loading ? '...' : orderStats.dineIn}
+              </div>
+              <div className="stat-label-modern">Dine-In</div>
+            </div>
+          </div>
+          <div className="stat-card-modern take-away">
+            <div className="stat-icon-modern">
+              <FaShoppingBag />
+            </div>
+            <div className="stat-content-modern">
+              <div className="stat-number-modern">
+                {loading ? '...' : orderStats.takeAway}
+              </div>
+              <div className="stat-label-modern">Take-Away</div>
+            </div>
+          </div> */}
+          <div className="stat-card-modern completed">
+            <div className="stat-icon-modern">
+              <MdDoneAll />
+            </div>
+            <div className="stat-content-modern">
+              <div className="stat-number-modern">
+                {loading ? '...' : orderStats.completed}
+              </div>
+              <div className="stat-label-modern">Completed/Cancelled</div>
+            </div>
           </div>
         </div>
       </div>
-      
-      <div className="order-tabs">
-        {/* <button 
-          className={`order-tab ${activeTab === 'waiting' ? 'active' : ''}`}
-          onClick={() => setActiveTab('waiting')}
-        >
-          <MdOutlinePending /> 
-          <span>Đơn hàng chờ xác nhận</span>
-        </button> */}
+
+      {/* Navigation Tabs */}
+      <div className="management-tabs-modern">
         <button 
-          className={`order-tab ${activeTab === 'delivery' ? 'active' : ''}`}
+          className={`management-tab-modern delivery ${activeTab === 'delivery' ? 'active' : ''}`}
           onClick={() => setActiveTab('delivery')}
         >
-          <MdLocalShipping />
-          <span>Đơn hàng đang giao</span>
+          <MdLocalShipping className="tab-icon-modern" />
+                          <span className="tab-label-modern">Orders Being Delivered</span>
+          <span className="tab-count-modern">{loading ? '...' : orderStats.delivery}</span>
         </button>
+        {/* <button 
+          className={`management-tab-modern dine-in ${activeTab === 'dineIn' ? 'active' : ''}`}
+          onClick={() => setActiveTab('dineIn')}
+        >
+          <FaUtensils className="tab-icon-modern" />
+                          <span className="tab-label-modern">Dine-In Orders</span>
+          <span className="tab-count-modern">{loading ? '...' : orderStats.dineIn}</span>
+        </button> */}
+        {/* <button 
+          className={`management-tab-modern take-away ${activeTab === 'takeAway' ? 'active' : ''}`}
+          onClick={() => setActiveTab('takeAway')}
+        >
+          <FaShoppingBag className="tab-icon-modern" />
+                          <span className="tab-label-modern">Take-Away Orders</span>
+          <span className="tab-count-modern">{loading ? '...' : orderStats.takeAway}</span>
+        </button> */}
         <button 
-          className={`order-tab ${activeTab === 'completed' ? 'active' : ''}`}
+          className={`management-tab-modern completed ${activeTab === 'completed' ? 'active' : ''}`}
           onClick={() => setActiveTab('completed')}
         >
-          <MdDoneAll />
-          <span>Đơn hàng hoàn thành/Hủy</span>
+          <MdDoneAll className="tab-icon-modern" />
+                          <span className="tab-label-modern">Completed/Cancelled Orders</span>
+          <span className="tab-count-modern">{loading ? '...' : orderStats.completed}</span>
         </button>
       </div>
-      
-      <div className="order-content">
+
+      {/* Content */}
+      <div className="management-content">
         {renderContent()}
       </div>
     </div>

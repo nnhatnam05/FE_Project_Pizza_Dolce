@@ -145,7 +145,7 @@ export default function Detail_Customer() {
                         <td>{formatDate(order.createdAt)}</td>
                         <td className="order-total">{formatCurrency(order.totalPrice)}</td>
                         <td>
-                          <span className={`status-badge status-${order.status.toLowerCase()}`}>
+                          <span className={`status-badge-customer status-${order.status.toLowerCase()}`}>
                             {order.status}
                           </span>
                         </td>
@@ -216,24 +216,33 @@ export default function Detail_Customer() {
             ) : (
               <div className="addresses-list">
                 {customerDetails.addresses.map(address => (
-                  <div key={address.id} className="address-card">
-                    <div className="address-header">
-                      <span className="recipient-name">{address.recipientName}</span>
-                      {address.isDefault && (
-                        <span className="default-badge">Default</span>
-                      )}
-                    </div>
-                    <div className="address-body">
-                      <div className="recipient-phone">
-                        <FaPhone className="phone-icon" />
-                        {address.recipientPhone}
+                                      <div key={address.id} className="address-card">
+                      <div className="address-header">
+                        <span className="recipient-name">{address.name || 'N/A'}</span>
+                        {address.isDefault && (
+                          <span className="default-badge">Default</span>
+                        )}
                       </div>
-                      <div className="address-text">
-                        <FaMapMarkerAlt className="address-icon" />
-                        {address.address}
+                      <div className="address-body">
+                        <div className="recipient-phone">
+                          <FaPhone className="phone-icon" />
+                          {address.phoneNumber || 'N/A'}
+                        </div>
+                        <div className="address-text">
+                          <FaMapMarkerAlt className="address-icon" />
+                          {address.address || 'N/A'}
+                        </div>
+                        {address.note && (
+                          <div className="address-note">
+                            <span className="note-icon">📝</span>
+                            {address.note}
+                          </div>
+                        )}
+                        <div className="address-meta">
+                          <small>Created: {formatDate(address.createdAt)}</small>
+                        </div>
                       </div>
                     </div>
-                  </div>
                 ))}
               </div>
             )}
