@@ -85,12 +85,12 @@ const Main = () => {
 
     // Slide content 
     const slides = [
-        { id: 1, title: "Summer Collection", description: "Experience the joy<br />with our limited<br />Summer Collection", buttonText: "ORDER NOW" },
-        { id: 2, title: "Gift Voucher", description: "Give your loved ones<br />more than just a gift", buttonText: "SEND NOW" },
-        { id: 3, title: "New Flavors", description: "Try our latest<br />seasonal specialties", buttonText: "ORDER NOW" },
-        { id: 4, title: "Delivery Special", description: "Free delivery<br />on orders over $25", buttonText: "ORDER NOW" },
-        { id: 5, title: "Weekend Deal", description: "20% off<br />all items on weekends", buttonText: "GET OFFER" },
-        { id: 6, title: "Family Combo", description: "Perfect for<br />family gatherings", buttonText: "ORDER NOW" }
+        { id: 1, title: "Summer Collection", description: "Experience the joy<br />with our limited<br />Summer Collection" },
+        { id: 2, title: "Gift Voucher", description: "Give your loved ones<br />more than just a gift" },
+        { id: 3, title: "New Flavors", description: "Try our latest<br />seasonal specialties" },
+        { id: 4, title: "Delivery Special", description: "Free delivery<br />on orders over $25" },
+        { id: 5, title: "Weekend Deal", description: "20% off<br />all items on weekends"},
+        { id: 6, title: "Family Combo", description: "Perfect for<br />family gatherings" }
     ];
 
     return (

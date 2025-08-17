@@ -79,8 +79,8 @@ import TableOrder from "./components/pages/DineIn/TableOrder";
 import ThankYouPage from "./components/pages/DineIn/ThankYouPage";
 import TableDashboard from "./components/features/staff/TableDashboard";
 import OrderEdit from "./components/features/staff/OrderEdit";
-import WebSocketTest from "./components/test/WebSocketTest";
 import TakeAwayManagement from "./components/features/staff/takeaway/TakeAwayManagement";
+import WebSocketTest from "./components/test/WebSocketTest";
 
 
 function App() {
@@ -99,8 +99,6 @@ function App() {
           <Route path="/order" element={<TableOrder />} />
           <Route path="/dinein/thank-you" element={<ThankYouPage />} />
 
-          {/* WebSocket Test page */}
-          <Route path="/websocket-test" element={<WebSocketTest />} />
           <Route path="/pizza" element={
             <CustomerLayout>
               <List_Pizza />
@@ -196,25 +194,25 @@ function App() {
               <CustomerVouchers />
             </CustomerLayout>
           } />
-          
+
           <Route path="/voucher-policy" element={
             <CustomerLayout>
               <VoucherPolicy />
             </CustomerLayout>
           } />
-          
+
           <Route path="/delivery-policy" element={
             <CustomerLayout>
               <DeliveryPolicy />
             </CustomerLayout>
           } />
-          
+
           <Route path="/about-us" element={
             <CustomerLayout>
               <AboutUs />
             </CustomerLayout>
           } />
-          
+
           <Route path="/contact-us" element={
             <CustomerLayout>
               <ContactUs />
@@ -302,6 +300,10 @@ function App() {
           </Route>
 
           <Route path="/loading" element={<Loading />} />
+          
+          {/* WebSocket Test Route */}
+          <Route path="/websocket-test" element={<WebSocketTest />} />
+          
           <Route path="*" element={<Monkey404 />} />
         </Routes>
         <NotificationContainer />

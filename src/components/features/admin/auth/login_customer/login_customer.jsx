@@ -55,12 +55,31 @@ const LoginCustomer = () => {
       }, 2000);
     } catch (err) {
       console.error('LOGIN ERROR:', err);
+      console.log('Error response:', err.response);
+      
       if (err.response) {
         // Server responded with error status
         if (err.response.status === 401) {
+          const errorMessage = err.response.data;
+          console.log('Error message:', errorMessage);
+          
+          if (typeof errorMessage === 'string') {
+            if (errorMessage.includes('deactivated')) {
+              setError('Account is deactivated. Please contact administrator.');
+            } else if (errorMessage.includes('Email not found')) {
+              setError('Email or password is incorrect!');
+            } else if (errorMessage.includes('Invalid password')) {
+              setError('Email or password is incorrect!');
+            } else {
+              setError(errorMessage);
+            }
+          } else {
           setError('Email or password is incorrect!');
+          }
+        } else if (err.response.status === 500) {
+          setError('Server error. Please try again later.');
         } else {
-          setError(`Login failed: ${err.response.data.message || 'Unknown error'}`);
+          setError(`Login failed: ${err.response.data || 'Unknown error'}`);
         }
       } else if (err.code === 'ECONNABORTED') {
         setError('Login request timed out. Please try again.');
@@ -109,8 +128,21 @@ const LoginCustomer = () => {
       }, 2000);
     } catch (err) {
       console.error('GOOGLE LOGIN ERROR:', err);
+      console.log('Error response:', err.response);
+      
       if (err.response) {
-        setError(`Google login failed: ${err.response.data.message || err.response.status}`);
+        const errorMessage = err.response.data;
+        console.log('Error message:', errorMessage);
+        
+        if (typeof errorMessage === 'string') {
+          if (errorMessage.includes('deactivated')) {
+            setError('Account is deactivated. Please contact administrator.');
+          } else {
+            setError(`Google login failed: ${errorMessage}`);
+          }
+        } else {
+          setError(`Google login failed: ${err.response.status}`);
+        }
       } else if (err.code === 'ECONNABORTED') {
         setError('Login request timed out. Please try again.');
       } else if (err.message && err.message.includes('Network Error')) {

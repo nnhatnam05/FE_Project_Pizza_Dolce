@@ -1,7 +1,83 @@
+/* ===== UNIFIED ANIMATION SYSTEM ===== */
+/* Global animation variables and utilities */
+:root {
+  --animation-duration: 0.2s;
+  --animation-timing: ease;
+  --hover-transform-y: -2px;
+  --hover-transform-x: 2px;
+  --hover-scale: 1.05;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow: 0.3s ease;
+}
+
+/* Unified animation classes */
+.anim-fade-in {
+  animation: fadeIn var(--animation-duration) var(--animation-timing);
+}
+
+.anim-fade-up {
+  animation: fadeInUp var(--animation-duration) var(--animation-timing);
+}
+
+.anim-hover-lift {
+  transition: transform var(--transition-normal);
+}
+
+.anim-hover-lift:hover {
+  transform: translateY(var(--hover-transform-y));
+}
+
+.anim-hover-scale {
+  transition: transform var(--transition-normal);
+}
+
+.anim-hover-scale:hover {
+  transform: scale(var(--hover-scale));
+}
+
+.anim-hover-slide {
+  transition: transform var(--transition-normal);
+}
+
+.anim-hover-slide:hover {
+  transform: translateX(var(--hover-transform-x));
+}
+
+/* Unified keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== END UNIFIED ANIMATION SYSTEM ===== */
+
 .pizza4ps-root {
   background: #ece6d7;
   min-height: 100vh;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
   color: #222;
 }
 
@@ -68,7 +144,7 @@
 }
 
 /* Profile dropdown styles */
-.p4-profile-dropdown {
+.p4-profile-dropdown-main {
   position: absolute;
   right: 0;
   top: 45px;
@@ -80,18 +156,18 @@
   min-width: 230px;
   z-index: 100;
   display: none;
-  transition: all 0.3s ease;
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
 }
 
 /* Customer welcome styles */
-.p4-profile-dropdown > span {
+.p4-profile-dropdown-main > span {
   display: block;
   margin-bottom: 10px;
   font-size: 0.95rem;
   line-height: 1.4;
 }
 
-.p4-profile-dropdown > span b {
+.p4-profile-dropdown-main > span b {
   color: #c3893a;
 }
 
@@ -103,31 +179,31 @@
 }
 
 /* Style the logout button */
-.p4-btn-main {
+.p4-btn-primary {
   background: #c3893a;
   color: #fff;
   border: none;
   border-radius: 10px;
   padding: 6px 20px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color var(--transition-normal);
 }
 
-.p4-btn-main:hover {
+.p4-btn-primary:hover {
   background: #b07830;
 }
 
-.p4-btn-secondary {
+.p4-btn-secondary-alt {
   background: #ede7db;
   color: #666;
   border: none;
   border-radius: 10px;
   padding: 6px 20px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color var(--transition-normal);
 }
 
-.p4-btn-secondary:hover {
+.p4-btn-secondary-alt:hover {
   background: #e0d7c7;
 }
 
@@ -240,7 +316,7 @@
 }
 
 .p4-slide {
-  transition: opacity 0.5s ease;
+  transition: opacity 0.2s ease;
   width: 100%;
   height: 100%;
   background-color: transparent;
@@ -293,18 +369,20 @@
   font-weight: bold;
   margin-bottom: 20px;
   text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-  font-family: 'Arial', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-summer-logo span:first-child {
   font-size: 2rem;
   font-style: italic;
   transform: rotate(-10deg) translateY(5px);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-summer-logo span:last-child {
   font-size: 1.8rem;
   transform: translateY(-5px);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-summer-desc {
@@ -312,10 +390,10 @@
   line-height: 1.3;
   font-weight: 300;
   margin-bottom: 20px;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
-.p4-order-btn {
+.p4-order-btn-main {
   background-color: white;
   color: #232f54;
   border: none;
@@ -324,13 +402,14 @@
   font-weight: bold;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color var(--transition-normal);
   position: absolute;
   right: 30px;
   bottom: 30px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
-.p4-order-btn:hover {
+.p4-order-btn-main:hover {
   background-color: #f5f5f5;
 }
 
@@ -355,6 +434,7 @@
   text-align: center;
   color: #232f54;
   font-weight: bold;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-welcome-quote {
@@ -365,6 +445,7 @@
   text-align: center;
   flex-grow: 1;
   font-size: 0.95rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-welcome-author {
@@ -373,6 +454,7 @@
   margin-bottom: 15px;
   font-style: italic;
   font-size: 0.9rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-shop-info {
@@ -383,11 +465,13 @@
   border-radius: 8px;
   padding: 15px;
   margin-top: auto;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-shop-location {
   margin-bottom: 8px;
   color: #666;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-shop-location strong {
@@ -398,6 +482,7 @@
 .p4-shop-hours {
   font-size: 0.85rem;
   color: #666;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-shop-hours strong {
@@ -447,6 +532,7 @@
   font-size: 1.5rem;
   font-weight: bold;
   margin: 60px 0 15px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 /* Menu */
@@ -469,11 +555,15 @@
   padding: 12px 5px;
   cursor: pointer;
   box-shadow: 0 1px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
+  transition: transform 0.2s ease;
+}
+
+.p4-menu-item {
+  /* ... existing styles ... */
 }
 
 .p4-menu-item:hover {
-  transform: translateY(-3px);
+  transform: translateY(var(--hover-transform-y));
 }
 
 .p4-menu-thumb {
@@ -516,6 +606,7 @@
 .p4-menu-name {
   font-size: 0.9rem;
   font-weight: 500;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 /* Popular section */
@@ -535,6 +626,7 @@
 .p4-popular-header h2 {
   font-size: 1.5rem;
   margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-link {
@@ -543,22 +635,9 @@
   font-weight: 500;
 }
 
-.p4-food-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
 
-.p4-food-card {
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  width: 200px;
-  padding: 0;
-  position: relative;
-  overflow: hidden;
-}
+
+
 
 .p4-label {
   position: absolute;
@@ -583,70 +662,13 @@
   z-index: 2;
 }
 
-.p4-food-thumb {
-  width: 100%;
-  height: 130px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  border-radius: 14px 14px 0 0;
-}
 
-.p4-food-thumb.mi-y {
-  background-image: url('/public/images/youtube-1.jpg');
-}
 
-.p4-food-thumb.pizza-3-loai {
-  background-image: url('/public/images/youtube-1.jpg');
-}
 
-.p4-food-thumb.ga-ran {
-  background-image: url('/public/images/youtube-1.jpg');
-}
 
-.p4-food-thumb.pizza-4-loai {
-  background-image: url('/public/images/youtube-1.jpg');
-}
 
-.p4-food-thumb.mi-y-bo {
-  background-image: url('/public/images/youtube-1.jpg');
-}
 
-.p4-food-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin: 10px 15px;
-  text-align: center;
-  min-height: 40px;
-  line-height: 1.3;
-}
 
-.p4-food-price {
-  color: #ad7c3d;
-  font-size: 0.95rem;
-  font-weight: 500;
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-.p4-food-add {
-  background: #c3893a;
-  color: #fff;
-  border: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
 
 /* Feedback */
 .p4-feedback {
@@ -669,11 +691,11 @@
   font-size: 2rem;
   margin: 0 12px;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease;
 }
 
 .p4-emoji:hover {
-  transform: scale(1.2);
+  transform: scale(var(--hover-scale));
 }
 
 /* Footer */
@@ -703,18 +725,21 @@
   font-weight: bold;
   letter-spacing: 2px;
   margin-bottom: 5px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-footer-title {
   font-weight: bold;
   margin-top: 15px;
   font-size: 0.9rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-footer-text {
   font-size: 0.85rem;
   opacity: 0.8;
   line-height: 1.4;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-footer-link {
@@ -722,6 +747,7 @@
   opacity: 0.8;
   text-decoration: underline;
   cursor: pointer;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-footer-link:hover {
@@ -795,64 +821,14 @@
   margin-top: 30px;
   padding-top: 15px;
   border-top: 1px solid rgba(255,255,255,0.1);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
-/* Media queries */
-@media (max-width: 1024px) {
-  .p4-footer-main {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  /* Tablet adjustments */
-  .p4-food-list {
-    grid-template-columns: repeat(2, 1fr); /* 2 cột trên tablet */
-    max-width: 600px;
-  }
-}
 
-@media (max-width: 768px) {
-  .p4-header {
-    flex-direction: column;
-    gap: 10px;
-    padding: 15px;
-  }
-  
-  .p4-nav-links {
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .p4-menu {
-    gap: 10px;
-  }
-  
-  .p4-footer-main {
-    grid-template-columns: 1fr;
-  }
 
-  .p4-summer-logo {
-    font-size: 2rem;
-  }
-  
-  .p4-summer-desc {
-    font-size: 1.2rem;
-  }
-}
 
-@media (max-width: 480px) {
-  .p4-search input {
-    width: 200px;
-  }
-  
-  .p4-banner-title {
-    font-size: 1.4rem;
-  }
-  
-  .p4-banner-voucher {
-    font-size: 1.8rem;
-  }
-}
+
+
 
 /* Mobile responsiveness for the main container */
 @media (max-width: 1024px) {
@@ -870,46 +846,11 @@
   }
 }
 
-@media (max-width: 768px) {
-  .p4-summer-logo {
-    font-size: 2rem;
-  }
-  
-  .p4-summer-desc {
-    font-size: 1.2rem;
-  }
-  
-  /* Mobile food card adjustments */
-  .p4-food-card {
-    width: 100%;
-    max-width: 320px;
-  }
-  
-  .p4-food-list {
-    grid-template-columns: repeat(2, 1fr); /* 2 cột trên mobile */
-    gap: 16px;
-    max-width: 100%;
-  }
-  
-  .p4-food-thumb {
-    height: 180px;
-  }
-  
-  /* Mobile food footer adjustments */
-  .p4-food-footer {
-    margin-top: 12px;
-  }
-  
-  .p4-food-add {
-    width: 40px;
-    height: 40px;
-    font-size: 1.6rem;
-  }
-}
+
 
 /* Adjust dot transitions */
 .p4-dot, .p4-sidebar-dot {
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease;
   cursor: pointer;
 }
 
@@ -964,6 +905,7 @@
   margin: 0;
   color: #232f54;
   font-size: 1.5rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-modal-close {
@@ -1028,17 +970,20 @@
   font-weight: bold;
   margin-bottom: 5px;
   color: #555;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-form-group p {
   margin: 0;
   padding: 8px 0;
   color: #333;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-form-group p.readonly {
   color: #666;
   font-style: italic;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-form-group input,
@@ -1048,6 +993,7 @@
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 0.95rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-form-group textarea {
@@ -1098,16 +1044,18 @@
 .p4-delete-confirm h3 {
   color: #c62828;
   margin-top: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-change-password h3 {
   color: #1976d2;
   margin-top: 0;
   margin-bottom: 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 /* Responsive adjustments */
-@media (max-width: 600px) {
+@media (max-width: 480px) {
   .p4-modal {
     width: 95%;
     max-height: 95vh;
@@ -1147,7 +1095,7 @@
   object-fit: cover;
   border: 3px solid #f0f0f0;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .p4-avatar-select-btn {
@@ -1158,7 +1106,7 @@
   border-radius: 20px;
   cursor: pointer;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   width: 120px;
   display: flex;
@@ -1169,7 +1117,7 @@
 
 .p4-avatar-select-btn:hover {
   background: #374c80;
-  transform: translateY(-2px);
+  transform: translateY(var(--hover-transform-y));
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
@@ -1181,15 +1129,16 @@
   margin: 12px 0;
   padding: 8px 12px;
   border-radius: 8px;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
   font-size: 0.95rem;
   cursor: pointer;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-profile-list span:hover {
   background-color: #f5f0e5;
   color: #c3893a;
-  transform: translateX(3px);
+  transform: translateX(var(--hover-transform-x));
 }
 
 /* Change password modal enhancements */
@@ -1207,9 +1156,10 @@
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 0.95rem;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
   box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-form-group input[type="password"]:focus {
@@ -1219,18 +1169,18 @@
 }
 
 /* Improved button styles */
-.p4-btn-main, .p4-btn-secondary, .p4-btn-danger, .p4-btn-password {
+.p4-btn-primary, .p4-btn-secondary-alt, .p4-btn-danger, .p4-btn-password {
   border-radius: 20px;
   padding: 8px 20px;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
   min-width: 110px;
   text-align: center;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.p4-btn-main:hover, .p4-btn-secondary:hover, .p4-btn-danger:hover, .p4-btn-password:hover {
-  transform: translateY(-2px);
+.p4-btn-primary:hover, .p4-btn-secondary-alt:hover, .p4-btn-danger:hover, .p4-btn-password:hover {
+  transform: translateY(var(--hover-transform-y));
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
@@ -1239,7 +1189,7 @@
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   max-width: 700px;
   background: linear-gradient(to bottom, #ffffff 0%, #f9f6f0 100%);
 }
@@ -1259,12 +1209,12 @@
   color: white;
   font-size: 24px;
   opacity: 0.8;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .p4-modal-close:hover {
   opacity: 1;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .p4-modal-body {
@@ -1284,7 +1234,7 @@
   gap: 30px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 480px) {
   .p4-customer-info {
     grid-template-columns: 1fr;
   }
@@ -1304,6 +1254,7 @@
   transition: all 0.2s ease;
   width: 100%;
   background-color: #fff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-form-group input[type="text"]:focus,
@@ -1326,27 +1277,16 @@
   min-width: 250px;
   z-index: 100;
   display: none;
-  transition: all 0.3s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
   opacity: 0;
   transform: translateY(-10px);
 }
 
-.p4-profile-dropdown.show {
+.p4-profile-dropdown-main.show {
   display: block;
   opacity: 1;
   transform: translateY(0);
-  animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  animation: fadeIn var(--animation-duration) var(--animation-timing);
 }
 
 /* Customer avatar display improvements */
@@ -1364,7 +1304,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 /* Enhanced Food List Styles */
@@ -1383,7 +1323,8 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   overflow: hidden;
   position: relative;
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -1391,7 +1332,7 @@
 }
 
 .p4-food-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
@@ -1406,7 +1347,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.2s ease;
+  will-change: transform;
   border-radius: 14px 14px 0 0;
 }
 
@@ -1433,6 +1375,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 /* Food footer container */
@@ -1450,6 +1393,7 @@
   font-weight: 500; /* Giảm độ đậm để giống hình ảnh */
   text-align: left; /* Căn trái để cân đối với nút + */
   margin: 0; /* Reset margin */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-food-add {
@@ -1469,12 +1413,13 @@
   margin: 0; /* Reset margin vì đã có container */
   transition: all 0.2s ease;
   box-shadow: none; /* Không có shadow như hình ảnh */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-food-add:hover {
   background: #f8f8f8; /* Màu xám nhạt hơn khi hover */
   border-color: #ccc; /* Viền đậm hơn khi hover */
-  transform: scale(1.02); /* Scale rất nhẹ */
+  transform: scale(1.05);
 }
 
 .p4-food-add:disabled {
@@ -1516,6 +1461,7 @@
   border-radius: 4px;
   letter-spacing: 1px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 /* Loading, Error and Empty States */
@@ -1526,6 +1472,7 @@
   background-color: #fff;
   border-radius: 14px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-loading {
@@ -1534,6 +1481,7 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-loading-spinner {
@@ -1543,11 +1491,8 @@
   border-top: 4px solid #e74c3c;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  will-change: transform;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-error {
@@ -1556,6 +1501,7 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-retry-btn {
@@ -1566,7 +1512,8 @@
   border-radius: 20px;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 .p4-retry-btn:hover {
@@ -1576,5 +1523,6 @@
 .p4-empty {
   color: #666;
   font-style: italic;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
   

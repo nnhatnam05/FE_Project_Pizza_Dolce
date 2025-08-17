@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './ContactUs.css';
+import './PoliciesGlobal.css';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ContactSupportIcon from '@mui/icons-material/ContactSupport';
@@ -14,7 +14,7 @@ import BusinessIcon from '@mui/icons-material/Business';
 const ContactUs = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        name: '',
+        name: 'queqweq',
         email: '',
         phone: '',
         subject: '',
@@ -64,319 +64,392 @@ const ContactUs = () => {
     };
 
     return (
-        <div className="contact-us-container">
-            {/* Header */}
-            <div className="contact-us-header">
-                <button className="back-button" onClick={handleBack}>
-                    <ArrowBackIcon />
-                    <span>Quay lại</span>
-                </button>
-                <h1 className="contact-us-title">
-                    <ContactSupportIcon className="title-icon" />
+        <div className="policies-page-wrapper">
+            {/* Back Button */}
+            <button className="policies-back-button" onClick={handleBack}>
+                <ArrowBackIcon />
+                <span>Quay lại</span>
+            </button>
+
+            {/* Header Section */}
+            <div className="policies-header-section">
+                <h1 className="policies-page-title">
+                    <ContactSupportIcon style={{ marginRight: '10px' }} />
                     Liên Hệ Với Chúng Tôi
                 </h1>
+                <p className="policies-page-subtitle">
+                    Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn mọi lúc
+                </p>
             </div>
 
-            {/* Main Content */}
-            <div className="contact-us-content">
-                
-                {/* Contact Information Section */}
-                <section className="contact-section">
-                    <div className="section-header">
-                        <BusinessIcon className="section-icon" />
-                        <h2>Thông Tin Liên Hệ</h2>
-                    </div>
-                    <div className="section-content">
-                        <div className="contact-info-grid">
-                            <div className="contact-info-card">
-                                <LocationOnIcon className="contact-icon" />
-                                <div className="contact-details">
-                                    <h3>📍 Địa Chỉ</h3>
-                                    <p>FPT Arena Multimedia</p>
-                                    <p>Lê Lợi, Quận 1</p>
-                                    <p>TP.HCM, Việt Nam</p>
-                                </div>
+            {/* Contact Information Section */}
+            <div className="policies-content-section">
+                <h2 className="policies-section-title">
+                    <BusinessIcon style={{ marginRight: '10px' }} />
+                    Thông Tin Liên Hệ
+                </h2>
+                <div className="policies-section-content">
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '15px', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <LocationOnIcon style={{ color: '#e74c3c', fontSize: '2rem', marginTop: '5px' }} />
+                            <div>
+                                <h3 style={{ color: '#232f54', marginBottom: '10px' }}>📍 Địa Chỉ</h3>
+                                <p style={{ color: '#666', marginBottom: '5px' }}>FPT Arena Multimedia</p>
+                                <p style={{ color: '#666', marginBottom: '5px' }}>Lê Lợi, Quận 1</p>
+                                <p style={{ color: '#666' }}>TP.HCM, Việt Nam</p>
                             </div>
-                            
-                            <div className="contact-info-card">
-                                <PhoneIcon className="contact-icon" />
-                                <div className="contact-details">
-                                    <h3>📞 Điện Thoại</h3>
-                                    <p>Hotline: +1-800-DOLCE</p>
-                                    <p>Support: +1-555-0123</p>
-                                    <p>Fax: +1-555-0124</p>
-                                </div>
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '15px', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <PhoneIcon style={{ color: '#e74c3c', fontSize: '2rem', marginTop: '5px' }} />
+                            <div>
+                                <h3 style={{ color: '#232f54', marginBottom: '10px' }}>📞 Điện Thoại</h3>
+                                <p style={{ color: '#666', marginBottom: '5px' }}>Hotline: +1-000-DOLCE</p>
+                                <p style={{ color: '#666', marginBottom: '5px' }}>Support: +1-555-0123</p>
+                                <p style={{ color: '#666' }}>Fax: +1-555-0124</p>
                             </div>
-                            
-                            <div className="contact-info-card">
-                                <EmailIcon className="contact-icon" />
-                                <div className="contact-details">
-                                    <h3>📧 Email</h3>
-                                    <p>General: info@dolce.com</p>
-                                    <p>Support: support@dolce.com</p>
-                                    <p>Business: business@dolce.com</p>
-                                </div>
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '15px', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <EmailIcon style={{ color: '#f39c12', fontSize: '2rem', marginTop: '5px' }} />
+                            <div>
+                                <h3 style={{ color: '#232f54', marginBottom: '10px' }}>📧 Email</h3>
+                                <p style={{ color: '#666', marginBottom: '5px' }}>General: info@dolce.com</p>
+                                <p style={{ color: '#666', marginBottom: '5px' }}>Support: support@dolce.com</p>
+                                <p style={{ color: '#666' }}>Business: business@dolce.com</p>
                             </div>
-                            
-                            <div className="contact-info-card">
-                                <AccessTimeIcon className="contact-icon" />
-                                <div className="contact-details">
-                                    <h3>🕐 Giờ Làm Việc</h3>
-                                    <p>Thứ 2 - Thứ 6: 7:00 - 22:00</p>
-                                    <p>Thứ 7: 8:00 - 23:00</p>
-                                    <p>Chủ Nhật: 9:00 - 21:00</p>
-                                </div>
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '15px', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <AccessTimeIcon style={{ color: '#f39c12', fontSize: '2rem', marginTop: '5px' }} />
+                            <div>
+                                <h3 style={{ color: '#232f54', marginBottom: '10px' }}>🕐 Giờ Làm Việc</h3>
+                                <p style={{ color: '#666', marginBottom: '5px' }}>Thứ 2 - Thứ 6: 7:00-22:00</p>
+                                <p style={{ color: '#666', marginBottom: '5px' }}>Thứ 7: 8:00-23:00</p>
+                                <p style={{ color: '#666' }}>Chủ Nhật: 9:00-21:00</p>
                             </div>
                         </div>
                     </div>
-                </section>
-
-                {/* Contact Form Section */}
-                <section className="contact-section">
-                    <div className="section-header">
-                        <SendIcon className="section-icon" />
-                        <h2>Gửi Tin Nhắn Cho Chúng Tôi</h2>
-                    </div>
-                    <div className="section-content">
-                        <div className="contact-form-container">
-                            {submitSuccess && (
-                                <div className="success-message">
-                                    <h3>✅ Tin nhắn đã được gửi thành công!</h3>
-                                    <p>Cảm ơn bạn đã liên hệ với chúng tôi. Chúng tôi sẽ phản hồi trong thời gian sớm nhất.</p>
-                                </div>
-                            )}
-                            
-                            {submitError && (
-                                <div className="error-message">
-                                    <h3>❌ Có lỗi xảy ra!</h3>
-                                    <p>{submitError}</p>
-                                </div>
-                            )}
-                            
-                            <form onSubmit={handleSubmit} className="contact-form">
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label htmlFor="name">Họ và Tên *</label>
-                                        <input
-                                            type="text"
-                                            id="name"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleInputChange}
-                                            required
-                                            placeholder="Nhập họ và tên của bạn"
-                                        />
-                                    </div>
-                                    
-                                    <div className="form-group">
-                                        <label htmlFor="email">Email *</label>
-                                        <input
-                                            type="email"
-                                            id="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleInputChange}
-                                            required
-                                            placeholder="Nhập địa chỉ email"
-                                        />
-                                    </div>
-                                </div>
-                                
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label htmlFor="phone">Số Điện Thoại</label>
-                                        <input
-                                            type="tel"
-                                            id="phone"
-                                            name="phone"
-                                            value={formData.phone}
-                                            onChange={handleInputChange}
-                                            placeholder="Nhập số điện thoại"
-                                        />
-                                    </div>
-                                    
-                                    <div className="form-group">
-                                        <label htmlFor="subject">Chủ Đề *</label>
-                                        <select
-                                            id="subject"
-                                            name="subject"
-                                            value={formData.subject}
-                                            onChange={handleInputChange}
-                                            required
-                                        >
-                                            <option value="">Chọn chủ đề</option>
-                                            <option value="general">Thông tin chung</option>
-                                            <option value="order">Đơn hàng & Giao hàng</option>
-                                            <option value="quality">Chất lượng & Dịch vụ</option>
-                                            <option value="feedback">Góp ý & Phản hồi</option>
-                                            <option value="partnership">Hợp tác kinh doanh</option>
-                                            <option value="other">Khác</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div className="form-group full-width">
-                                    <label htmlFor="message">Nội Dung Tin Nhắn *</label>
-                                    <textarea
-                                        id="message"
-                                        name="message"
-                                        value={formData.message}
-                                        onChange={handleInputChange}
-                                        required
-                                        rows="6"
-                                        placeholder="Nhập nội dung tin nhắn của bạn..."
-                                    ></textarea>
-                                </div>
-                                
-                                <div className="form-actions">
-                                    <button
-                                        type="submit"
-                                        className="submit-button"
-                                        disabled={isSubmitting}
-                                    >
-                                        {isSubmitting ? (
-                                            <>
-                                                <div className="loading-spinner"></div>
-                                                Đang gửi...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <SendIcon />
-                                                Gửi Tin Nhắn
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Map & Location Section */}
-                <section className="contact-section">
-                    <div className="section-header">
-                        <MapIcon className="section-icon" />
-                        <h2>Bản Đồ & Vị Trí</h2>
-                    </div>
-                    <div className="section-content">
-                        <div className="map-container">
-                            <div className="map-iframe-container">
-                                <div className="map-placeholder">
-                                    <MapIcon className="map-icon" />
-                                    <h3>🗺️ Vị Trí DOLCE Restaurant</h3>
-                                    <div className="map-info">
-                                        <p><strong>📍 Địa Chỉ:</strong> FPT Arena Multimedia</p>
-                                        <p><strong>🏢 Đường:</strong> Lê Lợi, Quận 1, TP.HCM</p>
-                                        <p><strong>🌍 Tọa Độ:</strong> 10.8454°N, 106.7118°E</p>
-                                    </div>
-                                    <div className="map-actions">
-                                        <a 
-                                            href="https://maps.google.com/?q=FPT+Arena+Multimedia,Ho+Chi+Minh+City,Vietnam" 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="map-link-button"
-                                        >
-                                            🌐 Mở Bản Đồ Google Maps
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="location-details">
-                                <h3>📍 Hướng Dẫn Đường Đi</h3>
-                                <div className="directions">
-                                    <div className="direction-item">
-                                        <h4>🚇 Bằng Tàu Điện Ngầm</h4>
-                                        <p>Tuyến Metro đến trạm Bến Thành</p>
-                                        <p>Đi bộ 10 phút về phía Lê Lợi</p>
-                                    </div>
-                                    
-                                    <div className="direction-item">
-                                        <h4>🚌 Bằng Xe Buýt</h4>
-                                        <p>Tuyến 01, 02, 03 đến trạm Lê Lợi</p>
-                                        <p>Xuống xe tại trạm Bến Thành</p>
-                                    </div>
-                                    
-                                    <div className="direction-item">
-                                        <h4>🚗 Bằng Ô Tô</h4>
-                                        <p>Đường Lê Lợi, Quận 1, TP.HCM</p>
-                                        <p>Gần góc đường Lê Lợi - Pasteur</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* FAQ Section */}
-                <section className="contact-section">
-                    <div className="section-header">
-                        <ContactSupportIcon className="section-icon" />
-                        <h2>Câu Hỏi Thường Gặp</h2>
-                    </div>
-                    <div className="section-content">
-                        <div className="faq-container">
-                            <div className="faq-item">
-                                <h4>Q: Tôi có thể liên hệ với DOLCE qua những cách nào?</h4>
-                                <p>A: Bạn có thể liên hệ với chúng tôi qua điện thoại, email, form liên hệ trên website, hoặc đến trực tiếp các chi nhánh.</p>
-                            </div>
-                            
-                            <div className="faq-item">
-                                <h4>Q: Thời gian phản hồi email là bao lâu?</h4>
-                                <p>A: Chúng tôi cam kết phản hồi trong vòng 24 giờ làm việc kể từ khi nhận được email.</p>
-                            </div>
-                            
-                            <div className="faq-item">
-                                <h4>Q: Tôi có thể đặt bàn qua điện thoại không?</h4>
-                                <p>A: Có, bạn có thể đặt bàn qua hotline +1-800-DOLCE hoặc qua ứng dụng di động của chúng tôi.</p>
-                            </div>
-                            
-                            <div className="faq-item">
-                                <h4>Q: DOLCE có dịch vụ giao hàng không?</h4>
-                                <p>A: Có, chúng tôi cung cấp dịch vụ giao hàng tận nơi trong phạm vi 10km từ các chi nhánh.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Emergency Contact Section */}
-                <section className="contact-section">
-                    <div className="section-header">
-                        <PhoneIcon className="section-icon" />
-                        <h2>Liên Hệ Khẩn Cấp</h2>
-                    </div>
-                    <div className="section-content">
-                        <div className="emergency-contact">
-                            <div className="emergency-highlight">
-                                <h3>🚨 Liên Hệ Khẩn Cấp 24/7</h3>
-                                <p>
-                                    Đối với các vấn đề khẩn cấp về an toàn thực phẩm, dịch vụ hoặc khiếu nại nghiêm trọng, 
-                                    vui lòng liên hệ ngay với chúng tôi:
-                                </p>
-                            </div>
-                            
-                            <div className="emergency-numbers">
-                                <div className="emergency-item">
-                                    <h4>📞 Hotline Khẩn Cấp</h4>
-                                    <p className="emergency-number">1900-DOLCE</p>
-                                    <p>Hoạt động 24/7</p>
-                                </div>
-                                
-                                <div className="emergency-item">
-                                    <h4>📧 Email Khẩn Cấp</h4>
-                                    <p className="emergency-number">emergency@dolce.com</p>
-                                    <p>Phản hồi trong 2 giờ</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                </div>
             </div>
 
-            {/* Footer */}
-            <div className="contact-us-footer">
-                <p>Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn!</p>
-                <p>© 2025 DOLCE. Tất cả quyền được bảo lưu.</p>
+            {/* Contact Form Section */}
+            <div className="policies-content-section">
+                <h2 className="policies-section-title">
+                    <SendIcon style={{ marginRight: '10px' }} />
+                    Gửi Tin Nhắn Cho Chúng Tôi
+                </h2>
+                <div className="policies-section-content">
+                    {submitSuccess && (
+                        <div style={{ background: '#d4edda', color: '#155724', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #c3e6cb' }}>
+                            ✅ Tin nhắn đã được gửi thành công! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.
+                        </div>
+                    )}
+                    
+                    {submitError && (
+                        <div style={{ background: '#f8d7da', color: '#721c24', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #f5c6cb' }}>
+                            ❌ {submitError}
+                        </div>
+                    )}
+                    
+                    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '20px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '8px', color: '#232f54', fontWeight: '600' }}>
+                                    Họ và Tên *
+                                </label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px',
+                                        border: '2px solid #e0e0e0',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        transition: 'border-color 0.3s ease'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = '#232f54'}
+                                    onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
+                                />
+                            </div>
+                            
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '8px', color: '#232f54', fontWeight: '600' }}>
+                                    Email *
+                                </label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                    required
+                                    placeholder="Nhập địa chỉ email"
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px',
+                                        border: '2px solid #e0e0e0',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        transition: 'border-color 0.3s ease'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = '#232f54'}
+                                    onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
+                                />
+                            </div>
+                        </div>
+                        
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '8px', color: '#232f54', fontWeight: '600' }}>
+                                    Số Điện Thoại
+                                </label>
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleInputChange}
+                                    placeholder="Nhập số điện thoại"
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px',
+                                        border: '2px solid #e0e0e0',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        transition: 'border-color 0.3s ease'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = '#232f54'}
+                                    onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
+                                />
+                            </div>
+                            
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '8px', color: '#232f54', fontWeight: '600' }}>
+                                    Chủ Đề *
+                                </label>
+                                <select
+                                    name="subject"
+                                    value={formData.subject}
+                                    onChange={handleInputChange}
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px',
+                                        border: '2px solid #e0e0e0',
+                                        borderRadius: '8px',
+                                        fontSize: '1rem',
+                                        backgroundColor: 'white',
+                                        transition: 'border-color 0.3s ease'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = '#232f54'}
+                                    onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
+                                >
+                                    <option value="">Chọn chủ đề</option>
+                                    <option value="general">Thông tin chung</option>
+                                    <option value="support">Hỗ trợ khách hàng</option>
+                                    <option value="complaint">Khiếu nại</option>
+                                    <option value="suggestion">Đề xuất</option>
+                                    <option value="business">Hợp tác kinh doanh</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label style={{ display: 'block', marginBottom: '8px', color: '#232f54', fontWeight: '600' }}>
+                                Nội Dung Tin Nhắn *
+                            </label>
+                            <textarea
+                                name="message"
+                                value={formData.message}
+                                onChange={handleInputChange}
+                                required
+                                rows="6"
+                                placeholder="Nhập nội dung tin nhắn của bạn"
+                                style={{
+                                    width: '100%',
+                                    padding: '12px',
+                                    border: '2px solid #e0e0e0',
+                                    borderRadius: '8px',
+                                    fontSize: '1rem',
+                                    resize: 'vertical',
+                                    transition: 'border-color 0.3s ease'
+                                }}
+                                onFocus={(e) => e.target.style.borderColor = '#232f54'}
+                                onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
+                            />
+                        </div>
+                        
+                        <div style={{ textAlign: 'center' }}>
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                style={{
+                                    background: '#ffd700',
+                                    color: '#232f54',
+                                    border: 'none',
+                                    padding: '15px 30px',
+                                    borderRadius: '25px',
+                                    fontSize: '1.1rem',
+                                    fontWeight: '600',
+                                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '10px',
+                                    transition: 'all 0.3s ease',
+                                    opacity: isSubmitting ? 0.7 : 1
+                                }}
+                                onMouseEnter={(e) => !isSubmitting && (e.target.style.background = '#ffed4e')}
+                                onMouseLeave={(e) => !isSubmitting && (e.target.style.background = '#ffd700')}
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <div style={{ width: '20px', height: '20px', border: '2px solid #232f54', borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                                        Đang gửi...
+                                    </>
+                                ) : (
+                                    <>
+                                        Gửi Tin Nhắn
+                                        <SendIcon />
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {/* Map & Location Section */}
+            <div className="policies-highlight-section">
+                <h2 className="policies-highlight-title">
+                    <MapIcon style={{ marginRight: '10px' }} />
+                    Bản Đồ & Vị Trí
+                </h2>
+                <div className="policies-highlight-content">
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', alignItems: 'start' }}>
+                        <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '25px', borderRadius: '15px' }}>
+                            <h3 style={{ color: '#ffd700', marginBottom: '20px', fontSize: '1.3rem' }}>
+                                📍 Vị Trí DOLCE Restaurant
+                            </h3>
+                            <div style={{ marginBottom: '20px' }}>
+                                <p style={{ marginBottom: '8px' }}><strong>Địa Chỉ:</strong> FPT Arena Multimedia</p>
+                                <p style={{ marginBottom: '8px' }}><strong>Đường:</strong> Lê Lợi, Quận 1, TP.HCM</p>
+                                <p style={{ marginBottom: '8px' }}><strong>Tọa Độ:</strong> 10.8454°N, 106.7118°E</p>
+                            </div>
+                            <button
+                                style={{
+                                    background: '#ffd700',
+                                    color: '#232f54',
+                                    border: 'none',
+                                    padding: '12px 24px',
+                                    borderRadius: '20px',
+                                    fontSize: '1rem',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s ease'
+                                }}
+                                onMouseEnter={(e) => e.target.style.background = '#ffed4e'}
+                                onMouseLeave={(e) => e.target.style.background = '#ffd700'}
+                            >
+                                🗺️ Mở Bản Đồ Google Maps
+                            </button>
+                        </div>
+                        
+                        <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '25px', borderRadius: '15px', minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <div style={{ textAlign: 'center', color: '#ffd700' }}>
+                                <MapIcon style={{ fontSize: '4rem', marginBottom: '15px' }} />
+                                <p>Bản đồ sẽ được hiển thị tại đây</p>
+                                <p style={{ fontSize: '0.9rem', opacity: 0.8 }}>Google Maps Integration</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* FAQ Section */}
+            <div className="policies-content-section">
+                <h2 className="policies-section-title">
+                    <ContactSupportIcon style={{ marginRight: '10px' }} />
+                    Câu Hỏi Thường Gặp
+                </h2>
+                <div className="policies-section-content">
+                    <div style={{ display: 'grid', gap: '20px' }}>
+                        <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <h3 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>
+                                <strong>Q:</strong> Tôi có thể liên hệ với DOLCE qua những cách nào?
+                            </h3>
+                            <p style={{ color: '#666', lineHeight: '1.6' }}>
+                                <strong>A:</strong> Bạn có thể liên hệ với chúng tôi qua điện thoại, email, form liên hệ trên website, hoặc đến trực tiếp các chi nhánh.
+                            </p>
+                        </div>
+                        
+                        <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <h3 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>
+                                <strong>Q:</strong> Thời gian phản hồi email là bao lâu?
+                            </h3>
+                            <p style={{ color: '#666', lineHeight: '1.6' }}>
+                                <strong>A:</strong> Chúng tôi cam kết phản hồi trong vòng 24 giờ làm việc kể từ khi nhận được email.
+                            </p>
+                        </div>
+                        
+                        <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <h3 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>
+                                <strong>Q:</strong> Tôi có thể đặt bàn qua điện thoại không?
+                            </h3>
+                            <p style={{ color: '#666', lineHeight: '1.6' }}>
+                                <strong>A:</strong> Có, bạn có thể đặt bàn qua hotline +1-800-DOLCE hoặc qua ứng dụng di động của chúng tôi.
+                            </p>
+                        </div>
+                        
+                        <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <h3 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>
+                                <strong>Q:</strong> DOLCE có dịch vụ giao hàng không?
+                            </h3>
+                            <p style={{ color: '#666', lineHeight: '1.6' }}>
+                                <strong>A:</strong> Có, chúng tôi cung cấp dịch vụ giao hàng tận nơi trong phạm vi 10km từ các chi nhánh.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Emergency Contact Section */}
+            <div className="policies-highlight-section">
+                <h2 className="policies-highlight-title">
+                    🚨 Liên Hệ Khẩn Cấp 24/7
+                </h2>
+                <div className="policies-highlight-content">
+                    <p style={{ marginBottom: '20px', fontSize: '1.1rem' }}>
+                        Đối với các vấn đề khẩn cấp về an toàn thực phẩm, dịch vụ hoặc khiếu nại nghiêm trọng, vui lòng liên hệ ngay với chúng tôi:
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+                        <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '20px', borderRadius: '10px', textAlign: 'center' }}>
+                            <PhoneIcon style={{ fontSize: '2.5rem', color: '#e74c3c', marginBottom: '10px' }} />
+                            <h3 style={{ color: '#ffd700', marginBottom: '10px' }}>Hotline Khẩn Cấp</h3>
+                            <p style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '5px' }}>1900-DOLCE</p>
+                            <p style={{ fontSize: '0.9rem', opacity: 0.9 }}>Hoạt động 24/7</p>
+                        </div>
+                        
+                        <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '20px', borderRadius: '10px', textAlign: 'center' }}>
+                            <EmailIcon style={{ fontSize: '2.5rem', color: '#3498db', marginBottom: '10px' }} />
+                            <h3 style={{ color: '#ffd700', marginBottom: '10px' }}>Email Khẩn Cấp</h3>
+                            <p style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '5px' }}>emergency@dolce.com</p>
+                            <p style={{ fontSize: '0.9rem', opacity: 0.9 }}>Phản hồi trong 2 giờ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Footer Section */}
+            <div className="policies-footer-section">
+                <p className="policies-footer-text">
+                    Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn!
+                </p>
+                <p className="policies-copyright">
+                    © 2025 DOLCE. Tất cả quyền được bảo lưu.
+                </p>
             </div>
         </div>
     );

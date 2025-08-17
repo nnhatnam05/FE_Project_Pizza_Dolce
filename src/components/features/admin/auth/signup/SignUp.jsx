@@ -139,8 +139,21 @@ const SignUp = () => {
       }, 2000);
     } catch (err) {
       console.error('GOOGLE SIGNUP ERROR:', err);
+      console.log('Error response:', err.response);
+      
       if (err.response) {
-        setError(`Google signup failed: ${err.response.data.message || err.response.status}`);
+        const errorMessage = err.response.data;
+        console.log('Error message:', errorMessage);
+        
+        if (typeof errorMessage === 'string') {
+          if (errorMessage.includes('deactivated')) {
+            setError('Account is deactivated. Please contact administrator.');
+          } else {
+            setError(`Google signup failed: ${errorMessage}`);
+          }
+        } else {
+          setError(`Google signup failed: ${err.response.status}`);
+        }
       } else if (err.code === 'ECONNABORTED') {
         setError('Signup request timed out. Please try again.');
       } else if (err.message && err.message.includes('Network Error')) {

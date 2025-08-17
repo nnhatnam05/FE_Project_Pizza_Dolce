@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate, NavLink } from 'react-router-dom';
 import { validatePhoneNumber } from '../../../../utils/phoneValidation';
 import { DashboardProvider } from '../../../../contexts/DashboardContext';
+import useAccountStatusWebSocket from '../../../../hooks/useAccountStatusWebSocket';
+import AccountDeactivationModal from '../../AccountDeactivationModal';
 import {
   AppBar,
   Toolbar,
@@ -238,6 +240,33 @@ function AdminLayoutContent() {
 
   // Submenu states
   const [ordersSubmenuOpen, setOrdersSubmenuOpen] = useState(false);
+
+  // Account deactivation states
+  const [deactivationModalOpen, setDeactivationModalOpen] = useState(false);
+  const [deactivationNotification, setDeactivationNotification] = useState(null);
+
+  // Use account status WebSocket hook
+  const { connectWebSocket, disconnectWebSocket } = useAccountStatusWebSocket();
+
+  // Handle account deactivation
+  const handleAccountDeactivated = (notification) => {
+    console.log('[AdminLayout] Account deactivated:', notification);
+    setDeactivationNotification(notification);
+    setDeactivationModalOpen(true);
+  };
+
+  // Handle account activation
+  const handleAccountActivated = (notification) => {
+    console.log('[AdminLayout] Account activated:', notification);
+    // You can show a success notification here if needed
+  };
+
+  // Connect WebSocket when user data is available
+  useEffect(() => {
+    if (user && user.id) {
+      connectWebSocket(user.id.toString(), handleAccountDeactivated, handleAccountActivated);
+    }
+  }, [user, connectWebSocket]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -1455,6 +1484,20 @@ function AdminLayoutContent() {
           <Outlet />
         </DashboardProvider>
       </Box>
+      
+      {/* Account Deactivation Modal */}
+      <AccountDeactivationModal
+        isOpen={deactivationModalOpen}
+        onClose={() => {
+          setDeactivationModalOpen(false);
+          setDeactivationNotification(null);
+          // Clear storage and redirect to login
+          localStorage.clear();
+          sessionStorage.clear();
+          navigate('/login');
+        }}
+        notification={deactivationNotification}
+      />
     </Box>
   );
 }

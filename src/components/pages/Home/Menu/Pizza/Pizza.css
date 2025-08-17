@@ -255,9 +255,7 @@
     animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
+
 
 /* Sold Out Styling */
 .p4-sold-out .pizza-image::before {
@@ -660,7 +658,7 @@
 }
 
 /* Responsive */
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
     .menu-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 20px;
@@ -763,7 +761,7 @@
     }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 480px) {
     .menu-grid {
         grid-template-columns: repeat(1, 1fr);
         max-width: 350px;
@@ -804,7 +802,7 @@
     }
 
     .detail-description p, 
-    .detail-ingredients p {
+        .detail-ingredients p {
         font-size: 14px;
         line-height: 1.5;
     }

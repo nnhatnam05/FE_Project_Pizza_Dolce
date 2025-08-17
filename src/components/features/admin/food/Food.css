@@ -1,13 +1,11 @@
-@import url('https://fonts.googleapis.com/css?family=Inter:400,600,700&display=swap');
-
-.food-list-container {
+.food-list-container-main {
   padding: 20px;
   background-color: #f8fafc;
   min-height: calc(100vh - 64px);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
-.food-list-header {
+.food-list-header-main {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -21,7 +19,7 @@
   margin: 0;
 }
 
-.add-food-btn {
+.add-food-btn-main {
   background-color: #2ecc7a;
   color: white;
   border: none;
@@ -36,7 +34,7 @@
   text-decoration: none;
 }
 
-.add-food-btn:hover {
+.add-food-btn-main:hover {
   background-color: #27b368;
 }
 

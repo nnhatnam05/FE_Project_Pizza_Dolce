@@ -1,0 +1,314 @@
+/* ===== POLICIES GLOBAL CSS - HOÀN TOÀN MỚI ===== */
+/* Thiết kế lại từ đầu với cấu trúc hoàn toàn khác biệt */
+
+/* ===== GLOBAL RESET FOR POLICIES PAGES ===== */
+.policies-page-wrapper,
+.policies-page-wrapper *,
+.policies-page-wrapper *::before,
+.policies-page-wrapper *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== MAIN CONTAINER STYLES ===== */
+.policies-page-wrapper {
+    background: #ffffff !important;
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    color: #232f54 !important;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ===== HEADER SECTION ===== */
+.policies-header-section {
+    background: linear-gradient(135deg, #232f54 0%, #1a2332 100%);
+    color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(35, 47, 84, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.policies-header-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.05) 100%);
+    pointer-events: none;
+}
+
+.policies-page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.policies-page-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== BACK BUTTON ===== */
+.policies-back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #ffd700;
+    color: #232f54;
+    border: 2px solid #ffd700;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.policies-back-button:hover {
+    background: #ffed4e;
+    border-color: #ffed4e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+}
+
+.policies-back-button:active {
+    transform: translateY(0);
+}
+
+/* ===== CONTENT SECTION ===== */
+.policies-content-section {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+.policies-section-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #232f54;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #ffd700;
+}
+
+.policies-section-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333333;
+}
+
+/* ===== HIGHLIGHTED SECTION ===== */
+.policies-highlight-section {
+    background: linear-gradient(135deg, #232f54 0%, #1a2332 100%);
+    color: #ffffff;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(35, 47, 84, 0.3);
+}
+
+.policies-highlight-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #ffffff;
+}
+
+.policies-highlight-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #ffffff;
+    opacity: 0.95;
+}
+
+/* ===== FOOTER SECTION ===== */
+.policies-footer-section {
+    background: linear-gradient(135deg, #232f54 0%, #1a2332 100%);
+    color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(35, 47, 84, 0.3);
+}
+
+.policies-footer-text {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.policies-copyright {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    color: #ffffff;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+    .policies-page-wrapper {
+        padding: 15px;
+    }
+    
+    .policies-page-title {
+        font-size: 2rem;
+    }
+    
+    .policies-content-section,
+    .policies-highlight-section,
+    .policies-header-section,
+    .policies-footer-section {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .policies-page-wrapper {
+        padding: 10px;
+    }
+    
+    .policies-page-title {
+        font-size: 1.8rem;
+    }
+    
+    .policies-section-title {
+        font-size: 1.5rem;
+    }
+    
+    .policies-content-section,
+    .policies-highlight-section,
+    .policies-header-section,
+    .policies-footer-section {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .policies-page-wrapper {
+        padding: 5px;
+    }
+    
+    .policies-page-title {
+        font-size: 1.5rem;
+    }
+    
+    .policies-section-title {
+        font-size: 1.3rem;
+    }
+    
+    .policies-content-section,
+    .policies-highlight-section,
+    .policies-header-section,
+    .policies-footer-section {
+        padding: 10px;
+    }
+    
+    .policies-back-button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+.policies-page-wrapper {
+    animation: policiesFadeIn 0.5s ease-out;
+}
+
+@keyframes policiesFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.policies-content-section,
+.policies-highlight-section {
+    animation: policiesSlideIn 0.6s ease-out;
+}
+
+@keyframes policiesSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ===== HOVER EFFECTS ===== */
+.policies-content-section:hover,
+.policies-highlight-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+/* ===== UTILITY CLASSES ===== */
+.policies-text-center {
+    text-align: center;
+}
+
+.policies-text-left {
+    text-align: left;
+}
+
+.policies-text-right {
+    text-align: right;
+}
+
+.policies-mb-10 {
+    margin-bottom: 10px;
+}
+
+.policies-mb-20 {
+    margin-bottom: 20px;
+}
+
+.policies-mb-30 {
+    margin-bottom: 30px;
+}
+
+.policies-mt-10 {
+    margin-top: 10px;
+}
+
+.policies-mt-20 {
+    margin-top: 20px;
+}
+
+.policies-mt-30 {
+    margin-top: 30px;
+}
+
+.policies-p-10 {
+    padding: 10px;
+}
+
+.policies-p-20 {
+    padding: 20px;
+}
+
+.policies-p-30 {
+    padding: 30px;
+} 

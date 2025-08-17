@@ -16,7 +16,8 @@ const EditUser = () => {
     address: '',
     dob: '',
     gender: 'Nam',
-    workLocation: ''
+    workLocation: '',
+    isActive: true // Thêm field active status
   });
   const [originalData, setOriginalData] = useState({
     username: '',
@@ -93,7 +94,8 @@ const EditUser = () => {
         address: staffData.address || '',
         dob: staffData.dob || '',
         gender: staffData.gender || 'Male',
-        workLocation: staffData.workLocation || ''
+        workLocation: staffData.workLocation || '',
+        isActive: userData.isActive || true // Lấy trạng thái hoạt động
       });
       
       setOriginalData({
@@ -435,6 +437,7 @@ const EditUser = () => {
       formDataToSend.append('email', formData.email);
       formDataToSend.append('phone', formData.phone);
       formDataToSend.append('role', formData.role);
+      formDataToSend.append('isActive', formData.isActive); // Thêm trạng thái hoạt động
       
       // Add password if entered
       if (password && password.trim() !== '') {
@@ -774,19 +777,38 @@ const EditUser = () => {
                   </div>
                   
                   <div className="form-group">
-                    <label>Work Location</label>
+                    <label htmlFor="workLocation">Work Location</label>
                     <select 
+                      id="workLocation"
                       name="workLocation" 
                       value={formData.workLocation} 
                       onChange={handleChange}
                       className={errors.workLocation ? 'error' : ''}
                     >
-                      <option value="">Select Work Location</option>
+                      <option value="">Select work location</option>
                       {locationOptions.map((location, index) => (
-                        <option key={index} value={location}>{location}</option>
+                        <option key={index} value={location}>
+                          {location}
+                        </option>
                       ))}
                     </select>
-                    {errors.workLocation && <p className="error-message">{errors.workLocation}</p>}
+                    {errors.workLocation && <span className="error-message">{errors.workLocation}</span>}
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="isActive">Account Status</label>
+                    <div className="checkbox-group">
+                      <input
+                        type="checkbox"
+                        id="isActive"
+                        name="isActive"
+                        checked={formData.isActive}
+                        onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
+                      />
+                      <label htmlFor="isActive" className="checkbox-label">
+                        Active Account (User can login and access system)
+                      </label>
+                    </div>
                   </div>
                 </div>
               )}

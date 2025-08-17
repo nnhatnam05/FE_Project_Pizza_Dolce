@@ -19,6 +19,14 @@ export default function User() {
   const [deleteError, setDeleteError] = useState('');
   const [deleteSuccess, setDeleteSuccess] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Thêm state cho toggle status
+  const [showToggleConfirmDialog, setShowToggleConfirmDialog] = useState(false);
+  const [userToToggle, setUserToToggle] = useState(null);
+  const [toggleError, setToggleError] = useState('');
+  const [toggleSuccess, setToggleSuccess] = useState('');
+  const [isToggling, setIsToggling] = useState(false);
+  
   const navigate = useNavigate();
 
   const usersPerPage = 10;
@@ -101,6 +109,91 @@ export default function User() {
     setUserToDelete(id);
     setUserToDeleteName(name || `User ID: ${id}`);
     setShowConfirmDialog(true);
+  };
+
+  // Thêm function xử lý toggle status
+  const handleToggleStatus = (id, name, currentStatus) => {
+    // Prevent toggling current logged-in user
+    if (id === currentUserId) {
+      showError("You cannot deactivate your own account while logged in.");
+      return;
+    }
+
+    // Reset any previous messages
+    setToggleError('');
+    setToggleSuccess('');
+    
+    // Set user to toggle and show confirm dialog
+    setUserToToggle({ id, name, currentStatus });
+    setShowToggleConfirmDialog(true);
+  };
+
+  const handleConfirmToggle = async () => {
+    if (isToggling) return;
+    
+    setIsToggling(true);
+    try {
+      const token = localStorage.getItem('token');
+      
+      const response = await axios.put(`http://localhost:8080/api/auth/users/${userToToggle.id}/toggle-status`, {}, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      // Show success message
+      const newStatus = userToToggle.currentStatus ? 'deactivated' : 'activated';
+      setToggleSuccess(`User ${newStatus} successfully`);
+      
+      // Refresh user list after successful toggle
+      fetchUsers();
+      
+      // Close dialog after delay
+      setTimeout(() => {
+        setShowToggleConfirmDialog(false);
+        setUserToToggle(null);
+        setToggleSuccess('');
+      }, 1500);
+      
+    } catch (err) {
+      console.error("Error toggling user status:", err);
+      
+      if (err.response) {
+        const statusCode = err.response.status;
+        const errorData = err.response.data;
+        
+        if (statusCode === 403) {
+          setToggleError("Access forbidden: You don't have permission to toggle user status.");
+        } else if (statusCode === 404) {
+          setToggleError("User not found. The user may have been already deleted.");
+        } else if (errorData) {
+          if (typeof errorData === 'string') {
+            setToggleError(errorData);
+          } else if (errorData.error) {
+            setToggleError(errorData.error);
+          } else if (errorData.message) {
+            setToggleError(errorData.message);
+          } else {
+            setToggleError(`Failed to toggle user status: ${statusCode}`);
+          }
+        } else {
+          setToggleError(`Server error (${statusCode}). Please try again later.`);
+        }
+      } else if (err.request) {
+        setToggleError('No response from server. Please check your connection.');
+      } else {
+        setToggleError('Failed to toggle user status. Please try again later.');
+      }
+    } finally {
+      setIsToggling(false);
+    }
+  };
+
+  const handleCancelToggle = () => {
+    setShowToggleConfirmDialog(false);
+    setUserToToggle(null);
+    setToggleError('');
   };
 
   const handleConfirmDelete = async () => {
@@ -302,15 +395,10 @@ export default function User() {
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Code</th>
-                  <th>Username</th>
-                  <th>Avatar</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
+                  <th>User Info</th>
+                  <th>Contact</th>
                   <th>Role</th>
-                  {/* Add column for staff details */}
-                  <th>Staff Details</th>
+                  <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -323,14 +411,37 @@ export default function User() {
                   return (
                     <tr key={u.id} className={isCurrentUser ? "current-user-row" : ""}>
                       <td>{actualIndex}</td>
-                      <td>S10{u.id}</td>
-                      <td>{u.username}{isCurrentUser ? " (USING)" : ""}</td>
-                      <td>{renderAvatar(u)}</td>
-                      <td>{u.name}</td>
-                      <td>{u.email}</td>
-                      <td>{u.phone}</td>
+                      <td className="user-info-cell">
+                        <div className="user-avatar-name">
+                          {renderAvatar(u)}
+                          <div className="user-details">
+                            <div className="user-name">{u.name}</div>
+                            <div className="user-code">S10{u.id} • {u.username}{isCurrentUser ? " (USING)" : ""}</div>
+                            {isStaff && u.staffProfile && (
+                              <div className="staff-details">
+                                <small>📍 {u.staffProfile.workLocation || 'N/A'}</small>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="contact-cell">
+                        <div className="contact-info">
+                          <div className="email">{u.email}</div>
+                          <div className="phone">{u.phone}</div>
+                        </div>
+                      </td>
                       <td><span className={`role-badge role-${u.role?.toLowerCase()}`}>{u.role}</span></td>
-                      <td>{renderStaffDetails(u)}</td>
+                      <td>
+                        <button 
+                          className={`status-toggle-btn ${(u.isActive !== null ? u.isActive : true) ? 'status-active' : 'status-inactive'}`}
+                          onClick={() => handleToggleStatus(u.id, u.name || u.username, u.isActive !== null ? u.isActive : true)}
+                          disabled={u.id === currentUserId}
+                          title={(u.isActive !== null ? u.isActive : true) ? "Click to deactivate" : "Click to activate"}
+                        >
+                          {(u.isActive !== null ? u.isActive : true) ? 'Active' : 'Inactive'}
+                        </button>
+                      </td>
                       <td className="actions-cell">
                         <div className="action-buttons">
                           {isStaff && (
@@ -462,6 +573,53 @@ export default function User() {
                   disabled={!!deleteSuccess || isDeleting}
                 >
                   {isDeleting ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toggle Status Confirm Dialog */}
+      {showToggleConfirmDialog && (
+        <div className="confirm-dialog-overlay">
+          <div className="confirm-dialog">
+            <div className="confirm-dialog-content">
+              <h3>Confirm Status Change</h3>
+              <p>Are you sure you want to <strong>{userToToggle?.currentStatus ? 'deactivate' : 'activate'}</strong> <strong>{userToToggle?.name}</strong>?</p>
+              <p className="toggle-warning">
+                {userToToggle?.currentStatus 
+                  ? 'Deactivating will prevent this user from logging in and accessing the system.'
+                  : 'Activating will restore this user\'s access to the system.'
+                }
+              </p>
+              
+              {toggleError && (
+                <div className="delete-error-message">
+                  {toggleError}
+                </div>
+              )}
+              
+              {toggleSuccess && (
+                <div className="delete-success-message">
+                  {toggleSuccess}
+                </div>
+              )}
+              
+              <div className="confirm-dialog-actions">
+                <button 
+                  onClick={handleCancelToggle} 
+                  className="cancel-btn" 
+                  disabled={!!toggleSuccess || isToggling}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleConfirmToggle} 
+                  className="confirm-btn"
+                  disabled={!!toggleSuccess || isToggling}
+                >
+                  {isToggling ? 'Processing...' : (userToToggle?.currentStatus ? 'Deactivate' : 'Activate')}
                 </button>
               </div>
             </div>

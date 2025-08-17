@@ -1,22 +1,22 @@
 /* Modern Order Management Styles */
 
 /* Container */
-.modern-order-container {
+.modern-order-container-main {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   padding: 20px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 /* Order Management Dashboard - New Modern Styles */
-.modern-order-management {
+.modern-order-management-main {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   padding: 20px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
-.management-header {
+.management-header-main {
   background: white;
   border-radius: 16px;
   padding: 24px;

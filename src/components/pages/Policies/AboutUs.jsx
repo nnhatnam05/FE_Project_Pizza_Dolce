@@ -1,5 +1,5 @@
 import React from 'react';
-import './AboutUs.css';
+import './PoliciesGlobal.css';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -20,333 +20,348 @@ const AboutUs = () => {
     };
 
     return (
-        <div className="about-us-container">
-            {/* Header */}
-            <div className="about-us-header">
-                <button className="back-button" onClick={handleBack}>
-                    <ArrowBackIcon />
-                    <span>Quay lại</span>
-                </button>
-                <h1 className="about-us-title">
-                    <BusinessIcon className="title-icon" />
+        <div className="policies-page-wrapper">
+            {/* Back Button */}
+            <button className="policies-back-button" onClick={handleBack}>
+                <ArrowBackIcon />
+                <span>Quay lại</span>
+            </button>
+
+            {/* Header Section */}
+            <div className="policies-header-section">
+                <h1 className="policies-page-title">
+                    <BusinessIcon style={{ marginRight: '10px' }} />
                     Về Chúng Tôi - DOLCE
                 </h1>
+                <p className="policies-page-subtitle">
+                    Khám phá câu chuyện và sứ mệnh của DOLCE - Chuỗi nhà hàng Ý hàng đầu
+                </p>
             </div>
 
-            {/* Main Content */}
-            <div className="about-us-content">
-                
-                {/* Company Introduction Section */}
-                <section className="about-section">
-                    <div className="section-header">
-                        <RestaurantIcon className="section-icon" />
-                        <h2>Giới Thiệu Công Ty</h2>
+            {/* Company Introduction Section */}
+            <div className="policies-content-section">
+                <h2 className="policies-section-title">
+                    <RestaurantIcon style={{ marginRight: '10px' }} />
+                    Giới Thiệu Công Ty
+                </h2>
+                <div className="policies-section-content">
+                    <div className="policies-mb-20">
+                        <h3 style={{ color: '#232f54', fontSize: '1.4rem', marginBottom: '15px' }}>
+                            🍕 DOLCE - Hương Vị Ý Đích Thực
+                        </h3>
+                        <p>
+                            DOLCE là chuỗi nhà hàng Ý hàng đầu, chuyên phục vụ những món ăn Ý truyền thống 
+                            với hương vị đích thực. Chúng tôi tự hào mang đến trải nghiệm ẩm thực Ý chân chính, 
+                            từ những chiếc pizza nổi tiếng đến các món pasta, salad và món tráng miệng đặc trưng.
+                        </p>
                     </div>
-                    <div className="section-content">
-                        <div className="company-intro">
-                            <div className="intro-highlight">
-                                <h3>🍕 DOLCE - Hương Vị Ý Đích Thực</h3>
-                                <p>
-                                    DOLCE là chuỗi nhà hàng Ý hàng đầu, chuyên phục vụ những món ăn Ý truyền thống 
-                                    với hương vị đích thực. Chúng tôi tự hào mang đến trải nghiệm ẩm thực Ý chân chính, 
-                                    từ những chiếc pizza nổi tiếng đến các món pasta, salad và món tráng miệng đặc trưng.
-                                </p>
-                            </div>
-                            
-                            <div className="company-stats">
-                                <div className="stat-item">
-                                    <h4>🏪 15+</h4>
-                                    <p>Chi nhánh</p>
-                                </div>
-                                <div className="stat-item">
-                                    <h4>👥 500+</h4>
-                                    <p>Nhân viên</p>
-                                </div>
-                                <div className="stat-item">
-                                    <h4>🍽️ 100+</h4>
-                                    <p>Món ăn</p>
-                                </div>
-                                <div className="stat-item">
-                                    <h4>⭐ 4.8/5</h4>
-                                    <p>Đánh giá</p>
-                                </div>
-                            </div>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginTop: '30px' }}>
+                        <div style={{ textAlign: 'center', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <h4 style={{ fontSize: '2rem', color: '#232f54', marginBottom: '10px' }}>🏪 15+</h4>
+                            <p style={{ color: '#666' }}>Chi nhánh</p>
+                        </div>
+                        <div style={{ textAlign: 'center', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <h4 style={{ fontSize: '2rem', color: '#232f54', marginBottom: '10px' }}>👥 500+</h4>
+                            <p style={{ color: '#666' }}>Nhân viên</p>
+                        </div>
+                        <div style={{ textAlign: 'center', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <h4 style={{ fontSize: '2rem', color: '#232f54', marginBottom: '10px' }}>🍽️ 100+</h4>
+                            <p style={{ color: '#666' }}>Món ăn</p>
+                        </div>
+                        <div style={{ textAlign: 'center', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <h4 style={{ fontSize: '2rem', color: '#232f54', marginBottom: '10px' }}>⭐ 4.8/5</h4>
+                            <p style={{ color: '#666' }}>Đánh giá</p>
                         </div>
                     </div>
-                </section>
+                </div>
+            </div>
 
-                {/* Company History Section */}
-                <section className="about-section">
-                    <div className="section-header">
-                        <HistoryIcon className="section-icon" />
-                        <h2>Lịch Sử Phát Triển</h2>
-                    </div>
-                    <div className="section-content">
-                        <div className="history-timeline">
-                            <div className="timeline-item">
-                                <div className="timeline-year">2020</div>
-                                <div className="timeline-content">
-                                    <h4>🎯 Khởi Nghiệp</h4>
-                                    <p>DOLCE được thành lập với nhà hàng đầu tiên tại trung tâm thành phố</p>
-                                </div>
+            {/* Company History Section */}
+            <div className="policies-content-section">
+                <h2 className="policies-section-title">
+                    <HistoryIcon style={{ marginRight: '10px' }} />
+                    Lịch Sử Phát Triển
+                </h2>
+                <div className="policies-section-content">
+                    <div style={{ display: 'grid', gap: '20px' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <div style={{ background: '#232f54', color: 'white', padding: '10px 15px', borderRadius: '20px', fontWeight: 'bold', minWidth: '80px', textAlign: 'center' }}>
+                                2020
                             </div>
-                            
-                            <div className="timeline-item">
-                                <div className="timeline-year">2021</div>
-                                <div className="timeline-content">
-                                    <h4>🚀 Mở Rộng</h4>
-                                    <p>Mở thêm 3 chi nhánh mới và ra mắt dịch vụ giao hàng</p>
-                                </div>
-                            </div>
-                            
-                            <div className="timeline-item">
-                                <div className="timeline-year">2022</div>
-                                <div className="timeline-content">
-                                    <h4>💻 Công Nghệ Số</h4>
-                                    <p>Phát triển ứng dụng đặt hàng và hệ thống quản lý hiện đại</p>
-                                </div>
-                            </div>
-                            
-                            <div className="timeline-item">
-                                <div className="timeline-year">2023</div>
-                                <div className="timeline-content">
-                                    <h4>🏆 Thành Công</h4>
-                                    <p>Đạt 10 chi nhánh và nhận giải thưởng "Nhà hàng Ý tốt nhất"</p>
-                                </div>
-                            </div>
-                            
-                            <div className="timeline-item">
-                                <div className="timeline-year">2024</div>
-                                <div className="timeline-content">
-                                    <h4>🌟 Vươn Xa</h4>
-                                    <p>Mở rộng ra 15 chi nhánh và phát triển dịch vụ quốc tế</p>
-                                </div>
-                            </div>
-                            
-                            <div className="timeline-item">
-                                <div className="timeline-year">2025</div>
-                                <div className="timeline-content">
-                                    <h4>🚀 Tương Lai</h4>
-                                    <p>Tiếp tục mở rộng và đổi mới công nghệ phục vụ khách hàng</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Vision & Mission Section */}
-                <section className="about-section">
-                    <div className="section-header">
-                        <VisibilityIcon className="section-icon" />
-                        <h2>Tầm Nhìn & Sứ Mệnh</h2>
-                    </div>
-                    <div className="section-content">
-                        <div className="vision-mission">
-                            <div className="vision-card">
-                                <h3>🔮 Tầm Nhìn</h3>
-                                <p>
-                                    Trở thành chuỗi nhà hàng Ý hàng đầu tại Việt Nam, mang đến trải nghiệm ẩm thực 
-                                    Ý chân chính và dịch vụ chất lượng cao cho mọi khách hàng.
-                                </p>
-                            </div>
-                            
-                            <div className="mission-card">
-                                <h3>🎯 Sứ Mệnh</h3>
-                                <p>
-                                    Cung cấp những món ăn Ý truyền thống với nguyên liệu chất lượng cao, 
-                                    dịch vụ chuyên nghiệp và trải nghiệm khách hàng tuyệt vời.
-                                </p>
+                            <div>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>🎯 Khởi Nghiệp</h4>
+                                <p>DOLCE được thành lập với nhà hàng đầu tiên tại trung tâm thành phố</p>
                             </div>
                         </div>
                         
-                        <div className="core-values">
-                            <h3>💎 Giá Trị Cốt Lõi</h3>
-                            <div className="values-grid">
-                                <div className="value-item">
-                                    <h4>🍕 Chất Lượng</h4>
-                                    <p>Luôn sử dụng nguyên liệu tươi ngon và công thức truyền thống</p>
-                                </div>
-                                <div className="value-item">
-                                    <h4>👥 Con Người</h4>
-                                    <p>Đội ngũ nhân viên chuyên nghiệp và thân thiện</p>
-                                </div>
-                                <div className="value-item">
-                                    <h4>💡 Đổi Mới</h4>
-                                    <p>Không ngừng cải tiến và áp dụng công nghệ mới</p>
-                                </div>
-                                <div className="value-item">
-                                    <h4>🤝 Uy Tín</h4>
-                                    <p>Xây dựng niềm tin với khách hàng qua chất lượng dịch vụ</p>
-                                </div>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <div style={{ background: '#232f54', color: 'white', padding: '10px 15px', borderRadius: '20px', fontWeight: 'bold', minWidth: '80px', textAlign: 'center' }}>
+                                2021
+                            </div>
+                            <div>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>🚀 Mở Rộng</h4>
+                                <p>Mở thêm 3 chi nhánh mới và ra mắt dịch vụ giao hàng</p>
+                            </div>
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <div style={{ background: '#232f54', color: 'white', padding: '10px 15px', borderRadius: '20px', fontWeight: 'bold', minWidth: '80px', textAlign: 'center' }}>
+                                2022
+                            </div>
+                            <div>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>💻 Công Nghệ Số</h4>
+                                <p>Phát triển ứng dụng đặt hàng và hệ thống quản lý hiện đại</p>
+                            </div>
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <div style={{ background: '#232f54', color: 'white', padding: '10px 15px', borderRadius: '20px', fontWeight: 'bold', minWidth: '80px', textAlign: 'center' }}>
+                                2023
+                            </div>
+                            <div>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>🏆 Thành Công</h4>
+                                <p>Đạt 10 chi nhánh và nhận giải thưởng "Nhà hàng Ý tốt nhất"</p>
+                            </div>
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <div style={{ background: '#232f54', color: 'white', padding: '10px 15px', borderRadius: '20px', fontWeight: 'bold', minWidth: '80px', textAlign: 'center' }}>
+                                2024
+                            </div>
+                            <div>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>🌟 Vươn Xa</h4>
+                                <p>Mở rộng ra 15 chi nhánh và phát triển dịch vụ quốc tế</p>
+                            </div>
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <div style={{ background: '#232f54', color: 'white', padding: '10px 15px', borderRadius: '20px', fontWeight: 'bold', minWidth: '80px', textAlign: 'center' }}>
+                                2025
+                            </div>
+                            <div>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>🚀 Tương Lai</h4>
+                                <p>Tiếp tục mở rộng và đổi mới công nghệ phục vụ khách hàng</p>
                             </div>
                         </div>
                     </div>
-                </section>
-
-                {/* Team & Leadership Section */}
-                <section className="about-section">
-                    <div className="section-header">
-                        <PeopleIcon className="section-icon" />
-                        <h2>Đội Ngũ & Lãnh Đạo</h2>
-                    </div>
-                    <div className="section-content">
-                        <div className="team-info">
-                            <div className="team-highlight">
-                                <h3>👨‍🍳 Đội Ngũ Chuyên Nghiệp</h3>
-                                <p>
-                                    DOLCE tự hào có đội ngũ đầu bếp Ý chuyên nghiệp, được đào tạo tại các 
-                                    trường ẩm thực danh tiếng. Chúng tôi cam kết mang đến hương vị Ý đích thực 
-                                    trong mọi món ăn.
-                                </p>
-                            </div>
-                            
-                            <div className="leadership-team">
-                                <div className="leader-card">
-                                    <div className="leader-avatar">
-                                        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect width="80" height="80" fill="#f0f0f0"/>
-                                            <circle cx="40" cy="32" r="16" fill="#ccc"/>
-                                            <path d="M16 64c0-18 16-32 24-32s24 14 24 32v16H16z" fill="#ccc"/>
-                                        </svg>
-                                    </div>
-                                    <h4>Giám Đốc Điều Hành</h4>
-                                    <p>Nguyễn Văn A</p>
-                                    <p>15+ năm kinh nghiệm trong ngành ẩm thực</p>
-                                </div>
-                                
-                                <div className="leader-card">
-                                    <div className="leader-avatar">
-                                        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect width="80" height="80" fill="#f0f0f0"/>
-                                            <circle cx="40" cy="32" r="16" fill="#ccc"/>
-                                            <path d="M16 64c0-18 16-32 24-32s24 14 24 32v16H16z" fill="#ccc"/>
-                                        </svg>
-                                    </div>
-                                    <h4>Bếp Trưởng Chính</h4>
-                                    <p>Marco Rossi</p>
-                                    <p>Đầu bếp Ý với 20+ năm kinh nghiệm</p>
-                                </div>
-                                
-                                <div className="leader-card">
-                                    <div className="leader-avatar">
-                                        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect width="80" height="80" fill="#f0f0f0"/>
-                                            <circle cx="40" cy="32" r="16" fill="#ccc"/>
-                                            <path d="M16 64c0-18 16-32 24-32s24 14 24 32v16H16z" fill="#ccc"/>
-                                        </svg>
-                                    </div>
-                                    <h4>Giám Đốc Kinh Doanh</h4>
-                                    <p>Trần Thị B</p>
-                                    <p>Chuyên gia phát triển thị trường</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Awards & Recognition Section */}
-                <section className="about-section">
-                    <div className="section-header">
-                        <NewReleasesIcon className="section-icon" />
-                        <h2>Giải Thưởng & Công Nhận</h2>
-                    </div>
-                    <div className="section-content">
-                        <div className="awards-info">
-                            <div className="awards-highlight">
-                                <h3>🏆 Những Thành Tựu Đáng Tự Hào</h3>
-                                <p>
-                                    Trong suốt quá trình phát triển, DOLCE đã nhận được nhiều giải thưởng 
-                                    và sự công nhận từ khách hàng và các tổ chức uy tín.
-                                </p>
-                            </div>
-                            
-                            <div className="awards-list">
-                                <div className="award-item">
-                                    <h4>🥇 2023</h4>
-                                    <p>"Nhà hàng Ý tốt nhất" - Tạp chí Ẩm thực Việt Nam</p>
-                                </div>
-                                <div className="award-item">
-                                    <h4>🥈 2022</h4>
-                                    <p>"Chuỗi nhà hàng phát triển nhanh nhất" - Hiệp hội Nhà hàng</p>
-                                </div>
-                                <div className="award-item">
-                                    <h4>🥉 2021</h4>
-                                    <p>"Dịch vụ khách hàng xuất sắc" - Bộ Văn hóa</p>
-                                </div>
-                                <div className="award-item">
-                                    <h4>⭐ 2020-2024</h4>
-                                    <p>Đánh giá 4.8/5 từ 50,000+ khách hàng</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Contact Information Section */}
-                <section className="about-section">
-                    <div className="section-header">
-                        <LocationOnIcon className="section-icon" />
-                        <h2>Thông Tin Liên Hệ</h2>
-                    </div>
-                    <div className="section-content">
-                        <div className="contact-info">
-                            <div className="contact-highlight">
-                                <h3>📍 Trụ Sở Chính</h3>
-                                <p>123 Main Street, Downtown, New York, NY 10001</p>
-                            </div>
-                            
-                            <div className="contact-details">
-                                <div className="contact-item">
-                                    <PhoneIcon className="contact-icon" />
-                                    <div className="contact-text">
-                                        <h4>Điện Thoại</h4>
-                                        <p>+1-800-DOLCE</p>
-                                    </div>
-                                </div>
-                                
-                                <div className="contact-item">
-                                    <EmailIcon className="contact-icon" />
-                                    <div className="contact-text">
-                                        <h4>Email</h4>
-                                        <p>info@dolce.com</p>
-                                    </div>
-                                </div>
-                                
-                                <div className="contact-item">
-                                    <LocationOnIcon className="contact-icon" />
-                                    <div className="contact-text">
-                                        <h4>Website</h4>
-                                        <p>www.dolce.com</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="business-hours">
-                                <h3>🕐 Giờ Làm Việc</h3>
-                                <div className="hours-grid">
-                                    <div className="hours-item">
-                                        <span>Thứ 2 - Thứ 6:</span>
-                                        <span>7:00 - 22:00</span>
-                                    </div>
-                                    <div className="hours-item">
-                                        <span>Thứ 7:</span>
-                                        <span>8:00 - 23:00</span>
-                                    </div>
-                                    <div className="hours-item">
-                                        <span>Chủ Nhật:</span>
-                                        <span>9:00 - 21:00</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                </div>
             </div>
 
-            {/* Footer */}
-            <div className="about-us-footer">
-                <p>DOLCE - Nơi hương vị Ý gặp gỡ tình yêu ẩm thực Việt Nam</p>
-                <p>© 2025 DOLCE. Tất cả quyền được bảo lưu.</p>
+            {/* Vision & Mission Section */}
+            <div className="policies-highlight-section">
+                <h2 className="policies-highlight-title">
+                    <VisibilityIcon style={{ marginRight: '10px' }} />
+                    Tầm Nhìn & Sứ Mệnh
+                </h2>
+                <div className="policies-highlight-content">
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', marginBottom: '30px' }}>
+                        <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '20px', borderRadius: '10px' }}>
+                            <h3 style={{ color: '#ffd700', marginBottom: '15px' }}>🔮 Tầm Nhìn</h3>
+                            <p>
+                                Trở thành chuỗi nhà hàng Ý hàng đầu tại Việt Nam, mang đến trải nghiệm ẩm thực 
+                                Ý chân chính và dịch vụ chất lượng cao cho mọi khách hàng.
+                            </p>
+                        </div>
+                        
+                        <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '20px', borderRadius: '10px' }}>
+                            <h3 style={{ color: '#ffd700', marginBottom: '15px' }}>🎯 Sứ Mệnh</h3>
+                            <p>
+                                Cung cấp những món ăn Ý truyền thống với nguyên liệu chất lượng cao, 
+                                dịch vụ chuyên nghiệp và trải nghiệm khách hàng tuyệt vời.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 style={{ color: '#ffd700', marginBottom: '20px' }}>💎 Giá Trị Cốt Lõi</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+                            <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '15px', borderRadius: '10px' }}>
+                                <h4 style={{ color: '#ffd700', marginBottom: '10px' }}>🍕 Chất Lượng</h4>
+                                <p>Luôn sử dụng nguyên liệu tươi ngon và công thức truyền thống</p>
+                            </div>
+                            <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '15px', borderRadius: '10px' }}>
+                                <h4 style={{ color: '#ffd700', marginBottom: '10px' }}>👥 Con Người</h4>
+                                <p>Đội ngũ nhân viên chuyên nghiệp và thân thiện</p>
+                            </div>
+                            <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '15px', borderRadius: '10px' }}>
+                                <h4 style={{ color: '#ffd700', marginBottom: '10px' }}>💡 Đổi Mới</h4>
+                                <p>Không ngừng cải tiến và áp dụng công nghệ mới</p>
+                            </div>
+                            <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '15px', borderRadius: '10px' }}>
+                                <h4 style={{ color: '#ffd700', marginBottom: '10px' }}>🤝 Uy Tín</h4>
+                                <p>Xây dựng niềm tin với khách hàng qua chất lượng dịch vụ</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Team & Leadership Section */}
+            <div className="policies-content-section">
+                <h2 className="policies-section-title">
+                    <PeopleIcon style={{ marginRight: '10px' }} />
+                    Đội Ngũ & Lãnh Đạo
+                </h2>
+                <div className="policies-section-content">
+                    <div className="policies-mb-20">
+                        <h3 style={{ color: '#232f54', fontSize: '1.4rem', marginBottom: '15px' }}>
+                            👨‍🍳 Đội Ngũ Chuyên Nghiệp
+                        </h3>
+                        <p>
+                            DOLCE tự hào có đội ngũ đầu bếp Ý chuyên nghiệp, được đào tạo tại các 
+                            trường ẩm thực danh tiếng. Chúng tôi cam kết mang đến hương vị Ý đích thực 
+                            trong mọi món ăn.
+                        </p>
+                    </div>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '30px', marginTop: '30px' }}>
+                        <div style={{ textAlign: 'center', padding: '20px', background: '#f8f9fa', borderRadius: '15px' }}>
+                            <div style={{ width: '80px', height: '80px', background: '#232f54', borderRadius: '50%', margin: '0 auto 15px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '2rem' }}>
+                                👨‍💼
+                            </div>
+                            <h4 style={{ color: '#232f54', marginBottom: '10px' }}>Giám Đốc Điều Hành</h4>
+                            <p style={{ fontWeight: 'bold', color: '#666', marginBottom: '5px' }}>Nguyễn Văn A</p>
+                            <p style={{ color: '#666', fontSize: '0.9rem' }}>15+ năm kinh nghiệm trong ngành ẩm thực</p>
+                        </div>
+                        
+                        <div style={{ textAlign: 'center', padding: '20px', background: '#f8f9fa', borderRadius: '15px' }}>
+                            <div style={{ width: '80px', height: '80px', background: '#232f54', borderRadius: '50%', margin: '0 auto 15px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '2rem' }}>
+                                👨‍🍳
+                            </div>
+                            <h4 style={{ color: '#232f54', marginBottom: '10px' }}>Bếp Trưởng Chính</h4>
+                            <p style={{ fontWeight: 'bold', color: '#666', marginBottom: '5px' }}>Marco Rossi</p>
+                            <p style={{ color: '#666', fontSize: '0.9rem' }}>Đầu bếp Ý với 20+ năm kinh nghiệm</p>
+                        </div>
+                        
+                        <div style={{ textAlign: 'center', padding: '20px', background: '#f8f9fa', borderRadius: '15px' }}>
+                            <div style={{ width: '80px', height: '80px', background: '#232f54', borderRadius: '50%', margin: '0 auto 15px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '2rem' }}>
+                                👩‍💼
+                            </div>
+                            <h4 style={{ color: '#232f54', marginBottom: '10px' }}>Giám Đốc Kinh Doanh</h4>
+                            <p style={{ fontWeight: 'bold', color: '#666', marginBottom: '5px' }}>Trần Thị B</p>
+                            <p style={{ color: '#666', fontSize: '0.9rem' }}>Chuyên gia phát triển thị trường</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Awards & Recognition Section */}
+            <div className="policies-content-section">
+                <h2 className="policies-section-title">
+                    <NewReleasesIcon style={{ marginRight: '10px' }} />
+                    Giải Thưởng & Công Nhận
+                </h2>
+                <div className="policies-section-content">
+                    <div className="policies-mb-20">
+                        <h3 style={{ color: '#232f54', fontSize: '1.4rem', marginBottom: '15px' }}>
+                            🏆 Những Thành Tựu Đáng Tự Hào
+                        </h3>
+                        <p>
+                            Trong suốt quá trình phát triển, DOLCE đã nhận được nhiều giải thưởng 
+                            và sự công nhận từ khách hàng và các tổ chức uy tín.
+                        </p>
+                    </div>
+                    
+                    <div style={{ display: 'grid', gap: '15px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <div style={{ background: '#ffd700', color: '#232f54', padding: '8px 12px', borderRadius: '20px', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                                🥇 2023
+                            </div>
+                            <p>"Nhà hàng Ý tốt nhất" - Tạp chí Ẩm thực Việt Nam</p>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <div style={{ background: '#ffd700', color: '#232f54', padding: '8px 12px', borderRadius: '20px', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                                🥈 2022
+                            </div>
+                            <p>"Chuỗi nhà hàng phát triển nhanh nhất" - Hiệp hội Nhà hàng</p>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <div style={{ background: '#ffd700', color: '#232f54', padding: '8px 12px', borderRadius: '20px', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                                🥉 2021
+                            </div>
+                            <p>"Dịch vụ khách hàng xuất sắc" - Bộ Văn hóa</p>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <div style={{ background: '#ffd700', color: '#232f54', padding: '8px 12px', borderRadius: '20px', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                                ⭐ 2020-2024
+                            </div>
+                            <p>Đánh giá 4.8/5 từ 50,000+ khách hàng</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Contact Information Section */}
+            <div className="policies-content-section">
+                <h2 className="policies-section-title">
+                    <LocationOnIcon style={{ marginRight: '10px' }} />
+                    Thông Tin Liên Hệ
+                </h2>
+                <div className="policies-section-content">
+                    <div className="policies-mb-20">
+                        <h3 style={{ color: '#232f54', fontSize: '1.4rem', marginBottom: '15px' }}>
+                            📍 Trụ Sở Chính
+                        </h3>
+                        <p>123 Main Street, Downtown, New York, NY 10001</p>
+                    </div>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <PhoneIcon style={{ color: '#232f54', fontSize: '2rem' }} />
+                            <div>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>Điện Thoại</h4>
+                                <p style={{ color: '#666' }}>+1-800-DOLCE</p>
+                            </div>
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <EmailIcon style={{ color: '#232f54', fontSize: '2rem' }} />
+                            <div>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>Email</h4>
+                                <p style={{ color: '#666' }}>info@dolce.com</p>
+                            </div>
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+                            <LocationOnIcon style={{ color: '#232f54', fontSize: '2rem' }} />
+                            <div>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>Website</h4>
+                                <p style={{ color: '#666' }}>www.dolce.com</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 style={{ color: '#232f54', fontSize: '1.4rem', marginBottom: '15px' }}>
+                            🕐 Giờ Làm Việc
+                        </h3>
+                        <div style={{ display: 'grid', gap: '10px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', background: '#f8f9fa', borderRadius: '8px' }}>
+                                <span style={{ fontWeight: 'bold', color: '#232f54' }}>Thứ 2 - Thứ 6:</span>
+                                <span style={{ color: '#666' }}>7:00 - 22:00</span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', background: '#f8f9fa', borderRadius: '8px' }}>
+                                <span style={{ fontWeight: 'bold', color: '#232f54' }}>Thứ 7:</span>
+                                <span style={{ color: '#666' }}>8:00 - 23:00</span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', background: '#f8f9fa', borderRadius: '8px' }}>
+                                <span style={{ fontWeight: 'bold', color: '#232f54' }}>Chủ Nhật:</span>
+                                <span style={{ color: '#666' }}>9:00 - 21:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Footer Section */}
+            <div className="policies-footer-section">
+                <p className="policies-footer-text">
+                    DOLCE - Nơi hương vị Ý gặp gỡ tình yêu ẩm thực Việt Nam
+                </p>
+                <p className="policies-copyright">
+                    © 2025 DOLCE. Tất cả quyền được bảo lưu.
+                </p>
             </div>
         </div>
     );

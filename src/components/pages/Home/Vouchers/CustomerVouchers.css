@@ -9,7 +9,7 @@
     
     /* CSS Custom Properties for voucher cards */
     --voucher-card-bg: white;
-    --voucher-card-color: #333;
+    --voucher-card-color: #232f54;
 }
 
 /* CSS Reset for Voucher Cards to prevent conflicts */
@@ -202,12 +202,12 @@ html body .customer-vouchers-container .voucher-card .voucher-body {
 .vouchers-loading h3 {
     font-size: 1.8rem;
     margin: 0 0 16px 0;
-    color: #333;
+    color: #232f54;
 }
 
 .vouchers-loading p {
     font-size: 1.1rem;
-    color: #666;
+    color: #86632b;
     margin: 0;
 }
 
@@ -270,7 +270,7 @@ html body .customer-vouchers-container .voucher-card .voucher-body {
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background: transparent;
-    color: #666;
+    color: #86632b;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -338,14 +338,14 @@ html body .customer-vouchers-container .voucher-card .voucher-body {
 
 .empty-state h3 {
     font-size: 1.8rem;
-    color: #333;
+    color: #232f54;
     margin: 0 0 16px 0;
     font-weight: 600;
 }
 
 .empty-state p {
     font-size: 1.1rem;
-    color: #666;
+    color: #86632b;
     margin: 0 0 32px 0;
     max-width: 400px;
     margin-left: auto;
@@ -465,13 +465,13 @@ html body .customer-vouchers-container .voucher-card .voucher-body {
 .voucher-name {
     font-size: 1.4rem;
     font-weight: 700;
-    color: #333;
+    color: #232f54;
     margin: 0 0 12px 0;
     line-height: 1.3;
 }
 
 .voucher-description {
-    color: #666;
+    color: #86632b;
     margin: 0 0 24px 0;
     line-height: 1.5;
     font-size: 0.95rem;
@@ -503,7 +503,7 @@ html body .customer-vouchers-container .voucher-card .voucher-body {
 
 .detail-label {
     font-size: 0.8rem;
-    color: #999;
+    color: #86632b;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-weight: 600;
@@ -511,7 +511,7 @@ html body .customer-vouchers-container .voucher-card .voucher-body {
 
 .detail-value {
     font-size: 1rem;
-    color: #333;
+    color: #232f54;
     font-weight: 600;
 }
 
@@ -529,7 +529,7 @@ html body .customer-vouchers-container .voucher-card .voucher-body {
 .code-label {
     display: block;
     font-size: 0.8rem;
-    color: #999;
+    color: #86632b;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-weight: 600;
@@ -556,7 +556,7 @@ html body .customer-vouchers-container .voucher-card .voucher-body {
     font-family: 'Courier New', monospace;
     font-size: 1.1rem;
     font-weight: 700;
-    color: #333;
+    color: #232f54;
     letter-spacing: 1px;
     flex: 1;
 }
@@ -634,7 +634,7 @@ html body .customer-vouchers-container .voucher-card .voucher-body {
 /* Voucher Note */
 .voucher-note {
     text-align: center;
-    color: #666;
+    color: #86632b;
     font-size: 0.9rem;
     display: flex;
     align-items: center;

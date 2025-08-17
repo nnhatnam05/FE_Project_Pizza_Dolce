@@ -18,6 +18,9 @@ const ForgotPasswordCustomer = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
   const [redirectTimer, setRedirectTimer] = useState(0);
+  const [resetting, setResetting] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [resetCode, setResetCode] = useState('');
 
   const navigate = useNavigate();
 
@@ -62,9 +65,26 @@ const ForgotPasswordCustomer = () => {
         setSuccessMsg('');
       }
     } catch (err) {
+      console.error('SEND CODE ERROR:', err);
+      console.log('Error response:', err.response);
+      
       setSuccessMsg('');
-      if (err.response?.data) setError(err.response.data);
-      else setError('Could not send verification code. Try again later.');
+      if (err.response?.data) {
+        const errorMessage = err.response.data;
+        console.log('Error message:', errorMessage);
+        
+        if (typeof errorMessage === 'string') {
+          if (errorMessage.includes('deactivated')) {
+            setError('Account is deactivated. Please contact administrator.');
+          } else {
+            setError(errorMessage);
+          }
+        } else {
+          setError('Failed to send verification code.');
+        }
+      } else {
+        setError('Could not send verification code. Try again later.');
+      }
     } finally {
       setSending(false);
     }
@@ -86,8 +106,25 @@ const ForgotPasswordCustomer = () => {
         setError(res.data.message);
       }
     } catch (err) {
-      if (err.response?.data) setError(err.response.data);
-      else setError('Could not resend code. Try again.');
+      console.error('RESEND CODE ERROR:', err);
+      console.log('Error response:', err.response);
+      
+      if (err.response?.data) {
+        const errorMessage = err.response.data;
+        console.log('Error message:', errorMessage);
+        
+        if (typeof errorMessage === 'string') {
+          if (errorMessage.includes('deactivated')) {
+            setError('Account is deactivated. Please contact administrator.');
+          } else {
+            setError(errorMessage);
+          }
+        } else {
+          setError('Failed to resend verification code.');
+        }
+      } else {
+        setError('Could not resend code.');
+      }
     } finally {
       setSending(false);
     }
@@ -96,43 +133,48 @@ const ForgotPasswordCustomer = () => {
   // Reset password
   const handleResetPassword = async (e) => {
     e.preventDefault();
+    setResetting(true);
     setError('');
     setSuccessMsg('');
-    if (!email || !code || !newPassword || !confirmPw) {
-      setError('Please fill in all fields.');
-      return;
-    }
-    if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters.');
-      return;
-    }
-    if (newPassword !== confirmPw) {
-      setError('Passwords do not match.');
-      return;
-    }
-    if (!codeSent) {
-      setError('You must get a verification code first.');
-      return;
-    }
-    setSending(true);
     try {
       const res = await axios.post('http://localhost:8080/api/customer/reset-password', {
-        email, code, newPassword
+        email,
+        code: resetCode,
+        newPassword: newPassword
       });
+      
       if (typeof res.data === 'string' && res.data.toLowerCase().includes('successful')) {
-        setSuccessMsg('Password reset successful! Redirecting to login page...');
-        setResetSuccess(true);
-        setRedirectTimer(3); // 3 seconds before redirect
-      } else if (res.data && res.data.message) {
-        setError(res.data.message);
+        setSuccessMsg('Password reset successful! You can now login with your new password.');
+        setShowSuccessMessage(true);
+        setTimeout(() => {
+          setShowSuccessMessage(false);
+          navigate('/login/customer');
+        }, 3000);
       } else {
-        setError('Reset failed.');
+        setError(res.data || 'Failed to reset password.');
       }
     } catch (err) {
-      if (err.response?.data) setError(err.response.data);
-      else setError('Reset failed. Try again.');
+      console.error('RESET PASSWORD ERROR:', err);
+      console.log('Error response:', err.response);
+      
+      if (err.response?.data) {
+        const errorMessage = err.response.data;
+        console.log('Error message:', errorMessage);
+        
+        if (typeof errorMessage === 'string') {
+          if (errorMessage.includes('deactivated')) {
+            setError('Account is deactivated. Please contact administrator.');
+          } else {
+            setError(errorMessage);
+          }
+        } else {
+          setError('Failed to reset password.');
+        }
+      } else {
+        setError('Could not reset password. Try again later.');
+      }
     } finally {
-      setSending(false);
+      setResetting(false);
     }
   };
 

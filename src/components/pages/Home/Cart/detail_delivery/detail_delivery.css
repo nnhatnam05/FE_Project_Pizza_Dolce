@@ -868,10 +868,7 @@
     animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-    0% { transform: translateX(-50%) rotate(0deg); }
-    100% { transform: translateX(-50%) rotate(360deg); }
-}
+
 
 .delivery-error {
     color: #dc3545;

@@ -56,14 +56,33 @@ const Login = () => {
       setTimer(60);
       setCanResend(false);
     } catch (err) {
-      if (err.response?.status === 403) {
+      console.error('LOGIN ERROR:', err);
+      console.log('Error response:', err.response);
+      
+      if (err.response?.status === 401) {
+        const errorMessage = err.response.data;
+        console.log('Error message:', errorMessage);
+        
+        if (typeof errorMessage === 'string') {
+          if (errorMessage.includes('deactivated')) {
+            setError('Account is deactivated. Please contact administrator.');
+          } else if (errorMessage.includes('Invalid credentials')) {
+            setError('Invalid username or password!');
+          } else {
+            setError(errorMessage);
+          }
+        } else {
+          setError('Invalid username or password!');
+        }
+      } else if (err.response?.status === 403) {
         setError('Access denied. Please check your account or wait before trying again.');
       } else if (err.response?.status === 404) {
         setError('User not found or send-mail endpoint error.');
+      } else if (err.response?.status === 500) {
+        setError('Server error. Please try again later.');
       } else {
-        setError('Incorrect username or password!');
+        setError('Network error. Please check your connection and try again.');
       }
-      console.error('LOGIN ERROR:', err);
     } finally {
       setLoading(false);
     }
@@ -80,8 +99,31 @@ const Login = () => {
       setTimer(60);
       setCanResend(false);
     } catch (err) {
-      setError('Failed to resend code.');
       console.error('RESEND MAIL ERROR:', err);
+      console.log('Error response:', err.response);
+      
+      if (err.response?.status === 401) {
+        const errorMessage = err.response.data;
+        console.log('Error message:', errorMessage);
+        
+        if (typeof errorMessage === 'string') {
+          if (errorMessage.includes('deactivated')) {
+            setError('Account is deactivated. Please contact administrator.');
+          } else if (errorMessage.includes('Invalid token')) {
+            setError('Session expired. Please login again.');
+          } else {
+            setError(errorMessage || 'Failed to resend code.');
+          }
+        } else {
+          setError('Failed to resend code.');
+        }
+      } else if (err.response?.status === 400) {
+        setError('Invalid request. Please try again.');
+      } else if (err.response?.status === 404) {
+        setError('User not found. Please try logging in again.');
+      } else {
+        setError('Failed to resend code. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -116,8 +158,40 @@ const Login = () => {
         }
       }, 3000);
     } catch (err) {
-      setError('Incorrect or expired code.');
       console.error('VERIFY CODE ERROR:', err);
+      console.log('Error response:', err.response);
+      
+      if (err.response?.status === 401) {
+        const errorMessage = err.response.data;
+        console.log('Error message:', errorMessage);
+        
+        if (typeof errorMessage === 'string') {
+          if (errorMessage.includes('deactivated')) {
+            setError('Account is deactivated. Please contact administrator.');
+          } else {
+            setError(errorMessage || 'Verification failed.');
+          }
+        } else {
+          setError('Verification failed.');
+        }
+      } else if (err.response?.status === 400) {
+        const errorMessage = err.response.data;
+        if (typeof errorMessage === 'string') {
+          if (errorMessage.includes('Incorrect code')) {
+            setError('Incorrect or expired code.');
+          } else if (errorMessage.includes('No code sent')) {
+            setError('No verification code found. Please request a new code.');
+          } else {
+            setError(errorMessage);
+          }
+        } else {
+          setError('Invalid verification code.');
+        }
+      } else if (err.response?.status === 404) {
+        setError('User not found. Please try logging in again.');
+      } else {
+        setError('Verification failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

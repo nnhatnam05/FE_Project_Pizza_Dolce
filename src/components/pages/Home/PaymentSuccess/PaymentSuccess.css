@@ -58,7 +58,7 @@
 }
 
 .success-message, .error-message {
-    color: #666;
+    color: #86632b;
     font-size: 16px;
     line-height: 1.6;
     margin-bottom: 24px;
@@ -155,7 +155,7 @@
 }
 
 .loading-spinner p {
-    color: #666;
+    color: #86632b;
     font-size: 16px;
 }
 

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { validatePhoneNumber } from '../../../../utils/phoneValidation';
+import useAccountStatusWebSocket from '../../../../hooks/useAccountStatusWebSocket';
+import AccountDeactivationModal from '../../AccountDeactivationModal';
 import './Customer_Layout.css';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
@@ -38,6 +40,26 @@ const CustomerLayout = ({ children }) => {
     const [orders, setOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(false);
 
+    // Account deactivation states
+    const [deactivationModalOpen, setDeactivationModalOpen] = useState(false);
+    const [deactivationNotification, setDeactivationNotification] = useState(null);
+
+    // Use account status WebSocket hook
+    const { connectWebSocket, disconnectWebSocket } = useAccountStatusWebSocket();
+
+    // Handle account deactivation
+    const handleAccountDeactivated = (notification) => {
+        console.log('[CustomerLayout] Account deactivated:', notification);
+        setDeactivationNotification(notification);
+        setDeactivationModalOpen(true);
+    };
+
+    // Handle account activation
+    const handleAccountActivated = (notification) => {
+        console.log('[CustomerLayout] Account activated:', notification);
+        // You can show a success notification here if needed
+    };
+
 
     const profileDropdownRef = useRef(null);
     const profileIconRef = useRef(null);
@@ -59,7 +81,6 @@ const CustomerLayout = ({ children }) => {
     // Sync profile data
     useEffect(() => {
         if (customer) {
-            console.log('Customer provider:', customer.customer?.provider); // Debug log
             setFormData({
                 fullName: customer.fullName || '',
                 phoneNumber: customer.phoneNumber || '',
@@ -67,10 +88,28 @@ const CustomerLayout = ({ children }) => {
             });
             // Avatar preview removed
             
-            // 已登录用户，获取订单历史
-            fetchCustomerOrders();
+            // 已登录用户，获取订单历史 - Tạm thời disable để tránh spam
+            // fetchCustomerOrders();
         }
     }, [customer]);
+
+    // Connect WebSocket when customer data is available
+    useEffect(() => {
+        if (customer && customer.customerId) {
+            console.log('[CustomerLayout] Connecting WebSocket for customer:', customer.customerId);
+            connectWebSocket(customer.customerId.toString(), handleAccountDeactivated, handleAccountActivated);
+        }
+    }, [customer?.customerId]); // Use customerId instead of id
+
+    // Cleanup WebSocket on unmount
+    useEffect(() => {
+        return () => {
+            if (customer && customer.customerId) {
+                console.log('[CustomerLayout] Disconnecting WebSocket for customer:', customer.customerId);
+                disconnectWebSocket();
+            }
+        };
+    }, [customer?.customerId]);
     
     // 获取客户订单历史
     const fetchCustomerOrders = async () => {
@@ -122,15 +161,19 @@ const CustomerLayout = ({ children }) => {
                 },
             });
 
-            if (!response.ok) {
-                if (response.status === 401) localStorage.removeItem('token');
-                return;
+            if (response.ok) {
+                const data = await response.json();
+                setCustomer(data);
+                console.log('[CustomerLayout] Customer data fetched successfully:', data);
+            } else if (response.status === 401) {
+                console.log('[CustomerLayout] Token invalid, but keeping for WebSocket connection');
+                // Don't remove token immediately - let WebSocket handle deactivation
+                // Only remove if it's a real authentication error, not account deactivation
+            } else {
+                console.error('[CustomerLayout] Failed to fetch customer data:', response.status);
             }
-            const data = await response.json();
-            console.log('Customer data received:', data); // Debug log
-            setCustomer(data);
         } catch (error) {
-            console.error('Failed to fetch customer data:', error);
+            console.error('[CustomerLayout] Error fetching customer data:', error);
         }
     };
 
@@ -317,10 +360,8 @@ const CustomerLayout = ({ children }) => {
     };
     // Open the change password modal
     const openChangePasswordModal = () => {
-        console.log('Opening change password modal, customer provider:', customer?.customer?.provider); // Debug log
         // Check if user logged in with Google then don't allow password change
         if (customer && customer.customer && (customer.customer.provider === 'GOOGLE' || customer.customer.provider === 'google')) {
-            console.log('Google login detected, showing notice instead of password form'); // Debug log
             setShowChangePassword(true);
             setShowModal(true);
             setIsProfileOpen(false);
@@ -759,6 +800,20 @@ const CustomerLayout = ({ children }) => {
                         <span>Copyright © 2025 Dolce. All Rights Reserved</span>
                     </div>
                 </footer>
+
+                {/* Account Deactivation Modal */}
+                <AccountDeactivationModal
+                    isOpen={deactivationModalOpen}
+                    onClose={() => {
+                        setDeactivationModalOpen(false);
+                        setDeactivationNotification(null);
+                        // Clear storage and redirect to login
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        navigate('/login/customer');
+                    }}
+                    notification={deactivationNotification}
+                />
             </div>
         </CartContext.Provider>
     );
