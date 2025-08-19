@@ -5,7 +5,7 @@ import useAccountStatusWebSocket from '../../../../hooks/useAccountStatusWebSock
 import AccountDeactivationModal from '../../AccountDeactivationModal';
 import './Customer_Layout.css';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-
+ 
 // Create a cart context to share cart functionality across the component tree
 export const CartContext = createContext();
 
@@ -754,6 +754,32 @@ const CustomerLayout = ({ children }) => {
 
                 {/* Main content */}
                 {children}
+
+                {/* Floating Chat Button */}
+                <button
+                    onClick={() => navigate('/chat')}
+                    aria-label="Open chat"
+                    style={{
+                        position: 'fixed',
+                        right: 20,
+                        bottom: 20,
+                        width: 56,
+                        height: 56,
+                        borderRadius: '50%',
+                        border: 'none',
+                        background: 'linear-gradient(135deg,#6366f1,#22c55e)',
+                        color: '#fff',
+                        boxShadow: '0 10px 15px rgba(0,0,0,0.15)',
+                        cursor: 'pointer',
+                        zIndex: 100000,
+                        display:'flex',
+                        alignItems:'center',
+                        justifyContent:'center',
+                        fontSize: 22
+                    }}
+                >
+                    💬
+                </button>
 
                 {/* footer */}
                 <footer className="p4-footer">

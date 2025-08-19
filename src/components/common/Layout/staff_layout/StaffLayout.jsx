@@ -616,6 +616,11 @@ function StaffLayoutContent() {
           icon: <ReceiptLongIcon />,
           to: '/staff/orders',
         },
+        {
+          label: 'Support Chat',
+          icon: <PersonIcon />,
+          to: '/staff/support-chat',
+        },
         
         
 

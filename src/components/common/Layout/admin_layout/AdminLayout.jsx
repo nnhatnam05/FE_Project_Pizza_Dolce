@@ -59,7 +59,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LockIcon from '@mui/icons-material/Lock';
-import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import SchoolIcon from '@mui/icons-material/School';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import HomeIcon from '@mui/icons-material/Home';
@@ -69,6 +69,12 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PaymentIcon from '@mui/icons-material/Payment';
 import SellIcon from '@mui/icons-material/Sell';
 import KeyIcon from '@mui/icons-material/Key';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import CategoryIcon from '@mui/icons-material/Category';
+import QuizIcon from '@mui/icons-material/Quiz';
+import BookIcon from '@mui/icons-material/Book';
+import ForumIcon from '@mui/icons-material/Forum';
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import axios from 'axios';
 import './AdminLayout.css';
 
@@ -671,6 +677,13 @@ function AdminLayoutContent() {
           icon: <PersonIcon />,
           to: '/admin/customers',
         },
+      ],
+    },
+    {
+      label: 'CHATBOT',
+      items: [
+        { label: 'Prompt Training', icon: <SchoolIcon />, to: '/admin/chatbot/prompts' },
+        { label: 'Sessions', icon: <ForumIcon />, to: '/admin/chatbot/sessions' },
       ],
     },
     {

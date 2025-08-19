@@ -1,0 +1,26 @@
+/* Trang chat tối giản: chỉ còn khung chat, full height */
+.chat-page {
+  min-height: calc(100vh - 92px);
+  background: #f5f7fb;
+  padding: 0;
+  margin: 0;
+  display: flex;
+}
+
+.chat-page--single {
+  background: #f5f7fb;
+}
+
+.chat-page-only {
+  width: 100%;
+  height: calc(100vh - 92px);
+  margin: 0 auto;
+  padding: 16px;
+  max-width: 1100px;
+  display: flex;
+}
+
+/* Bên trong ChatWidget đã có khung và shadow, nên container chỉ cần fill toàn bộ */
+.chat-page-only > * {
+  flex: 1;
+} 

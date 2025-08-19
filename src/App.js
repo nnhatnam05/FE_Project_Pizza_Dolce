@@ -81,6 +81,10 @@ import TableDashboard from "./components/features/staff/TableDashboard";
 import OrderEdit from "./components/features/staff/OrderEdit";
 import TakeAwayManagement from "./components/features/staff/takeaway/TakeAwayManagement";
 import WebSocketTest from "./components/test/WebSocketTest";
+import PromptTraining from './components/features/admin/chatbot/PromptTraining';
+import Sessions from './components/features/admin/chatbot/Sessions';
+import ChatPage from './components/pages/Home/Chat/ChatPage';
+import SupportChat from './components/features/staff/chat/SupportChat';
 
 
 function App() {
@@ -219,6 +223,13 @@ function App() {
             </CustomerLayout>
           } />
 
+          {/* Customer Chat Page */}
+          <Route path="/chat" element={
+            <CustomerLayout>
+              <ChatPage />
+            </CustomerLayout>
+          } />
+
           <Route path="/detail-delivery/:orderId" element={
             <CustomerLayout>
               <DetailDelivery />
@@ -277,6 +288,10 @@ function App() {
               <Route path="request" element={<RequestManagementAdmin />} />
               <Route path="request/pending" element={<RequestPendingConfirmation />} />
               <Route path="request/list" element={<RequestList />} />
+
+              {/* Chatbot Admin Routes */}
+              <Route path="chatbot/prompts" element={<PromptTraining />} />
+              <Route path="chatbot/sessions" element={<Sessions />} />
             </Route>
           </Route>
 
@@ -292,6 +307,7 @@ function App() {
               <Route path="tables" element={<TableList />} />
               <Route path="orders" element={<OrderList />} />
               <Route path="delivery-status" element={<Delivery_Status />} />
+              <Route path="support-chat" element={<SupportChat />} />
 
               <Route path="request" element={<RequestManagement />} />
               <Route path="request/form" element={<FormRequest />} />

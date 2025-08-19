@@ -1,0 +1,106 @@
+.prompt-training-container {
+  padding: 24px;
+}
+
+.prompt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.prompt-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.prompt-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.stats-grid {
+  margin-bottom: 24px;
+}
+
+.prompt-table {
+  width: 100%;
+  overflow: hidden;
+}
+
+.prompt-table .MuiTableCell-head {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.prompt-name {
+  max-width: 300px;
+}
+
+.prompt-description {
+  color: #666;
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+
+.prompt-actions-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.prompt-dialog {
+  max-width: 800px;
+}
+
+.prompt-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 16px;
+}
+
+.prompt-form-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.prompt-priority {
+  width: 120px;
+}
+
+.prompt-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.language-chip {
+  margin: 4px;
+}
+
+.priority-chip {
+  margin: 4px;
+}
+
+.demo-data-button {
+  background: linear-gradient(45deg, #2196F3 30%, #21CBF3 90%);
+  color: white;
+  border: none;
+}
+
+.demo-data-button:hover {
+  background: linear-gradient(45deg, #1976D2 30%, #00BCD4 90%);
+}
+
+.add-prompt-button {
+  background: linear-gradient(45deg, #4CAF50 30%, #8BC34A 90%);
+  color: white;
+  border: none;
+}
+
+.add-prompt-button:hover {
+  background: linear-gradient(45deg, #388E3C 30%, #689F38 90%);
+} 

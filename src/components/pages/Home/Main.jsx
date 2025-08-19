@@ -85,12 +85,12 @@ const Main = () => {
 
     // Slide content 
     const slides = [
-        { id: 1, title: "Summer Collection", description: "Experience the joy<br />with our limited<br />Summer Collection" },
-        { id: 2, title: "Gift Voucher", description: "Give your loved ones<br />more than just a gift" },
-        { id: 3, title: "New Flavors", description: "Try our latest<br />seasonal specialties" },
-        { id: 4, title: "Delivery Special", description: "Free delivery<br />on orders over $25" },
-        { id: 5, title: "Weekend Deal", description: "20% off<br />all items on weekends"},
-        { id: 6, title: "Family Combo", description: "Perfect for<br />family gatherings" }
+        { id: 1, title: "Summer Collection", description: "Experience the joy<br />with our limited<br />Summer Collection", image: "/images/pizza_slide_1.png" },
+        { id: 2, title: "Gift Voucher", description: "Give your loved ones<br />more than just a gift", image: "/images/pizza_slide_2.png" },
+        { id: 3, title: "New Flavors", description: "Try our latest<br />seasonal specialties", image: "/images/pizza_slide_3.png" },
+        { id: 4, title: "Delivery Special", description: "Free delivery<br />on orders over $25", image: "/images/pizza_slide_4.jpg" },
+        { id: 5, title: "Weekend Deal", description: "20% off<br />all items on weekends", image: "/images/pizza_slide_5.jpg" },
+        { id: 6, title: "Family Combo", description: "Perfect for<br />family gatherings", image: "/images/pizza_slide_6.jpg" }
     ];
 
     return (
@@ -112,7 +112,9 @@ const Main = () => {
                         <div
                             key={slide.id}
                             className={`p4-slide ${index === activeSlide ? 'active' : ''}`}
-                            style={{ display: index === activeSlide ? 'block' : 'none' }}
+                            style={{
+                                backgroundImage: `url(${slide.image})`
+                            }}
                         >
                             <div className="p4-slide-content">
                                 <div className="p4-summer-text">
@@ -121,12 +123,17 @@ const Main = () => {
                                             <span key={i}>{word}</span>
                                         ))}
                                     </div>
-                                    <p className="p4-summer-desc" dangerouslySetInnerHTML={{ __html: slide.description }}></p>
+                                    <p
+                                        className="p4-summer-desc"
+                                        dangerouslySetInnerHTML={{ __html: slide.description }}
+                                    ></p>
                                 </div>
                                 <button className="p4-order-btn">{slide.buttonText}</button>
                             </div>
                         </div>
                     ))}
+
+                    {/* Dots */}
                     <div className="p4-slider-dots">
                         {slides.map((slide, index) => (
                             <span
@@ -137,6 +144,7 @@ const Main = () => {
                         ))}
                     </div>
                 </div>
+
 
                 <div className="p4-right-sidebar">
                     <div className="p4-welcome-card">
@@ -207,8 +215,8 @@ const Main = () => {
                         <div className="p4-empty">No foods found.</div>
                     ) : (
                         displayedFoods.map((food, idx) => (
-                            <div 
-                                className={`p4-food-card ${food.status === 'UNAVAILABLE' ? 'p4-sold-out' : ''}`} 
+                            <div
+                                className={`p4-food-card ${food.status === 'UNAVAILABLE' ? 'p4-sold-out' : ''}`}
                                 key={food.id || idx}
                                 onClick={() => goToDetail(food.id)}
                             >
@@ -231,8 +239,8 @@ const Main = () => {
                                         <div className="p4-food-price">
                                             ${food.price?.toFixed ? food.price.toFixed(2) : food.price}
                                         </div>
-                                        <button 
-                                            className="p4-food-add" 
+                                        <button
+                                            className="p4-food-add"
                                             disabled={food.status === 'UNAVAILABLE'}
                                             onClick={(e) => {
                                                 e.stopPropagation(); // Prevent triggering the parent onClick
