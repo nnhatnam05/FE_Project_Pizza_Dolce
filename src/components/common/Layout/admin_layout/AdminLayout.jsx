@@ -66,7 +66,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import BadgeIcon from '@mui/icons-material/Badge';
 import CheckIcon from '@mui/icons-material/Check';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import PaymentIcon from '@mui/icons-material/Payment';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import SellIcon from '@mui/icons-material/Sell';
 import KeyIcon from '@mui/icons-material/Key';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
@@ -665,7 +665,7 @@ function AdminLayoutContent() {
           label: 'Vouchers',
           icon: <SellIcon />,
           to: '/admin/vouchers',
-          new: true,
+          // new: true,
         },
         {
           label: 'Users',
@@ -698,6 +698,12 @@ function AdminLayoutContent() {
           label: 'Request',
           icon: <RequestPageIcon />,
           to: '/admin/request',
+          // new: true,
+        },
+        {
+          label: 'Complaints',
+          icon: <SupportAgentIcon />,
+          to: '/admin/complaints/dashboard',
           new: true,
         },
         {

@@ -49,7 +49,7 @@ import RequestPageIcon from '@mui/icons-material/RequestPage';
 import PersonIcon from '@mui/icons-material/Person';
 import EditIcon from '@mui/icons-material/Edit';
 import LogoutIcon from '@mui/icons-material/Logout';
-import SettingsIcon from '@mui/icons-material/Settings';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import axios from 'axios';
 import './StaffLayout.css';
 import LockIcon from '@mui/icons-material/Lock';
@@ -620,6 +620,12 @@ function StaffLayoutContent() {
           label: 'Support Chat',
           icon: <PersonIcon />,
           to: '/staff/support-chat',
+        },
+        {
+          label: 'Complaints',
+          icon: <SupportAgentIcon />,
+          to: '/staff/complaints',
+          // new: true,
         },
         
         

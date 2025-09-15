@@ -72,6 +72,8 @@ import ForgotPasswordCustomer from "./components/features/admin/auth/login_custo
 import PaymentDetails from "./components/pages/Home/Cart/payment/payment";
 import EditCart from "./components/pages/Home/Cart/payment/editCart";
 import OrderHistory from "./components/pages/Home/OrderHistory";
+import ComplaintChat from './components/pages/Home/Complaints/ComplaintChat';
+import ComplaintStart from './components/pages/Home/Complaints/ComplaintStart';
 import DetailDelivery from "./components/pages/Home/Cart/detail_delivery/detail_delivery";
 import PaymentSuccess from "./components/pages/Home/PaymentSuccess/PaymentSuccess";
 import AddressManagement from "./components/pages/Home/AddressManagement/AddressManagement";
@@ -85,6 +87,10 @@ import PromptTraining from './components/features/admin/chatbot/PromptTraining';
 import Sessions from './components/features/admin/chatbot/Sessions';
 import ChatPage from './components/pages/Home/Chat/ChatPage';
 import SupportChat from './components/features/staff/chat/SupportChat';
+import AdminComplaints from './components/features/admin/complaints/AdminComplaints';
+import ComplaintsDashboard from './components/features/staff/complaints/ComplaintsDashboard';
+import AdminResolvedComplaints from './components/features/admin/complaints/AdminResolvedComplaints';
+import AdminComplaintsMenu from './components/features/admin/complaints/AdminComplaintsMenu';
 
 
 function App() {
@@ -184,6 +190,17 @@ function App() {
           <Route path="/order-history" element={
             <CustomerLayout>
               <OrderHistory />
+            </CustomerLayout>
+          } />
+
+          <Route path="/complaints/start/:orderId" element={
+            <CustomerLayout>
+              <ComplaintStart />
+            </CustomerLayout>
+          } />
+          <Route path="/complaints/:id" element={
+            <CustomerLayout>
+              <ComplaintChat />
             </CustomerLayout>
           } />
 
@@ -292,6 +309,9 @@ function App() {
               {/* Chatbot Admin Routes */}
               <Route path="chatbot/prompts" element={<PromptTraining />} />
               <Route path="chatbot/sessions" element={<Sessions />} />
+              <Route path="complaints" element={<AdminComplaints />} />
+              <Route path="complaints/dashboard" element={< AdminComplaintsMenu/>} />
+              <Route path="complaints/resolved" element={<AdminResolvedComplaints />} />
             </Route>
           </Route>
 
@@ -308,6 +328,7 @@ function App() {
               <Route path="orders" element={<OrderList />} />
               <Route path="delivery-status" element={<Delivery_Status />} />
               <Route path="support-chat" element={<SupportChat />} />
+              <Route path="complaints" element={<ComplaintsDashboard />} />
 
               <Route path="request" element={<RequestManagement />} />
               <Route path="request/form" element={<FormRequest />} />

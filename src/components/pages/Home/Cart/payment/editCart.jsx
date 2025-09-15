@@ -378,7 +378,7 @@ const EditCart = () => {
                             ></textarea>
                             
                             <div className="edit-cart-actions">
-                                <div className="left-actions">
+                                {/* <div className="left-actions">
                                     <button 
                                         className="delete-order-btn"
                                         onClick={showCancelOrderModal}
@@ -386,7 +386,7 @@ const EditCart = () => {
                                     >
                                         Cancel Order
                                     </button>
-                                </div>
+                                </div> */}
                                 <div className="right-actions">
                                     <button 
                                         className="cancel-btn"

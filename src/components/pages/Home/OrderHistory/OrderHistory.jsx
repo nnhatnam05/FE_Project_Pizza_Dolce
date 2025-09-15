@@ -267,6 +267,8 @@ const OrderHistory = () => {
                         const statusInfo = getStatusInfo(order);
                         const cardClassName = getOrderCardClassName(order);
                         
+                        const deliveredAt = order.deliveredAt || order.updatedAt; // fallback
+                        const canComplain = (order.deliveryStatus === 'DELIVERED') && deliveredAt && ((Date.now() - new Date(deliveredAt).getTime()) <= 60*60*1000);
                         return (
                             <div 
                                 key={order.id} 
@@ -388,6 +390,17 @@ const OrderHistory = () => {
                                         <span className="label">Total:</span>
                                         <span className="value">${Number(order.totalPrice).toLocaleString()}</span>
                                     </div>
+                                    {canComplain && (
+                                      <button
+                                        className="view-details-btn"
+                                        onClick={(e) => { e.stopPropagation(); navigate(`/complaints/start/${order.id}`); }}
+                                      >
+                                        Khiếu nại/Refund
+                                      </button>
+                                    )}
+                                    {!canComplain && order.deliveryStatus === 'DELIVERED' && (
+                                      <span style={{fontSize: 12, color: '#6b7280'}}>Hết thời hạn khiếu nại</span>
+                                    )}
                                     
                                     <button className="view-details-btn">
                                         View details
