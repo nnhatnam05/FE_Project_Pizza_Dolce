@@ -15,7 +15,14 @@ const TAKEAWAY_STATUS = [
 
 const PAYMENT_METHODS = {
   "CASH": "Cash",
-  "QR_BANKING": "QR Banking"
+  // Take-Away supports bank transfer via QR/Banking, not PayOS label
+  "QR_BANKING": "Bank Transfer"
+};
+
+const getPaymentMethodLabel = (pm) => {
+  if (!pm) return '—';
+  const key = String(pm).toUpperCase();
+  return PAYMENT_METHODS[key] || pm;
 };
 
 export default function AdminTakeAwayOrders() {
@@ -278,12 +285,10 @@ export default function AdminTakeAwayOrders() {
                         </div>
                       )}
 
-                      {order.paymentMethod && (
-                        <div className="order-info-row">
-                          <FaCreditCard className="info-icon" />
-                          <span>Payment: {PAYMENT_METHODS[order.paymentMethod] || order.paymentMethod}</span>
-                        </div>
-                      )}
+                      <div className="order-info-row">
+                        <FaCreditCard className="info-icon" />
+                        <span>Payment: {getPaymentMethodLabel(order.paymentMethod)}</span>
+                      </div>
 
                       <div className="order-info-row">
                         <FaDollarSign className="info-icon" />
@@ -378,17 +383,15 @@ export default function AdminTakeAwayOrders() {
                     </div>
                   )}
 
-                  {selectedOrder.paymentMethod && (
-                    <div className="detail-section">
-                      <h4>Payment Information</h4>
-                      <div className="detail-grid">
-                        <div className="detail-item">
-                          <label>Payment Method:</label>
-                          <span>{PAYMENT_METHODS[selectedOrder.paymentMethod] || selectedOrder.paymentMethod}</span>
-                        </div>
+                  <div className="detail-section">
+                    <h4>Payment Information</h4>
+                    <div className="detail-grid">
+                      <div className="detail-item">
+                        <label>Payment Method:</label>
+                        <span>{getPaymentMethodLabel(selectedOrder.paymentMethod)}</span>
                       </div>
                     </div>
-                  )}
+                  </div>
 
                   {selectedOrder.orderFoods && selectedOrder.orderFoods.length > 0 && (
                     <div className="detail-section">

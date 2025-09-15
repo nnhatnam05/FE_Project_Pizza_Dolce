@@ -5,7 +5,7 @@ import useAccountStatusWebSocket from '../../../../hooks/useAccountStatusWebSock
 import AccountDeactivationModal from '../../AccountDeactivationModal';
 import './Customer_Layout.css';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
- 
+
 // Create a cart context to share cart functionality across the component tree
 export const CartContext = createContext();
 
@@ -35,7 +35,7 @@ const CustomerLayout = ({ children }) => {
     const [cart, setCart] = useState([]);
     const [showMiniCart, setShowMiniCart] = useState(false);
     const [lastAdded, setLastAdded] = useState(null);
-    
+
     // 新增：订单相关状态
     const [orders, setOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(false);
@@ -72,7 +72,7 @@ const CustomerLayout = ({ children }) => {
             fetchCustomerData(token);
         }
     }, []);
-    
+
     useEffect(() => {
         const storedCart = localStorage.getItem('cart');
         setCart(storedCart ? JSON.parse(storedCart) : []);
@@ -87,7 +87,7 @@ const CustomerLayout = ({ children }) => {
                 address: customer.address || '',
             });
             // Avatar preview removed
-            
+
             // 已登录用户，获取订单历史 - Tạm thời disable để tránh spam
             // fetchCustomerOrders();
         }
@@ -110,12 +110,12 @@ const CustomerLayout = ({ children }) => {
             }
         };
     }, [customer?.customerId]);
-    
+
     // 获取客户订单历史
     const fetchCustomerOrders = async () => {
         const token = localStorage.getItem('token');
         if (!token) return;
-        
+
         try {
             setOrdersLoading(true);
             const response = await fetch('http://localhost:8080/api/orders/myorder', {
@@ -123,11 +123,11 @@ const CustomerLayout = ({ children }) => {
                     'Authorization': `Bearer ${token}`,
                 }
             });
-            
+
             if (!response.ok) {
                 throw new Error('Failed to fetch orders');
             }
-            
+
             const data = await response.json();
             setOrders(data);
             setOrdersLoading(false);
@@ -399,7 +399,7 @@ const CustomerLayout = ({ children }) => {
                         <input type="text" placeholder="Search" />
                     </div> */}
                     <div className="p4-header-actions">
-                                                {/* Personal data */}
+                        {/* Personal data */}
                         <div className="p4-profile">
                             <div
                                 className="p4-profile-avatar-container"
@@ -407,9 +407,9 @@ const CustomerLayout = ({ children }) => {
                                 ref={profileIconRef}
                             >
                                 <svg width="40" height="40" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg" className="p4-profile-avatar-svg">
-                                    <rect width="150" height="150" fill="#f0f0f0"/>
-                                    <circle cx="75" cy="60" r="25" fill="#ccc"/>
-                                    <path d="M30 120c0-25 20-45 45-45s45 20 45 45v30H30z" fill="#ccc"/>
+                                    <rect width="150" height="150" fill="#f0f0f0" />
+                                    <circle cx="75" cy="60" r="25" fill="#ccc" />
+                                    <path d="M30 120c0-25 20-45 45-45s45 20 45 45v30H30z" fill="#ccc" />
                                 </svg>
                             </div>
                             <div
@@ -474,15 +474,15 @@ const CustomerLayout = ({ children }) => {
                                         <img
                                             src={
                                                 lastAdded.imageUrl?.startsWith('http')
-                                                ? lastAdded.imageUrl
-                                                : lastAdded.imageUrl
-                                                    ? `http://localhost:8080${lastAdded.imageUrl}`
-                                                    : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZjBmMGYwIi8+Cjx0ZXh0IHg9IjMwIiB5PSIzNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5ET0xDRTwvdGV4dD4KPHN2Zz4K'
+                                                    ? lastAdded.imageUrl
+                                                    : lastAdded.imageUrl
+                                                        ? `http://localhost:8080${lastAdded.imageUrl}`
+                                                        : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZjBmMGYwIi8+Cjx0ZXh0IHg9IjMwIiB5PSIzNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5ET0xDRTwvdGV4dD4KPHN2Zz4K'
                                             }
                                             alt={lastAdded.name || ''}
                                             className="p4-mini-cart-product-img"
                                             onError={(e) => {
-                                                e.target.onerror = null; 
+                                                e.target.onerror = null;
                                                 e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZjBmMGYwIi8+Cjx0ZXh0IHg9IjMwIiB5PSIzNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5ET0xDRTwvdGV4dD4KPHN2Zz4K';
                                             }}
                                         />
@@ -606,13 +606,14 @@ const CustomerLayout = ({ children }) => {
                                             <div className="p4-customer-avatar">
                                                 <div className="p4-avatar-fixed">
                                                     <svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <rect width="150" height="150" fill="#f0f0f0"/>
-                                                        <circle cx="75" cy="60" r="25" fill="#ccc"/>
-                                                        <path d="M30 120c0-25 20-45 45-45s45 20 45 45v30H30z" fill="#ccc"/>
+                                                        <rect width="150" height="150" fill="#f0f0f0" />
+                                                        <circle cx="75" cy="60" r="25" fill="#ccc" />
+                                                        <path d="M30 120c0-25 20-45 45-45s45 20 45 45v30H30z" fill="#ccc" />
                                                     </svg>
                                                 </div>
                                             </div>
                                             <div className="p4-customer-details">
+                                                <h3 className="p4-section-title">Basic Information</h3>
                                                 <div className="p4-form-group">
                                                     <label>Full Name</label>
                                                     {editMode ? (
@@ -644,6 +645,8 @@ const CustomerLayout = ({ children }) => {
                                                         <p>{customer?.phoneNumber || 'Not updated'}</p>
                                                     )}
                                                 </div>
+                                                <div className="p4-divider"></div>
+                                                <h3 className="p4-section-title">Delivery Addresses</h3>
                                                 <div className="p4-form-group">
                                                     <label>Addresses</label>
                                                     <div className="p4-address-list">
@@ -668,8 +671,8 @@ const CustomerLayout = ({ children }) => {
                                                         ) : (
                                                             <div className="p4-no-addresses">
                                                                 <p>No addresses found</p>
-                                                                <button 
-                                                                    className="p4-btn-link" 
+                                                                <button
+                                                                    className="p4-btn-link"
                                                                     onClick={() => {
                                                                         setShowModal(false);
                                                                         navigate('/addresses');
@@ -680,8 +683,8 @@ const CustomerLayout = ({ children }) => {
                                                             </div>
                                                         )}
                                                         <div className="p4-address-actions">
-                                                            <button 
-                                                                className="p4-btn-link" 
+                                                            <button
+                                                                className="p4-btn-link"
                                                                 onClick={() => {
                                                                     setShowModal(false);
                                                                     navigate('/addresses');
@@ -692,31 +695,36 @@ const CustomerLayout = ({ children }) => {
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div className="p4-divider"></div>
                                                 <div className="p4-form-group">
                                                     <label>Loyalty Points</label>
                                                     <p className="readonly">{customer?.point || 0} points</p>
                                                 </div>
-                                                <div className="p4-form-group">
+                                                {/* <div className="p4-form-group">
                                                     <label>Vouchers</label>
                                                     <p className="readonly">{customer?.voucher || 0} vouchers</p>
-                                                </div>
+                                                </div> */}
                                                 {/* Display information about login type */}
                                                 {customer && customer.customer && customer.customer.provider && (
-                                                    <div className="p4-form-group">
-                                                        <label>Login Method</label>
-                                                        <p className="readonly">
-                                                            {customer.customer.provider === 'GOOGLE' || customer.customer.provider === 'google' 
-                                                                ? 'Google Account (Password change not available)' 
-                                                                : 'Email/Password'}
-                                                        </p>
-                                                    </div>
+                                                    <>
+                                                        <div className="p4-divider"></div>
+                                                        <h3 className="p4-section-title">Account</h3>
+                                                        <div className="p4-form-group">
+                                                            <label>Login Method</label>
+                                                            <p className="readonly">
+                                                                {customer.customer.provider === 'GOOGLE' || customer.customer.provider === 'google'
+                                                                    ? 'Google Account (Password change not available)'
+                                                                    : 'Email/Password'}
+                                                            </p>
+                                                        </div>
+                                                    </>
                                                 )}
                                             </div>
                                         </div>
                                         <div className="p4-modal-actions">
                                             {editMode ? (
                                                 <>
-                                                                                                        <button className="p4-btn-secondary" onClick={() => {
+                                                    <button className="p4-btn-secondary" onClick={() => {
                                                         setEditMode(false);
                                                         if (customer) {
                                                             setFormData({
@@ -741,7 +749,7 @@ const CustomerLayout = ({ children }) => {
                                                             Password (Google)
                                                         </button>
                                                     )}
-                                                    <button className="p4-btn-danger" onClick={() => setShowDeleteConfirm(true)}>Delete Account</button>
+                                                    {/* <button className="p4-btn-danger" onClick={() => setShowDeleteConfirm(true)}>Delete Account</button> */}
                                                 </>
                                             )}
                                         </div>
@@ -772,9 +780,9 @@ const CustomerLayout = ({ children }) => {
                         boxShadow: '0 10px 15px rgba(0,0,0,0.15)',
                         cursor: 'pointer',
                         zIndex: 100000,
-                        display:'flex',
-                        alignItems:'center',
-                        justifyContent:'center',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         fontSize: 22
                     }}
                 >

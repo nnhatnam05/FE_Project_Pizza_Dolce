@@ -166,6 +166,12 @@ export default function Delivery_Status() {
         return statusObj ? statusObj.icon : <FaSpinner />;
     };
 
+    const getPaymentMethodLabel = (pm) => {
+        if (!pm) return "—";
+        const key = String(pm).toUpperCase();
+        return key === 'CASH' ? 'Cash on Delivery' : 'PayOS';
+    };
+
     const formatDate = (dateString) => {
         if (!dateString) return "-";
         const date = new Date(dateString);
@@ -548,6 +554,11 @@ export default function Delivery_Status() {
                                             </div>
 
                                             <div className="staff-order-info-row">
+                                                <FaDollarSign className="staff-info-icon" />
+                                                <span>Payment: {getPaymentMethodLabel(order.paymentMethod)}</span>
+                                            </div>
+
+                                            <div className="staff-order-info-row">
                                                 <FaClock className="staff-info-icon" />
                                                 <span className="staff-date">{formatDate(order.createdAt)}</span>
                                             </div>
@@ -622,7 +633,7 @@ export default function Delivery_Status() {
                                             </div>
                                             <div className="staff-detail-item">
                                                 <label>Payment Method:</label>
-                                                <span>{selectedOrder.paymentMethod?.name || "No payment method selected"}</span>
+                                                <span>{getPaymentMethodLabel(selectedOrder.paymentMethod)}</span>
                                             </div>
                                             <div className="staff-detail-item">
                                                 <label>Order Time:</label>

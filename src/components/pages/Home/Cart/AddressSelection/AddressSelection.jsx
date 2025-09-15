@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { validatePhoneNumber } from '../../../../../utils/phoneValidation';
 import './AddressSelection.css';
 
@@ -17,6 +18,8 @@ const AddressSelection = ({ onAddressSelect, selectedAddress, onClose }) => {
         note: ''
     });
     const [saving, setSaving] = useState(false);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchAddresses();
@@ -174,107 +177,20 @@ const AddressSelection = ({ onAddressSelect, selectedAddress, onClose }) => {
                 )}
             </div>
 
-            {/* New Address Form */}
+            {/* Redirect to Address Management instead of inline form */}
             <div className="new-address-section">
                 <div className="section-header">
                     <h4>Add New Address</h4>
                     <button 
                         className="toggle-form-btn"
-                        onClick={() => setShowNewAddressForm(!showNewAddressForm)}
+                        onClick={() => navigate('/addresses')}
                     >
-                        {showNewAddressForm ? 'Cancel' : 'Add New Address'}
+                        Go to Address Management
                     </button>
                 </div>
-
-                {showNewAddressForm && (
-                    <div className="new-address-form">
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label>Recipient Name *</label>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    value={newAddress.name}
-                                    onChange={handleInputChange}
-                                    placeholder="Enter recipient name"
-                                    className="form-input"
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Phone Number *</label>
-                                <input
-                                    type="tel"
-                                    name="phoneNumber"
-                                    value={newAddress.phoneNumber}
-                                    onChange={handleInputChange}
-                                    placeholder="Enter phone number"
-                                    className="form-input"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Address *</label>
-                            <textarea
-                                name="address"
-                                value={newAddress.address}
-                                onChange={handleInputChange}
-                                placeholder="Enter detailed address (must be within Ho Chi Minh City)"
-                                className="form-input form-textarea"
-                                rows="3"
-                            />
-                        </div>
-
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label>Latitude (optional)</label>
-                                <input
-                                    type="number"
-                                    step="any"
-                                    name="latitude"
-                                    value={newAddress.latitude || ''}
-                                    onChange={handleCoordinateChange}
-                                    placeholder="10.7769"
-                                    className="form-input"
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Longitude (optional)</label>
-                                <input
-                                    type="number"
-                                    step="any"
-                                    name="longitude"
-                                    value={newAddress.longitude || ''}
-                                    onChange={handleCoordinateChange}
-                                    placeholder="106.7009"
-                                    className="form-input"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Note (optional)</label>
-                            <textarea
-                                name="note"
-                                value={newAddress.note}
-                                onChange={handleInputChange}
-                                placeholder="Additional delivery instructions"
-                                className="form-input form-textarea"
-                                rows="2"
-                            />
-                        </div>
-
-                        <div className="form-actions">
-                            <button 
-                                className="save-address-btn"
-                                onClick={handleNewAddressSubmit}
-                                disabled={saving}
-                            >
-                                {saving ? 'Saving...' : 'Save & Select Address'}
-                            </button>
-                        </div>
-                    </div>
-                )}
+                <div className="info-text">
+                    <p>To add a new delivery address, please use the Address Management page.</p>
+                </div>
             </div>
 
             {/* Map Integration Placeholder */}

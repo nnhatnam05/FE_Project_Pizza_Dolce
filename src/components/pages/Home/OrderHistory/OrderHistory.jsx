@@ -376,9 +376,13 @@ const OrderHistory = () => {
                                         <p>No items</p>
                                     )}
                                 </div>
-                                
+                                <div className="payment-method-row" style={{marginTop: 8}}>
+                                    <span className="label">Payment:</span>
+                                    <span className="value">
+                                        {order.paymentMethod ? (order.paymentMethod === 'CASH' ? 'Cash on Delivery' : 'PayOS') : '—'}
+                                    </span>
+                                </div>
 
-                                
                                 <div className="order-footer">
                                     <div className="order-total">
                                         <span className="label">Total:</span>

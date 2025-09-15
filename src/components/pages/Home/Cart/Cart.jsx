@@ -9,6 +9,7 @@ import './Cart.css';
 const Cart = () => {
     const navigate = useNavigate();
     const { cart, setCart, handleRemoveFromCart } = useContext(CartContext);
+    const [paymentMethod, setPaymentMethod] = useState('PAYOS'); // PAYOS or CASH
     const { showSuccess, showError } = useNotification();
     const [orderPlaced, setOrderPlaced] = useState(false);
     const [otherItems, setOtherItems] = useState([]);
@@ -563,7 +564,8 @@ const Cart = () => {
                 deliveryAddress: selectedDeliveryAddress,
                 voucherCode: appliedVoucher ? appliedVoucher.code : null,
                 voucherDiscount: voucherDiscount || 0,
-                needInvoice: needInvoice
+                needInvoice: needInvoice,
+                paymentMethod: paymentMethod
             };
     
             console.log("Submit order data:", orderData);
@@ -578,8 +580,12 @@ const Cart = () => {
                     localStorage.removeItem('cart');
                     setOrderPlaced(true);
     
-                    // Chuyển ngay lập tức đến payment page
+                    // Điều hướng theo phương thức thanh toán
+                    if (paymentMethod === 'CASH') {
+                        navigate(`/detail-delivery/${orderResponse.data.id}`);
+                    } else {
                         navigate(`/payment-details/${orderResponse.data.id}`);
+                    }
                 } else {
                     throw new Error("Order creation failed");
                 }
@@ -932,6 +938,10 @@ const Cart = () => {
                                     <span>Total:</span>
                                     <span className="price">{calculateTotal().toLocaleString()} $</span>
                                 </div>
+                                <div className="summary-row">
+                                    <span>Payment Method:</span>
+                                    <span className="price">{paymentMethod === 'CASH' ? 'Cash on Delivery' : 'PayOS (QR/Redirect)'}</span>
+                                </div>
                                 
                                 {/* Minimum order amount warning */}
                                 {calculateTotal() < 15 && (
@@ -947,12 +957,26 @@ const Cart = () => {
                                     </div>
                                 )}
                                 
+                                <div className="payment-method-section" style={{marginTop: '12px'}}>
+                                    <div style={{fontWeight:'600', marginBottom: 6}}>Choose Payment Method</div>
+                                    <label className="checkbox-container" style={{display:'flex', alignItems:'center', gap:8}}>
+                                        <input type="radio" name="pm" checked={paymentMethod==='PAYOS'} onChange={() => setPaymentMethod('PAYOS')} />
+                                        <span className="checkmark"></span>
+                                        <span>PayOS (QR/Redirect)</span>
+                                    </label>
+                                    <label className="checkbox-container" style={{display:'flex', alignItems:'center', gap:8}}>
+                                        <input type="radio" name="pm" checked={paymentMethod==='CASH'} onChange={() => setPaymentMethod('CASH')} />
+                                        <span className="checkmark"></span>
+                                        <span>Cash on Delivery</span>
+                                    </label>
+                                </div>
+
                                 <button
                                     className={`checkout-btn ${calculateTotal() < 15 ? 'disabled' : ''}`}
                                     onClick={handlePlaceOrder}
                                     disabled={cart.length === 0 && selectedOtherItems.length === 0 || calculateTotal() < 15}
                                 >
-                                    Confirm Payment
+                                    Place Order
                                 </button>
                             </div>
                         </div>
@@ -1033,7 +1057,7 @@ const Cart = () => {
                                     Cancel
                                 </button>
                                 <button className="modal-btn primary" onClick={confirmPayment}>
-                                    Confirm Payment
+                                    Confirm Order
                                 </button>
                             </div>
                         </div>

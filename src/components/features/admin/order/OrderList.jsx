@@ -121,6 +121,15 @@ export default function OrderList() {
     return status === 'DELIVERED' ? 'status-delivered' : 'status-cancelled';
   };
 
+  const getPaymentMethodLabel = (pm) => {
+    if (!pm) return '—';
+    const key = String(pm).toUpperCase();
+    if (key === 'CASH') return 'Cash';
+    if (key === 'QR_BANKING') return 'Bank Transfer';
+    if (key === 'PAYOS') return 'PayOS';
+    return pm;
+  };
+
   const getOrderStats = () => {
     const delivered = filteredOrders.filter(o => o.status === 'DELIVERED').length;
     const cancelled = filteredOrders.filter(o => o.status === 'CANCELLED').length;
@@ -243,6 +252,11 @@ export default function OrderList() {
                           <FaDollarSign className="info-icon" />
                           <span className="price">${order.totalPrice}</span>
                         </div>
+
+                        <div className="order-info-row">
+                          <FaDollarSign className="info-icon" />
+                          <span>Payment: {getPaymentMethodLabel(order.paymentMethod)}</span>
+                        </div>
                         
                         <div className="order-info-row">
                           <FaClock className="info-icon" />
@@ -277,6 +291,10 @@ export default function OrderList() {
                         <div className="detail-item">
                           <label>Total Amount:</label>
                           <span className="price">${selectedOrder.totalPrice}</span>
+                        </div>
+                        <div className="detail-item">
+                          <label>Payment Method:</label>
+                          <span>{getPaymentMethodLabel(selectedOrder.paymentMethod)}</span>
                         </div>
                         <div className="detail-item">
                           <label>Created:</label>

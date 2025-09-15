@@ -110,6 +110,12 @@ export default function Order_DeliveryStatus() {
     });
   };
 
+  const getPaymentMethodLabel = (pm) => {
+    if (!pm) return '—';
+    const key = String(pm).toUpperCase();
+    return key === 'CASH' ? 'Cash on Delivery' : 'PayOS';
+  };
+
   const ALLOWED_STATUS = ["PREPARING", "WAITING_FOR_SHIPPER", "DELIVERING"];
 
   const filteredOrders = orders.filter(order => {
@@ -287,6 +293,11 @@ export default function Order_DeliveryStatus() {
                           <FaDollarSign className="info-icon" />
                           <span className="price">${order.totalPrice}</span>
                         </div>
+
+                        <div className="order-info-row">
+                          <FaDollarSign className="info-icon" />
+                          <span>Payment: {getPaymentMethodLabel(order.paymentMethod)}</span>
+                        </div>
                         
                         <div className="order-info-row">
                           <FaClock className="info-icon" />
@@ -331,7 +342,7 @@ export default function Order_DeliveryStatus() {
                         </div>
                         <div className="detail-item">
                           <label>Payment Method:</label>
-                          <span>{selectedOrder.paymentMethod?.name || "Not paid"}</span>
+                          <span>{getPaymentMethodLabel(selectedOrder.paymentMethod)}</span>
                         </div>
                       </div>
                     </div>

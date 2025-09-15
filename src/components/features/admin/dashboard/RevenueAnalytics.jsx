@@ -99,27 +99,6 @@ const RevenueAnalytics = ({ data, loading, error, chartType = 'line', currency =
   console.log('RevenueAnalytics - revenueOverTime:', revenueOverTime);
   console.log('RevenueAnalytics - hasRevenueData:', hasRevenueData);
   
-  // If no data, create sample data for testing
-  if (!hasRevenueData && data) {
-    console.log('RevenueAnalytics - Creating sample data for testing');
-    const sampleData = [
-      { date: '2025-08-01', revenue: 1500000, deliveryRevenue: 500000, dineInRevenue: 600000, takeAwayRevenue: 400000 },
-      { date: '2025-08-02', revenue: 1800000, deliveryRevenue: 600000, dineInRevenue: 700000, takeAwayRevenue: 500000 },
-      { date: '2025-08-03', revenue: 2200000, deliveryRevenue: 800000, dineInRevenue: 900000, takeAwayRevenue: 500000 },
-      { date: '2025-08-04', revenue: 1900000, deliveryRevenue: 700000, dineInRevenue: 800000, takeAwayRevenue: 400000 },
-      { date: '2025-08-05', revenue: 2500000, deliveryRevenue: 900000, dineInRevenue: 1000000, takeAwayRevenue: 600000 },
-      { date: '2025-08-06', revenue: 2100000, deliveryRevenue: 750000, dineInRevenue: 850000, takeAwayRevenue: 500000 },
-      { date: '2025-08-07', revenue: 2800000, deliveryRevenue: 1000000, dineInRevenue: 1100000, takeAwayRevenue: 700000 },
-      { date: '2025-08-08', revenue: 2400000, deliveryRevenue: 850000, dineInRevenue: 950000, takeAwayRevenue: 600000 },
-      { date: '2025-08-09', revenue: 2600000, deliveryRevenue: 950000, dineInRevenue: 1050000, takeAwayRevenue: 600000 },
-      { date: '2025-08-10', revenue: 3000000, deliveryRevenue: 1100000, dineInRevenue: 1200000, takeAwayRevenue: 700000 },
-      { date: '2025-08-11', revenue: 2700000, deliveryRevenue: 1000000, dineInRevenue: 1100000, takeAwayRevenue: 600000 },
-      { date: '2025-08-12', revenue: 3200000, deliveryRevenue: 1200000, dineInRevenue: 1300000, takeAwayRevenue: 700000 }
-    ];
-    revenueOverTime.push(...sampleData);
-  }
-  
-  // Update hasRevenueData after potential sample data addition
   const finalHasRevenueData = revenueOverTime.length > 0;
   console.log('RevenueAnalytics - finalHasRevenueData:', finalHasRevenueData);
 
@@ -178,14 +157,6 @@ const RevenueAnalytics = ({ data, loading, error, chartType = 'line', currency =
 
   // Check if there's any order data
   const hasOrderData = orderTypeData.some(item => item.value > 0);
-  
-  // If no order data, add sample data
-  if (!hasOrderData && data) {
-    console.log('RevenueAnalytics - Adding sample order data');
-    orderTypeData[0].value = 45; // Giao hàng
-    orderTypeData[1].value = 38; // Tại bàn
-    orderTypeData[2].value = 27; // Mang về
-  }
   
   const finalHasOrderData = orderTypeData.some(item => item.value > 0);
   console.log('RevenueAnalytics - finalHasOrderData:', finalHasOrderData);

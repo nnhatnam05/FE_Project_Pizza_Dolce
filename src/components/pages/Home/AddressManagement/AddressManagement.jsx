@@ -782,12 +782,15 @@ const AddressManagement = () => {
             )}
             
             {loading ? (
-                <div className="loading-message">Loading...</div>
+                <div className="loading-message">
+                    <span className="loading-spinner"></span>
+                    Loading addresses...
+                </div>
             ) : addresses.length === 0 ? (
                 <div className="empty-addresses">
                     <div className="empty-icon">📍</div>
-                    <h3>No addresses yet</h3>
-                    <p>Add delivery addresses for convenience when ordering</p>
+                    <h3 className="empty-title">No addresses yet</h3>
+                    <p className="empty-description">Add delivery addresses for convenience when ordering</p>
                     <button className="add-first-address-btn" onClick={openAddModal}>
                         Add First Address
                     </button>
@@ -796,41 +799,36 @@ const AddressManagement = () => {
                 <div className="addresses-list">
                     {addresses.map(address => (
                         <div key={address.id} className={`address-card ${address.isDefault ? 'default' : ''}`}>
-                            <div className="address-header">
-                                <div className="address-info">
-                                    <h3>{address.name}</h3>
-                                    <p className="phone">{address.phoneNumber}</p>
-                                    {address.isDefault && (
-                                        <span className="default-badge">Default</span>
-                                    )}
-                                </div>
-                                <div className="address-actions">
-                                    <button 
-                                        className="action-btn edit"
-                                        onClick={() => openEditModal(address)}
-                                    >
-                                        Edit
-                                    </button>
-                                    <button 
-                                        className="action-btn delete"
-                                        onClick={() => openDeleteModal(address)}
-                                    >
-                                        Delete
-                                    </button>
-                                    {!address.isDefault && (
-                                        <button 
-                                            className="action-btn default"
-                                            onClick={() => handleSetDefault(address.id)}
-                                        >
-                                            Set as Default
-                                        </button>
-                                    )}
-                                </div>
+                            <div className="address-header-info">
+                                <div className="address-name">{address.name}</div>
+                                <div className="address-phone">{address.phoneNumber}</div>
                             </div>
                             <div className="address-details">
                                 <p className="address-text">{address.address}</p>
                                 {address.note && (
                                     <p className="address-note">Note: {address.note}</p>
+                                )}
+                            </div>
+                            <div className="address-actions">
+                                <button 
+                                    className="action-btn edit"
+                                    onClick={() => openEditModal(address)}
+                                >
+                                    Edit
+                                </button>
+                                <button 
+                                    className="action-btn delete"
+                                    onClick={() => openDeleteModal(address)}
+                                >
+                                    Delete
+                                </button>
+                                {!address.isDefault && (
+                                    <button 
+                                        className="action-btn default"
+                                        onClick={() => handleSetDefault(address.id)}
+                                    >
+                                        Set as Default
+                                    </button>
                                 )}
                             </div>
                         </div>

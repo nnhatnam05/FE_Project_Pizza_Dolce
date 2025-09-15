@@ -15,6 +15,7 @@ const LoginCustomer = () => {
   const [showLoadingForgot, setShowLoadingForgot] = useState(false);
   const [userType, setUserType] = useState('customer'); // 'admin' or 'customer'
   const [isGoogleInitialized, setIsGoogleInitialized] = useState(false);
+  const [remember, setRemember] = useState(false);
 
   const navigate = useNavigate();
 
@@ -29,6 +30,16 @@ const LoginCustomer = () => {
       document.body.removeChild(iframe);
       setIsGoogleInitialized(true);
     }, 1000);
+  }, []);
+
+  // Prefill saved email and remember flag
+  useEffect(() => {
+    const savedRemember = localStorage.getItem('rememberCustomer');
+    const savedEmail = localStorage.getItem('customerEmail');
+    if (savedRemember === 'true' && savedEmail) {
+      setRemember(true);
+      setEmail(savedEmail);
+    }
   }, []);
 
   const handleLogin = async (e) => {
@@ -46,8 +57,20 @@ const LoginCustomer = () => {
         timeout: 15000
       });
 
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('role', 'CUSTOMER');
+      const token = response.data.token;
+      if (remember) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('role', 'CUSTOMER');
+        localStorage.setItem('rememberCustomer', 'true');
+        localStorage.setItem('customerEmail', email);
+        sessionStorage.removeItem('token');
+      } else {
+        sessionStorage.setItem('token', token);
+        localStorage.setItem('role', 'CUSTOMER');
+        localStorage.setItem('rememberCustomer', 'false');
+        localStorage.removeItem('customerEmail');
+        localStorage.removeItem('token');
+      }
       setShowLoadingScreen(true);
       setTimeout(() => {
         setShowLoadingScreen(false);
@@ -119,8 +142,20 @@ const LoginCustomer = () => {
         timeout: 15000
       });
       
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('role', 'CUSTOMER');
+      const token = response.data.token;
+      if (remember) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('role', 'CUSTOMER');
+        localStorage.setItem('rememberCustomer', 'true');
+        localStorage.setItem('customerEmail', email);
+        sessionStorage.removeItem('token');
+      } else {
+        sessionStorage.setItem('token', token);
+        localStorage.setItem('role', 'CUSTOMER');
+        localStorage.setItem('rememberCustomer', 'false');
+        localStorage.removeItem('customerEmail');
+        localStorage.removeItem('token');
+      }
       setShowLoadingScreen(true);
       setTimeout(() => {
         setShowLoadingScreen(false);
@@ -205,7 +240,12 @@ const LoginCustomer = () => {
             </div>
             <div className="options-row">
               <div className="remember-me">
-                <input type="checkbox" id="remember" />
+                <input
+                  type="checkbox"
+                  id="remember"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                />
                 <label htmlFor="remember">Remember this device</label>
               </div>
               <button
