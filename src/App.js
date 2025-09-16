@@ -91,6 +91,7 @@ import AdminComplaints from './components/features/admin/complaints/AdminComplai
 import ComplaintsDashboard from './components/features/staff/complaints/ComplaintsDashboard';
 import AdminResolvedComplaints from './components/features/admin/complaints/AdminResolvedComplaints';
 import AdminComplaintsMenu from './components/features/admin/complaints/AdminComplaintsMenu';
+import ComplaintsMenu from './components/features/staff/complaints/StaffComplaintsMenu';
 
 
 function App() {
@@ -328,7 +329,7 @@ function App() {
               <Route path="orders" element={<OrderList />} />
               <Route path="delivery-status" element={<Delivery_Status />} />
               <Route path="support-chat" element={<SupportChat />} />
-              <Route path="complaints" element={<ComplaintsDashboard />} />
+              <Route path="complaints" element={<ComplaintsMenu />} />
 
               <Route path="request" element={<RequestManagement />} />
               <Route path="request/form" element={<FormRequest />} />

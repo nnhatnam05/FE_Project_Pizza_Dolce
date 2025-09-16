@@ -171,7 +171,7 @@ const SignUp = () => {
     setLoading(true);
     setError('');
     setCanResend(false);
-    setResendTimer(30); // Đếm ngược 30s nữa
+    setResendTimer(30);
 
     try {
       const response = await axios.post('http://localhost:8080/api/customer/register', {
@@ -226,7 +226,7 @@ const SignUp = () => {
     }
   };
 
-  // Xác thực mã
+  // Verify code
   const handleVerifyCode = async (e) => {
     e.preventDefault();
     if (verifyCode.length !== 6) {
@@ -286,7 +286,7 @@ const SignUp = () => {
     }
   };
 
-  // Xử lý đổi field form
+  // Handle form field change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (error) setError('');

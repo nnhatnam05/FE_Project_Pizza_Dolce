@@ -61,23 +61,18 @@ const OrderHistory = () => {
         let filtered = [];
         
         if (statusFilter === 'ALL') {
-            // Tất cả orders
             filtered = [...orders];
         } else if (statusFilter === 'WAITING_PAYMENT') {
-            // Orders có status = WAITING_PAYMENT
             filtered = orders.filter(order => order.status === 'WAITING_PAYMENT');
         } else if (statusFilter === 'DELIVERING_GROUP') {
-            // Orders có delivery_status = PREPARING, WAITING_FOR_SHIPPER, DELIVERING
             filtered = orders.filter(order => 
                 order.deliveryStatus === 'PREPARING' || 
                 order.deliveryStatus === 'WAITING_FOR_SHIPPER' || 
                 order.deliveryStatus === 'DELIVERING'
             );
         } else if (statusFilter === 'REJECTED') {
-            // Orders có delivery_status = CANCELED
             filtered = orders.filter(order => order.deliveryStatus === 'CANCELED');
         } else {
-            // Filter theo status khác
             filtered = orders.filter(order => order.status === statusFilter);
         }
         
@@ -130,7 +125,6 @@ const OrderHistory = () => {
 
     // Lấy tên class cho order card
     const getOrderCardClassName = (order) => {
-        // Ưu tiên hiển thị delivery status nếu có
         const status = order.deliveryStatus || order.status;
         
         switch (status) {
@@ -158,7 +152,6 @@ const OrderHistory = () => {
     };
 
     const handleOrderClick = (order) => {
-        // Ưu tiên kiểm tra delivery status
         const status = order.deliveryStatus || order.status;
         
         if (
@@ -301,7 +294,7 @@ const OrderHistory = () => {
                                         <div className="customer-row">
                                             <span className="customer-label">Customer Name:</span>
                                             <span className="customer-value">
-                                                {order.customer?.fullName || 'Chưa cập nhật tên'}
+                                                {order.customer?.fullName || 'Not updated'}
                                             </span>
                                         </div>
                                         <div className="customer-row">
@@ -395,11 +388,11 @@ const OrderHistory = () => {
                                         className="view-details-btn"
                                         onClick={(e) => { e.stopPropagation(); navigate(`/complaints/start/${order.id}`); }}
                                       >
-                                        Khiếu nại/Refund
+                                        Complaint/Refund
                                       </button>
                                     )}
                                     {!canComplain && order.deliveryStatus === 'DELIVERED' && (
-                                      <span style={{fontSize: 12, color: '#6b7280'}}>Hết thời hạn khiếu nại</span>
+                                      <span style={{fontSize: 12, color: '#6b7280'}}>Complaint period expired</span>
                                     )}
                                     
                                     <button className="view-details-btn">

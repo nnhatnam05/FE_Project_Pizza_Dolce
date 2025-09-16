@@ -76,9 +76,9 @@ export default function OrderForm() {
           </select>
         </div>
         <div className="mb-3">
-          <label className="form-label">Phương thức thanh toán</label>
+          <label className="form-label">Payment Method</label>
           <select className="form-select" name="paymentMethodId" value={form.paymentMethodId} onChange={handleChange} required>
-            <option value="">-- Chọn phương thức --</option>
+            <option value="">-- Select payment method --</option>
             {paymentMethods.map(pm => <option key={pm.id} value={pm.id}>{pm.name}</option>)}
           </select>
         </div>

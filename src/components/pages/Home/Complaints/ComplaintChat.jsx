@@ -12,6 +12,8 @@ export default function ComplaintChat() {
   const [text, setText] = useState('');
   const [uploading, setUploading] = useState(false);
   const [header, setHeader] = useState(null); // complaint details for banner
+  const [closed, setClosed] = useState(false);
+  const [closedMsg, setClosedMsg] = useState('');
   const endRef = useRef(null);
   const { connected, subscribe } = useWebSocket();
 
@@ -33,6 +35,11 @@ export default function ComplaintChat() {
           headers: { Authorization: `Bearer ${token}` }
         });
         setHeader(res.data);
+        const st = String(res.data?.status || '').toUpperCase();
+        if (['RESOLVED','REJECTED','APPROVED'].includes(st)) {
+          setClosed(true);
+          setClosedMsg('Đơn khiếu nại đã được giải quyết. Email kết quả đã được gửi đến bạn.');
+        }
       } catch (e) {}
     };
     fetchMsgs();
@@ -41,7 +48,28 @@ export default function ComplaintChat() {
 
   useEffect(() => {
     if (!connected) return;
-    const sub = subscribe(`/topic/complaints/${id}`, (data) => {
+    const sub = subscribe(`/topic/complaints/${id}`, async (data) => {
+      // Handle control events from backend to close chat
+      if (data && data.type) {
+        const t = String(data.type).toUpperCase();
+        if (
+          t === 'ADMIN_APPROVED' ||
+          t === 'ADMIN_REJECTED' ||
+          t === 'STAFF_DECIDE_REFUND' ||
+          t === 'STAFF_DECIDE_REDELIVER' ||
+          t === 'STAFF_REJECTED' ||
+          t === 'REFUND_COMPLETED'
+        ) {
+          setClosed(true);
+          setClosedMsg(
+            t === 'STAFF_REJECTED' || t === 'ADMIN_REJECTED'
+              ? 'Yêu cầu khiếu nại đã bị từ chối. Email kết quả đã được gửi đến bạn.'
+              : 'Đơn khiếu nại đã được xử lý. Email kết quả đã được gửi đến bạn.'
+          );
+          try { const res = await axios.get(`http://localhost:8080/api/complaints/${id}`, { headers: { Authorization: `Bearer ${token}` }}); setHeader(res.data); } catch {}
+          return; // don't push control event to messages
+        }
+      }
       setMessages((prev) => [...prev, data]);
       endRef.current && endRef.current.scrollIntoView({ behavior: 'smooth' });
     });
@@ -52,6 +80,7 @@ export default function ComplaintChat() {
 
   const send = async () => {
     if (!text.trim()) return;
+    if (closed) return;
     try {
       await axios.post(`http://localhost:8080/api/complaints/${id}/messages`, { message: text.trim() }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -63,8 +92,9 @@ export default function ComplaintChat() {
   const onFile = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > MAX_SIZE) { alert('File quá lớn (tối đa 10MB)'); return; }
-    if (!ALLOWED.includes(file.type)) { alert('Định dạng không hỗ trợ'); return; }
+    if (closed) { e.target.value = ''; return; }
+    if (file.size > MAX_SIZE) { alert('File is too large (max 10MB)'); return; }
+    if (!ALLOWED.includes(file.type)) { alert('Unsupported file format'); return; }
     setUploading(true);
     try {
       const form = new FormData();
@@ -73,7 +103,7 @@ export default function ComplaintChat() {
         headers: { Authorization: `Bearer ${token}` }
       });
     } catch (e) {
-      alert('Upload thất bại');
+      alert('Upload failed');
     } finally {
       setUploading(false);
       e.target.value = '';
@@ -83,22 +113,27 @@ export default function ComplaintChat() {
   return (
     <div className="complaint-chat-container" style={{maxWidth: 960, margin: '0 auto', padding: 16}}>
       <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8}}>
-        <h2 style={{margin:0, fontSize:20}}>Hỗ trợ khiếu nại</h2>
-        <div style={{fontSize:12, color:'#6b7280'}}>Mã case #{id}</div>
+        <h2 style={{margin:0, fontSize:20}}>Complaint Support</h2>
+        <div style={{fontSize:12, color:'#6b7280'}}>Case ID #{id}</div>
       </div>
       {header && (
         <div style={{border:'1px solid #e5e7eb', borderRadius:10, padding:12, background:'#fff', marginBottom:12, display:'grid', gridTemplateColumns:'1fr auto', gap:8}}>
           <div>
-            <div style={{fontWeight:600, marginBottom:4}}>Lý do</div>
+            <div style={{fontWeight:600, marginBottom:4}}>Reason</div>
             <div style={{color:'#111827'}}>{header.reason || '—'}</div>
           </div>
           <div style={{textAlign:'right'}}>
-            <div style={{fontWeight:600, marginBottom:4}}>Trạng thái</div>
+            <div style={{fontWeight:600, marginBottom:4}}>Status</div>
             <span style={{padding:'4px 10px', borderRadius:16, background:'#eef2ff', color:'#3730a3'}}>{header.status}</span>
-            {['RESOLVED','REJECTED','APPROVED'].includes((header.status||'').toUpperCase()) && (
-              <div style={{marginTop:6, color:'#166534', fontSize:12}}>Đã giải quyết • Chat đã đóng</div>
+            {(closed || ['RESOLVED','REJECTED','APPROVED'].includes((header.status||'').toUpperCase())) && (
+              <div style={{marginTop:6, color:'#166534', fontSize:12}}>Đã giải quyết • Đoạn chat đã đóng</div>
             )}
           </div>
+        </div>
+      )}
+      {closed && (
+        <div style={{marginBottom:12, border:'1px solid #e5e7eb', background:'#f0fdf4', color:'#166534', borderRadius:10, padding:10}}>
+          {closedMsg || 'Đơn khiếu nại đã được giải quyết. Email kết quả đã được gửi đến bạn.'}
         </div>
       )}
       <div className="chat-box" style={{border: '1px solid #e5e7eb', borderRadius: 10, padding: 12, height: 520, overflowY: 'auto', background: '#fff'}}>
@@ -112,7 +147,7 @@ export default function ComplaintChat() {
               <div style={{maxWidth:'76%'}}>
                 {!m.url ? (
                   <div style={{background:bg, color, padding:'8px 12px', borderRadius:12}}>
-                    <div style={{fontSize:12, opacity:0.7, marginBottom:2}}>{mine ? 'Bạn' : (m.senderType || 'CSKH')}</div>
+                    <div style={{fontSize:12, opacity:0.7, marginBottom:2}}>{mine ? 'You' : (m.senderType || 'Support')}</div>
                     <div style={{whiteSpace:'pre-wrap'}}>{m.message}</div>
                   </div>
                 ) : (
@@ -132,20 +167,22 @@ export default function ComplaintChat() {
         })}
         <div ref={endRef} />
       </div>
+      {!closed && (
       <div style={{display: 'flex', gap: 8, marginTop: 10}}>
         <input
           type="text"
-          placeholder="Nhập tin nhắn..."
+          placeholder="Type a message..."
           value={text}
           onChange={(e) => setText(e.target.value)}
           style={{flex: 1, padding: 12, borderRadius: 9999, border: '1px solid #e5e7eb', outline:'none'}}
         />
         <label style={{padding: '10px 14px', border: '1px solid #e5e7eb', borderRadius: 9999, cursor: 'pointer', background:'#fff'}}>
-          {uploading ? 'Đang tải...' : 'Ảnh/Video'}
+          {uploading ? 'Uploading...' : 'Image/Video'}
           <input type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime" onChange={onFile} style={{display:'none'}} />
         </label>
-        <button onClick={send} style={{padding: '10px 18px', borderRadius:9999, background:'#3b82f6', color:'#fff', border:'none'}}>Gửi</button>
+        <button onClick={send} style={{padding: '10px 18px', borderRadius:9999, background:'#3b82f6', color:'#fff', border:'none'}}>Send</button>
       </div>
+      )}
     </div>
   );
 }

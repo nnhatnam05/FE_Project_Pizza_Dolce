@@ -68,17 +68,17 @@ const ContactUs = () => {
             {/* Back Button */}
             <button className="policies-back-button" onClick={handleBack}>
                 <ArrowBackIcon />
-                <span>Quay lại</span>
+                <span>Back</span>
             </button>
 
             {/* Header Section */}
             <div className="policies-header-section">
                 <h1 className="policies-page-title">
                     <ContactSupportIcon style={{ marginRight: '10px' }} />
-                    Liên Hệ Với Chúng Tôi
+                    Contact Us
                 </h1>
                 <p className="policies-page-subtitle">
-                    Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn mọi lúc
+                    We are always ready to listen and support you anytime
                 </p>
             </div>
 
@@ -86,24 +86,24 @@ const ContactUs = () => {
             <div className="policies-content-section">
                 <h2 className="policies-section-title">
                     <BusinessIcon style={{ marginRight: '10px' }} />
-                    Thông Tin Liên Hệ
+                    Contact Information
                 </h2>
                 <div className="policies-section-content">
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '15px', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <LocationOnIcon style={{ color: '#e74c3c', fontSize: '2rem', marginTop: '5px' }} />
                             <div>
-                                <h3 style={{ color: '#232f54', marginBottom: '10px' }}>📍 Địa Chỉ</h3>
+                                <h3 style={{ color: '#232f54', marginBottom: '10px' }}>📍 Address</h3>
                                 <p style={{ color: '#666', marginBottom: '5px' }}>FPT Arena Multimedia</p>
-                                <p style={{ color: '#666', marginBottom: '5px' }}>Lê Lợi, Quận 1</p>
-                                <p style={{ color: '#666' }}>TP.HCM, Việt Nam</p>
+                                <p style={{ color: '#666', marginBottom: '5px' }}>Le Loi, District 1</p>
+                                <p style={{ color: '#666' }}>Ho Chi Minh City, Vietnam</p>
                             </div>
                         </div>
                         
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '15px', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <PhoneIcon style={{ color: '#e74c3c', fontSize: '2rem', marginTop: '5px' }} />
                             <div>
-                                <h3 style={{ color: '#232f54', marginBottom: '10px' }}>📞 Điện Thoại</h3>
+                                <h3 style={{ color: '#232f54', marginBottom: '10px' }}>📞 Phone</h3>
                                 <p style={{ color: '#666', marginBottom: '5px' }}>Hotline: +1-000-DOLCE</p>
                                 <p style={{ color: '#666', marginBottom: '5px' }}>Support: +1-555-0123</p>
                                 <p style={{ color: '#666' }}>Fax: +1-555-0124</p>
@@ -123,10 +123,10 @@ const ContactUs = () => {
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '15px', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <AccessTimeIcon style={{ color: '#f39c12', fontSize: '2rem', marginTop: '5px' }} />
                             <div>
-                                <h3 style={{ color: '#232f54', marginBottom: '10px' }}>🕐 Giờ Làm Việc</h3>
-                                <p style={{ color: '#666', marginBottom: '5px' }}>Thứ 2 - Thứ 6: 7:00-22:00</p>
-                                <p style={{ color: '#666', marginBottom: '5px' }}>Thứ 7: 8:00-23:00</p>
-                                <p style={{ color: '#666' }}>Chủ Nhật: 9:00-21:00</p>
+                                <h3 style={{ color: '#232f54', marginBottom: '10px' }}>🕐 Working Hours</h3>
+                                <p style={{ color: '#666', marginBottom: '5px' }}>Mon - Fri: 7:00-22:00</p>
+                                <p style={{ color: '#666', marginBottom: '5px' }}>Sat: 8:00-23:00</p>
+                                <p style={{ color: '#666' }}>Sun: 9:00-21:00</p>
                             </div>
                         </div>
                     </div>
@@ -137,12 +137,12 @@ const ContactUs = () => {
             <div className="policies-content-section">
                 <h2 className="policies-section-title">
                     <SendIcon style={{ marginRight: '10px' }} />
-                    Gửi Tin Nhắn Cho Chúng Tôi
+                    Send Us a Message
                 </h2>
                 <div className="policies-section-content">
                     {submitSuccess && (
                         <div style={{ background: '#d4edda', color: '#155724', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #c3e6cb' }}>
-                            ✅ Tin nhắn đã được gửi thành công! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.
+                            ✅ Message sent successfully! We will get back to you soon.
                         </div>
                     )}
                     
@@ -156,7 +156,7 @@ const ContactUs = () => {
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
                             <div>
                                 <label style={{ display: 'block', marginBottom: '8px', color: '#232f54', fontWeight: '600' }}>
-                                    Họ và Tên *
+                                    Full Name *
                                 </label>
                                 <input
                                     type="text"
@@ -205,7 +205,7 @@ const ContactUs = () => {
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
                             <div>
                                 <label style={{ display: 'block', marginBottom: '8px', color: '#232f54', fontWeight: '600' }}>
-                                    Số Điện Thoại
+                                    Phone
                                 </label>
                                 <input
                                     type="tel"
@@ -228,7 +228,7 @@ const ContactUs = () => {
                             
                             <div>
                                 <label style={{ display: 'block', marginBottom: '8px', color: '#232f54', fontWeight: '600' }}>
-                                    Chủ Đề *
+                                    Subject *
                                 </label>
                                 <select
                                     name="subject"
@@ -247,19 +247,19 @@ const ContactUs = () => {
                                     onFocus={(e) => e.target.style.borderColor = '#232f54'}
                                     onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
                                 >
-                                    <option value="">Chọn chủ đề</option>
-                                    <option value="general">Thông tin chung</option>
-                                    <option value="support">Hỗ trợ khách hàng</option>
-                                    <option value="complaint">Khiếu nại</option>
-                                    <option value="suggestion">Đề xuất</option>
-                                    <option value="business">Hợp tác kinh doanh</option>
+                                    <option value="">Select a subject</option>
+                                    <option value="general">General information</option>
+                                    <option value="support">Customer support</option>
+                                    <option value="complaint">Complaint</option>
+                                    <option value="suggestion">Suggestion</option>
+                                    <option value="business">Business partnership</option>
                                 </select>
                             </div>
                         </div>
                         
                         <div>
                             <label style={{ display: 'block', marginBottom: '8px', color: '#232f54', fontWeight: '600' }}>
-                                Nội Dung Tin Nhắn *
+                                Message Content *
                             </label>
                             <textarea
                                 name="message"
@@ -307,11 +307,11 @@ const ContactUs = () => {
                                 {isSubmitting ? (
                                     <>
                                         <div style={{ width: '20px', height: '20px', border: '2px solid #232f54', borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                                        Đang gửi...
+                                        Sending...
                                     </>
                                 ) : (
                                     <>
-                                        Gửi Tin Nhắn
+                                        Send Message
                                         <SendIcon />
                                     </>
                                 )}
@@ -325,18 +325,18 @@ const ContactUs = () => {
             <div className="policies-highlight-section">
                 <h2 className="policies-highlight-title">
                     <MapIcon style={{ marginRight: '10px' }} />
-                    Bản Đồ & Vị Trí
+                    Map & Location
                 </h2>
                 <div className="policies-highlight-content">
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', alignItems: 'start' }}>
                         <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '25px', borderRadius: '15px' }}>
                             <h3 style={{ color: '#ffd700', marginBottom: '20px', fontSize: '1.3rem' }}>
-                                📍 Vị Trí DOLCE Restaurant
+                                📍 DOLCE Restaurant Location
                             </h3>
                             <div style={{ marginBottom: '20px' }}>
-                                <p style={{ marginBottom: '8px' }}><strong>Địa Chỉ:</strong> FPT Arena Multimedia</p>
-                                <p style={{ marginBottom: '8px' }}><strong>Đường:</strong> Lê Lợi, Quận 1, TP.HCM</p>
-                                <p style={{ marginBottom: '8px' }}><strong>Tọa Độ:</strong> 10.8454°N, 106.7118°E</p>
+                                <p style={{ marginBottom: '8px' }}><strong>Address:</strong> FPT Arena Multimedia</p>
+                                <p style={{ marginBottom: '8px' }}><strong>Street:</strong> Le Loi, District 1, HCMC</p>
+                                <p style={{ marginBottom: '8px' }}><strong>Coordinates:</strong> 10.8454°N, 106.7118°E</p>
                             </div>
                             <button
                                 style={{
@@ -353,7 +353,7 @@ const ContactUs = () => {
                                 onMouseEnter={(e) => e.target.style.background = '#ffed4e'}
                                 onMouseLeave={(e) => e.target.style.background = '#ffd700'}
                             >
-                                🗺️ Mở Bản Đồ Google Maps
+                                🗺️ Open Google Maps
                             </button>
                         </div>
                         
@@ -372,43 +372,43 @@ const ContactUs = () => {
             <div className="policies-content-section">
                 <h2 className="policies-section-title">
                     <ContactSupportIcon style={{ marginRight: '10px' }} />
-                    Câu Hỏi Thường Gặp
+                    Frequently Asked Questions
                 </h2>
                 <div className="policies-section-content">
                     <div style={{ display: 'grid', gap: '20px' }}>
                         <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <h3 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>
-                                <strong>Q:</strong> Tôi có thể liên hệ với DOLCE qua những cách nào?
+                                <strong>Q:</strong> How can I contact DOLCE?
                             </h3>
                             <p style={{ color: '#666', lineHeight: '1.6' }}>
-                                <strong>A:</strong> Bạn có thể liên hệ với chúng tôi qua điện thoại, email, form liên hệ trên website, hoặc đến trực tiếp các chi nhánh.
+                                <strong>A:</strong> You can reach us via phone, email, contact form, or visit our branches.
                             </p>
                         </div>
                         
                         <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <h3 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>
-                                <strong>Q:</strong> Thời gian phản hồi email là bao lâu?
+                                <strong>Q:</strong> How long is the email response time?
                             </h3>
                             <p style={{ color: '#666', lineHeight: '1.6' }}>
-                                <strong>A:</strong> Chúng tôi cam kết phản hồi trong vòng 24 giờ làm việc kể từ khi nhận được email.
+                                <strong>A:</strong> We commit to responding within 24 working hours.
                             </p>
                         </div>
                         
                         <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <h3 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>
-                                <strong>Q:</strong> Tôi có thể đặt bàn qua điện thoại không?
+                                <strong>Q:</strong> Can I book a table by phone?
                             </h3>
                             <p style={{ color: '#666', lineHeight: '1.6' }}>
-                                <strong>A:</strong> Có, bạn có thể đặt bàn qua hotline +1-800-DOLCE hoặc qua ứng dụng di động của chúng tôi.
+                                <strong>A:</strong> Yes, call our hotline +1-800-DOLCE or use our mobile app.
                             </p>
                         </div>
                         
                         <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <h3 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>
-                                <strong>Q:</strong> DOLCE có dịch vụ giao hàng không?
+                                <strong>Q:</strong> Does DOLCE offer delivery service?
                             </h3>
                             <p style={{ color: '#666', lineHeight: '1.6' }}>
-                                <strong>A:</strong> Có, chúng tôi cung cấp dịch vụ giao hàng tận nơi trong phạm vi 10km từ các chi nhánh.
+                                <strong>A:</strong> Yes, we deliver within 10km of our branches.
                             </p>
                         </div>
                     </div>
@@ -418,25 +418,25 @@ const ContactUs = () => {
             {/* Emergency Contact Section */}
             <div className="policies-highlight-section">
                 <h2 className="policies-highlight-title">
-                    🚨 Liên Hệ Khẩn Cấp 24/7
+                    🚨 Emergency Contact 24/7
                 </h2>
                 <div className="policies-highlight-content">
                     <p style={{ marginBottom: '20px', fontSize: '1.1rem' }}>
-                        Đối với các vấn đề khẩn cấp về an toàn thực phẩm, dịch vụ hoặc khiếu nại nghiêm trọng, vui lòng liên hệ ngay với chúng tôi:
+                        For urgent issues regarding food safety, service, or serious complaints, please contact us immediately:
                     </p>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
                         <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '20px', borderRadius: '10px', textAlign: 'center' }}>
                             <PhoneIcon style={{ fontSize: '2.5rem', color: '#e74c3c', marginBottom: '10px' }} />
-                            <h3 style={{ color: '#ffd700', marginBottom: '10px' }}>Hotline Khẩn Cấp</h3>
+                            <h3 style={{ color: '#ffd700', marginBottom: '10px' }}>Emergency Hotline</h3>
                             <p style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '5px' }}>1900-DOLCE</p>
-                            <p style={{ fontSize: '0.9rem', opacity: 0.9 }}>Hoạt động 24/7</p>
+                            <p style={{ fontSize: '0.9rem', opacity: 0.9 }}>Available 24/7</p>
                         </div>
                         
                         <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '20px', borderRadius: '10px', textAlign: 'center' }}>
                             <EmailIcon style={{ fontSize: '2.5rem', color: '#3498db', marginBottom: '10px' }} />
-                            <h3 style={{ color: '#ffd700', marginBottom: '10px' }}>Email Khẩn Cấp</h3>
+                            <h3 style={{ color: '#ffd700', marginBottom: '10px' }}>Emergency Email</h3>
                             <p style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '5px' }}>emergency@dolce.com</p>
-                            <p style={{ fontSize: '0.9rem', opacity: 0.9 }}>Phản hồi trong 2 giờ</p>
+                            <p style={{ fontSize: '0.9rem', opacity: 0.9 }}>Responds within 2 hours</p>
                         </div>
                     </div>
                 </div>
@@ -445,10 +445,10 @@ const ContactUs = () => {
             {/* Footer Section */}
             <div className="policies-footer-section">
                 <p className="policies-footer-text">
-                    Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn!
+                    We are always here to listen and help!
                 </p>
                 <p className="policies-copyright">
-                    © 2025 DOLCE. Tất cả quyền được bảo lưu.
+                    © 2025 DOLCE. All rights reserved.
                 </p>
             </div>
         </div>

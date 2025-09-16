@@ -24,7 +24,7 @@ const ForgotPasswordCustomer = () => {
 
   const navigate = useNavigate();
 
-  // Timer cho resend code
+  // Timer for resend code
   useEffect(() => {
     let timer;
     if (resendTimer > 0) {
@@ -46,7 +46,7 @@ const ForgotPasswordCustomer = () => {
     return () => clearTimeout(timer);
   }, [resetSuccess, redirectTimer, navigate]);
 
-          // Send code
+  // Send code
   const handleSendCode = async (e) => {
     e.preventDefault();
     setSending(true);

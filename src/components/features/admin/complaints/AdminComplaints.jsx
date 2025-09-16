@@ -42,11 +42,11 @@ function Settings({ onSaved }) {
         { headers: { Authorization: `Bearer ${token}` }}
       );
       setEditing(false);
-      alert('Đã lưu cài đặt CSKH.');
+      alert('Support settings saved.');
       if (onSaved) onSaved();
     } catch (e) {
-      const msg = e?.response?.data || 'Lưu thất bại';
-      alert(typeof msg === 'string' ? msg : 'Lưu thất bại');
+      const msg = e?.response?.data || 'Save failed';
+      alert(typeof msg === 'string' ? msg : 'Save failed');
     }
   };
 
@@ -57,7 +57,7 @@ function Settings({ onSaved }) {
       {!editing ? (
         <>
           <div style={{fontSize:14}}>
-            <b>Staff mặc định:</b> {currentStaff ? `${currentStaff.name || currentStaff.fullName || currentStaff.username} ${currentStaff.email ? `(${currentStaff.email})` : ''}` : 'Chưa chỉ định'}
+            <b>Default Staff:</b> {currentStaff ? `${currentStaff.name || currentStaff.fullName || currentStaff.username} ${currentStaff.email ? `(${currentStaff.email})` : ''}` : 'Not assigned'}
           </div>
           <label style={{display:'flex', gap:6, alignItems:'center'}}>
             <input type="checkbox" checked={autoDecisionEnabled} onChange={(e)=>setAuto(e.target.checked)} /> Auto decision ON
@@ -71,7 +71,7 @@ function Settings({ onSaved }) {
             onChange={(e)=>setStaffId(e.target.value)}
             style={{minWidth:260, padding:8, border:'1px solid #e5e7eb', borderRadius:6}}
           >
-            <option value="">Staff ID mặc định</option>
+            <option value="">Default Staff ID</option>
             {staffs.map(s => (
               <option key={s.id} value={s.id}>
                 {s.name || s.fullName || s.username} {s.email ? `• ${s.email}` : ''}
@@ -81,8 +81,8 @@ function Settings({ onSaved }) {
           <label style={{display:'flex', gap:6, alignItems:'center'}}>
             <input type="checkbox" checked={autoDecisionEnabled} onChange={(e)=>setAuto(e.target.checked)} /> Auto decision ON
           </label>
-          <button onClick={save}>Lưu</button>
-          <button onClick={()=>setEditing(false)}>Hủy</button>
+          <button onClick={save}>Save</button>
+          <button onClick={()=>setEditing(false)}>Cancel</button>
         </>
       )}
     </div>
@@ -136,7 +136,7 @@ export default function AdminComplaints() {
     setEditAssign(false);
     setAssignStaffId(c?.assignedStaff?.id || '');
     try {
-      const res = await axios.get(`http://localhost:8080/api/staff/complaints/${c.id}/messages`, { headers: { Authorization: `Bearer ${token}` }});
+      const res = await axios.get(`http://localhost:8080/api/admin/complaints/${c.id}/timeline`, { headers: { Authorization: `Bearer ${token}` }});
       setMessages(res.data || []);
     } catch {}
   };
@@ -201,12 +201,12 @@ export default function AdminComplaints() {
     <div style={{padding:16}}>
       <div style={{position:'sticky', top:0, background:'#f9fafb', zIndex:1, borderBottom:'1px solid #e5e7eb', margin:'-16px -16px 12px -16px', padding:'12px 16px'}}>
         <div style={{display:'grid', gridTemplateColumns:'1fr auto', alignItems:'center', gap:12}}>
-          <h2 style={{margin:0}}>Quản lý khiếu nại</h2>
-          <input value={q} onChange={(e)=>setQ(e.target.value)} placeholder="Tìm theo Case/Order/Khách" style={{gridColumn:'1 / -1', padding:'8px 10px', border:'1px solid #e5e7eb', borderRadius:10}}/>
+          <h2 style={{margin:0}}>Complaints Management</h2>
+          <input value={q} onChange={(e)=>setQ(e.target.value)} placeholder="Search by Case/Order/Customer" style={{gridColumn:'1 / -1', padding:'8px 10px', border:'1px solid #e5e7eb', borderRadius:10}}/>
           <div style={{display:'flex', gap:8, flexWrap:'wrap'}}>
-            <StatusChip label="Tất cả" value="" />
+            <StatusChip label="All" value="" />
             <StatusChip label="Open" value="OPEN" />
-            <StatusChip label="Chờ duyệt" value="NEED_ADMIN_APPROVAL" />
+            <StatusChip label="Pending Approval" value="NEED_ADMIN_APPROVAL" />
             <StatusChip label="Approved" value="APPROVED" />
             <StatusChip label="Rejected" value="REJECTED" />
             <StatusChip label="Resolved" value="RESOLVED" />
@@ -218,7 +218,7 @@ export default function AdminComplaints() {
       </div>
       <div style={{display:'grid', gridTemplateColumns:'360px 1fr', gap:16}}>
         <div style={{border:'1px solid #e5e7eb', borderRadius:10, background:'#fff', overflow:'hidden'}}>
-          <div style={{padding:10, borderBottom:'1px solid #e5e7eb', fontWeight:700}}>Danh sách</div>
+          <div style={{padding:10, borderBottom:'1px solid #e5e7eb', fontWeight:700}}>List</div>
           <div style={{maxHeight:640, overflowY:'auto'}}>
             {list
               .filter(c => !['RESOLVED','REJECTED','APPROVED'].includes((c.status||'').toUpperCase()))
@@ -234,7 +234,7 @@ export default function AdminComplaints() {
                   <span style={{padding:'2px 8px', background:'#eef2ff', borderRadius:12, fontSize:12}}>{c.status}</span>
                   <div style={{marginLeft:'auto', fontSize:12, color:'#6b7280'}}>Order #{c.order?.id || c.orderId}</div>
                 </div>
-                <div style={{fontSize:12, color:'#6b7280', marginTop:4}}>Khách: {c.customer?.fullName || c.customer?.email || '—'}</div>
+                <div style={{fontSize:12, color:'#6b7280', marginTop:4}}>Customer: {c.customer?.fullName || c.customer?.email || '—'}</div>
               </div>
             ))}
             {list.filter(c => !['RESOLVED','REJECTED','APPROVED'].includes((c.status||'').toUpperCase())).length === 0 && (
@@ -244,7 +244,7 @@ export default function AdminComplaints() {
         </div>
         <div style={{border:'1px solid #e5e7eb', borderRadius:12, padding:12, background:'#fff', boxShadow:'0 10px 25px rgba(0,0,0,0.04)'}}>
           {!selected ? (
-            <div style={{color:'#6b7280'}}>Chọn một khiếu nại</div>
+            <div style={{color:'#6b7280'}}>Select a complaint</div>
           ) : (
             <div>
               <div style={{display:'flex', gap:8, alignItems:'center', marginBottom:8}}>
@@ -266,22 +266,22 @@ export default function AdminComplaints() {
                 marginBottom:12
               }}>
                 <div style={{border:'1px solid #f3f4f6', borderRadius:8, padding:10}}>
-                  <div style={{fontWeight:600, marginBottom:6}}>Khách hàng</div>
-                  <div><b>Tên:</b> {selected.customer?.fullName || selected.order?.recipientName || '—'}</div>
+                  <div style={{fontWeight:600, marginBottom:6}}>Customer</div>
+                  <div><b>Name:</b> {selected.customer?.fullName || selected.order?.recipientName || '—'}</div>
                   <div><b>Email:</b> {selected.customer?.email || '—'}</div>
-                  <div><b>Điện thoại:</b> {selected.customer?.customerDetails?.phoneNumber || selected.customer?.phoneNumber || selected.order?.recipientPhone || '—'}</div>
+                  <div><b>Phone:</b> {selected.customer?.customerDetails?.phoneNumber || selected.customer?.phoneNumber || selected.order?.recipientPhone || '—'}</div>
                 </div>
                 <div style={{border:'1px solid #f3f4f6', borderRadius:8, padding:10}}>
-                  <div style={{fontWeight:600, marginBottom:6}}>Đơn hàng</div>
+                  <div style={{fontWeight:600, marginBottom:6}}>Order</div>
                   <div><b>Order ID:</b> #{selected.order?.id || selected.orderId}</div>
                   <div><b>Tổng tiền:</b> {selected.order?.totalPrice != null ? `$${Number(selected.order.totalPrice).toLocaleString()}` : '—'}</div>
                   <div><b>Phương thức:</b> {selected.order?.paymentMethod || '—'}</div>
                   <div style={{marginTop:8}}>
-                    <div style={{fontWeight:600, marginBottom:4}}>Chi tiết món</div>
+                    <div style={{fontWeight:600, marginBottom:4}}>Items</div>
                     <ul style={{margin:0, paddingLeft:16}}>
                       {((selected.order?.orderFoods) || (selected.order?.foodList) || []).map((it, idx) => (
                         <li key={it.id || idx}>
-                          {(it.food?.name || it.name || 'Món')} x {it.quantity}
+                          {(it.food?.name || it.name || 'Item')} x {it.quantity}
                         </li>
                       ))}
                       {(((selected.order?.orderFoods)|| (selected.order?.foodList)||[]).length === 0) && (
@@ -291,13 +291,13 @@ export default function AdminComplaints() {
                   </div>
                 </div>
                 <div style={{border:'1px solid #f3f4f6', borderRadius:8, padding:10}}>
-                  <div style={{fontWeight:600, marginBottom:6}}>Lý do khiếu nại</div>
+                  <div style={{fontWeight:600, marginBottom:6}}>Complaint Reason</div>
                   <div style={{whiteSpace:'pre-wrap'}}>{selected.reason || '—'}</div>
                 </div>
               </div>
               {selected.refundQrUrl && (
                 <div style={{border:'1px solid #e5e7eb', borderRadius:8, padding:10, marginBottom:12, background:'#fff'}}>
-                  <div style={{fontWeight:600, marginBottom:6}}>QR chuyển khoản của khách</div>
+                  <div style={{fontWeight:600, marginBottom:6}}>Customer Transfer QR</div>
                   <div>
                     <img
                       alt="refund-qr"
@@ -309,35 +309,39 @@ export default function AdminComplaints() {
               )}
               {['RESOLVED','REJECTED','APPROVED'].includes((selected.status||'').toUpperCase()) && (
                 <div style={{padding:8, border:'1px solid #e5e7eb', background:'#f0fdf4', borderRadius:8, color:'#166534', marginBottom:8}}>
-                  Đơn khiếu nại đã được giải quyết. Chat đã đóng.
+                  Complaint has been resolved. Chat is closed.
                 </div>
               )}
               <div style={{border:'1px solid #f3f4f6', borderRadius:8, padding:8, height:480, overflowY:'auto'}}>
-                {messages.map((m,i)=> (
-                  <div key={`${m.id || i}-${m.url ? 'att' : 'msg'}`} style={{marginBottom:8}}>
-                    {m.url ? (
-                      m.mimeType?.startsWith('image/') ? (
-                        <a href={(m.url && !m.url.startsWith('http') ? `http://localhost:8080${m.url}` : m.url)} target="_blank" rel="noreferrer">
-                          <img src={(m.url && !m.url.startsWith('http') ? `http://localhost:8080${m.url}` : m.url)} alt='att' style={{maxWidth:'60%', maxHeight:400, height:'auto', width:'auto', borderRadius:6, objectFit:'contain'}}/>
-                        </a>
-                      ) : (
-                        <video controls src={(m.url && !m.url.startsWith('http') ? `http://localhost:8080${m.url}` : m.url)} style={{maxWidth:'60%', maxHeight:400}}/>
-                      )
-                    ) : (
+                {messages.map((m,i)=> {
+                  if (m.type === 'attachment') {
+                    const url = (m.url && !String(m.url).startsWith('http')) ? `http://localhost:8080${m.url}` : m.url;
+                    return (
+                      <div key={`att-${m.id || i}`} style={{marginBottom:8}}>
+                        {String(m.mimeType||'').startsWith('image/') ? (
+                          <a href={url} target="_blank" rel="noreferrer"><img src={url} alt='att' style={{maxWidth:'60%', maxHeight:400, height:'auto', width:'auto', borderRadius:6, objectFit:'contain'}}/></a>
+                        ) : (
+                          <video controls src={url} style={{maxWidth:'60%', maxHeight:400}}/>
+                        )}
+                      </div>
+                    );
+                  }
+                  return (
+                    <div key={`msg-${m.id || i}`} style={{marginBottom:8}}>
                       <div><strong>{m.senderType}</strong>: {m.message}</div>
-                    )}
-                  </div>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
               {approveOpen && (
                 <div style={{marginTop:12, border:'1px solid #e5e7eb', borderRadius:8, padding:12}}>
-                  <div style={{fontWeight:700, marginBottom:8}}>Phê duyệt & ký tên</div>
+                  <div style={{fontWeight:700, marginBottom:8}}>Approve & Signature</div>
                   <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:8}}>
-                    <input placeholder="Số tiền refund" value={approveForm.refundAmount} onChange={(e)=>setApproveForm(f=>({...f, refundAmount:e.target.value}))} />
-                    <input placeholder="Link QR chuyển khoản" value={approveForm.refundQrUrl} onChange={(e)=>setApproveForm(f=>({...f, refundQrUrl:e.target.value}))} />
+                    <input placeholder="Refund amount" value={approveForm.refundAmount} onChange={(e)=>setApproveForm(f=>({...f, refundAmount:e.target.value}))} />
+                    <input placeholder="Customer transfer QR URL" value={approveForm.refundQrUrl} onChange={(e)=>setApproveForm(f=>({...f, refundQrUrl:e.target.value}))} />
                   </div>
                   <div style={{marginTop:8}}>
-                    <div style={{marginBottom:6, fontWeight:600}}>Chữ ký Admin</div>
+                    <div style={{marginBottom:6, fontWeight:600}}>Admin Signature</div>
                     <canvas
                       ref={canvasRef}
                       width={500}
@@ -352,26 +356,26 @@ export default function AdminComplaints() {
                       onTouchEnd={endDraw}
                     />
                     <div style={{display:'flex', gap:8, marginTop:6}}>
-                      <button onClick={saveSign}>Lưu chữ ký</button>
-                      <button onClick={clearSign}>Xóa</button>
+                      <button onClick={saveSign}>Save signature</button>
+                      <button onClick={clearSign}>Clear</button>
                     </div>
                     {approveForm.adminSignature && (
-                      <div style={{marginTop:6, fontSize:12, color:'#6b7280'}}>Đã lưu chữ ký</div>
+                      <div style={{marginTop:6, fontSize:12, color:'#6b7280'}}>Signature saved</div>
                     )}
                   </div>
                   <div style={{display:'flex', gap:8, marginTop:8}}>
-                    <button onClick={async ()=>{ try { await axios.post(`http://localhost:8080/api/admin/complaints/${selected.id}/approve`, { refundAmount: approveForm.refundAmount?Number(approveForm.refundAmount):undefined, refundQrUrl: approveForm.refundQrUrl, adminSignature: approveForm.adminSignature }, { headers: { Authorization: `Bearer ${token}` }}); setApproveOpen(false); load(); } catch (e) { alert(e?.response?.data || 'Approve failed'); } }}>Xác nhận</button>
-                    <button onClick={()=>setApproveOpen(false)}>Hủy</button>
+                    <button onClick={async ()=>{ try { await axios.post(`http://localhost:8080/api/admin/complaints/${selected.id}/approve`, { refundAmount: approveForm.refundAmount?Number(approveForm.refundAmount):undefined, refundQrUrl: approveForm.refundQrUrl, adminSignature: approveForm.adminSignature }, { headers: { Authorization: `Bearer ${token}` }}); setApproveOpen(false); load(); } catch (e) { alert(e?.response?.data || 'Approve failed'); } }}>Confirm</button>
+                    <button onClick={()=>setApproveOpen(false)}>Cancel</button>
                   </div>
                 </div>
               )}
               {rejectOpen && (
                 <div style={{marginTop:12, border:'1px solid #fee2e2', background:'#fff1f2', borderRadius:8, padding:12}}>
-                  <div style={{fontWeight:700, marginBottom:8}}>Từ chối & gửi email khách hàng</div>
-                  <textarea placeholder="Lý do từ chối (sẽ gửi email cho khách)" value={rejectForm.reason} onChange={(e)=>setRejectForm(r=>({...r, reason:e.target.value}))} style={{width:'100%', minHeight:100}}/>
+                  <div style={{fontWeight:700, marginBottom:8}}>Reject & send email to customer</div>
+                  <textarea placeholder="Rejection reason (will be sent via email)" value={rejectForm.reason} onChange={(e)=>setRejectForm(r=>({...r, reason:e.target.value}))} style={{width:'100%', minHeight:100}}/>
                   <div style={{display:'flex', gap:8, marginTop:8}}>
-                    <button onClick={async ()=>{ try { await axios.post(`http://localhost:8080/api/admin/complaints/${selected.id}/reject`, { reason: rejectForm.reason }, { headers: { Authorization: `Bearer ${token}` }}); setRejectOpen(false); load(); } catch (e) { alert(e?.response?.data || 'Reject failed'); } }}>Gửi từ chối</button>
-                    <button onClick={()=>setRejectOpen(false)}>Hủy</button>
+                    <button onClick={async ()=>{ try { await axios.post(`http://localhost:8080/api/admin/complaints/${selected.id}/reject`, { reason: rejectForm.reason }, { headers: { Authorization: `Bearer ${token}` }}); setRejectOpen(false); load(); } catch (e) { alert(e?.response?.data || 'Reject failed'); } }}>Send rejection</button>
+                    <button onClick={()=>setRejectOpen(false)}>Cancel</button>
                   </div>
                 </div>
               )}

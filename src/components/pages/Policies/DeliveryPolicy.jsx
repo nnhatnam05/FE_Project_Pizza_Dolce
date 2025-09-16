@@ -24,17 +24,17 @@ const DeliveryPolicy = () => {
             {/* Back Button */}
             <button className="policies-back-button" onClick={handleBack}>
                 <ArrowBackIcon />
-                <span>Quay lại</span>
+                <span>Back</span>
             </button>
 
             {/* Header Section */}
             <div className="policies-header-section">
                 <h1 className="policies-page-title">
                     <LocalShippingIcon style={{ marginRight: '10px' }} />
-                    Chính Sách Giao Hàng
+                    Delivery Policy
                 </h1>
                 <p className="policies-page-subtitle">
-                    Thông tin chi tiết về quy trình giao hàng và dịch vụ vận chuyển của DOLCE
+                    Detailed information about DOLCE's delivery process and shipping services
                 </p>
             </div>
 
@@ -42,16 +42,16 @@ const DeliveryPolicy = () => {
             <div className="policies-content-section">
                 <h2 className="policies-section-title">
                     <TimelineIcon style={{ marginRight: '10px' }} />
-                    Quy Trình Giao Hàng
+                    Delivery Process
                 </h2>
                 <div className="policies-section-content">
                     <div className="policies-mb-20">
                         <h3 style={{ color: '#232f54', fontSize: '1.4rem', marginBottom: '15px' }}>
-                            🚚 Quy Trình Giao Hàng Tự Động
+                            🚚 Automated Delivery Workflow
                         </h3>
                         <p>
-                            Khi đơn hàng đã thanh toán thành công, đơn hàng sẽ được bàn giao cho đơn vị vận chuyển. 
-                            Đơn hàng sẽ được giao đến địa chỉ mà bạn đã chọn trong lúc tạo đơn hàng.
+                            After successful payment, your order is handed over to the courier and delivered to the
+                            address you provided during checkout.
                         </p>
                     </div>
                     
@@ -61,8 +61,8 @@ const DeliveryPolicy = () => {
                                 1
                             </div>
                             <div>
-                                <h4 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>Thanh Toán Thành Công</h4>
-                                <p style={{ color: '#666', lineHeight: '1.6' }}>Đơn hàng được xác nhận và chuyển cho đơn vị vận chuyển</p>
+                                <h4 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>Payment Confirmed</h4>
+                                <p style={{ color: '#666', lineHeight: '1.6' }}>Order is confirmed and handed to courier</p>
                             </div>
                         </div>
                         
@@ -71,8 +71,8 @@ const DeliveryPolicy = () => {
                                 2
                             </div>
                             <div>
-                                <h4 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>Bàn Giao Vận Chuyển</h4>
-                                <p style={{ color: '#666', lineHeight: '1.6' }}>Shipper nhận đơn hàng và bắt đầu giao hàng</p>
+                                <h4 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>Handover</h4>
+                                <p style={{ color: '#666', lineHeight: '1.6' }}>Courier receives the package and starts delivery</p>
                             </div>
                         </div>
                         
@@ -81,8 +81,8 @@ const DeliveryPolicy = () => {
                                 3
                             </div>
                             <div>
-                                <h4 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>Giao Hàng Tận Nơi</h4>
-                                <p style={{ color: '#666', lineHeight: '1.6' }}>Shipper giao đến địa chỉ chỉ định và cập nhật trạng thái</p>
+                                <h4 style={{ color: '#232f54', marginBottom: '10px', fontSize: '1.2rem' }}>Delivered</h4>
+                                <p style={{ color: '#666', lineHeight: '1.6' }}>Courier delivers to your address and updates status</p>
                             </div>
                         </div>
                     </div>
@@ -93,36 +93,36 @@ const DeliveryPolicy = () => {
             <div className="policies-highlight-section">
                 <h2 className="policies-highlight-title">
                     <InfoIcon style={{ marginRight: '10px' }} />
-                    Theo Dõi Đơn Hàng Real-time
+                    Real-time Order Tracking
                 </h2>
                 <div className="policies-highlight-content">
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', marginBottom: '30px' }}>
                         <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '25px', borderRadius: '15px' }}>
                             <h3 style={{ color: '#ffd700', marginBottom: '20px', fontSize: '1.3rem' }}>
-                                📱 Cập Nhật Trạng Thái Tự Động
+                                📱 Automatic Status Updates
                             </h3>
                             <p>
-                                Trạng thái đơn hàng sẽ được cập nhật ngay trong màn hình hiển thị chi tiết giao hàng 
-                                trên màn hình của bạn. Bạn có thể theo dõi mọi bước của quá trình giao hàng.
+                                Order status updates in real time on the delivery detail screen so you can follow
+                                every step.
                             </p>
                         </div>
                         
                         <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '25px', borderRadius: '15px' }}>
                             <h3 style={{ color: '#ffd700', marginBottom: '20px', fontSize: '1.3rem' }}>
-                                🎯 Tính Năng Theo Dõi
+                                🎯 Tracking Features
                             </h3>
                             <div style={{ display: 'grid', gap: '15px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <LocationOnIcon style={{ color: '#ffd700' }} />
-                                    <span>Vị trí shipper real-time</span>
+                                    <span>Live courier location</span>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <AccessTimeIcon style={{ color: '#ffd700' }} />
-                                    <span>Thời gian giao hàng ước tính</span>
+                                    <span>Estimated delivery time</span>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <PaymentIcon style={{ color: '#ffd700' }} />
-                                    <span>Trạng thái thanh toán</span>
+                                    <span>Payment status</span>
                                 </div>
                             </div>
                         </div>
@@ -134,29 +134,29 @@ const DeliveryPolicy = () => {
             <div className="policies-content-section">
                 <h2 className="policies-section-title">
                     <LocationOnIcon style={{ marginRight: '10px' }} />
-                    Khu Vực Giao Hàng
+                    Delivery Areas
                 </h2>
                 <div className="policies-section-content">
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
                         <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px', textAlign: 'center' }}>
-                            <h3 style={{ color: '#232f54', marginBottom: '15px' }}>🏙️ Nội Thành</h3>
-                            <p style={{ color: '#666', marginBottom: '10px' }}>Phạm vi: 5km</p>
-                            <p style={{ color: '#666', marginBottom: '10px' }}>Thời gian: 30-45 phút</p>
-                            <p style={{ color: '#666' }}>Phí giao: 15,000đ</p>
+                            <h3 style={{ color: '#232f54', marginBottom: '15px' }}>🏙️ Downtown</h3>
+                            <p style={{ color: '#666', marginBottom: '10px' }}>Range: 5km</p>
+                            <p style={{ color: '#666', marginBottom: '10px' }}>Time: 30-45 minutes</p>
+                            <p style={{ color: '#666' }}>Fee: 15,000đ</p>
                         </div>
                         
                         <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px', textAlign: 'center' }}>
-                            <h3 style={{ color: '#232f54', marginBottom: '15px' }}>🏘️ Ngoại Thành</h3>
-                            <p style={{ color: '#666', marginBottom: '10px' }}>Phạm vi: 5-10km</p>
-                            <p style={{ color: '#666', marginBottom: '10px' }}>Thời gian: 45-60 phút</p>
-                            <p style={{ color: '#666' }}>Phí giao: 25,000đ</p>
+                            <h3 style={{ color: '#232f54', marginBottom: '15px' }}>🏘️ Suburban</h3>
+                            <p style={{ color: '#666', marginBottom: '10px' }}>Range: 5-10km</p>
+                            <p style={{ color: '#666', marginBottom: '10px' }}>Time: 45-60 minutes</p>
+                            <p style={{ color: '#666' }}>Fee: 25,000đ</p>
                         </div>
                         
                         <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px', textAlign: 'center' }}>
-                            <h3 style={{ color: '#232f54', marginBottom: '15px' }}>🌆 Xa Hơn</h3>
-                            <p style={{ color: '#666', marginBottom: '10px' }}>Phạm vi: 10-15km</p>
-                            <p style={{ color: '#666', marginBottom: '10px' }}>Thời gian: 60-90 phút</p>
-                            <p style={{ color: '#666' }}>Phí giao: 35,000đ</p>
+                            <h3 style={{ color: '#232f54', marginBottom: '15px' }}>🌆 Further</h3>
+                            <p style={{ color: '#666', marginBottom: '10px' }}>Range: 10-15km</p>
+                            <p style={{ color: '#666', marginBottom: '10px' }}>Time: 60-90 minutes</p>
+                            <p style={{ color: '#666' }}>Fee: 35,000đ</p>
                         </div>
                     </div>
                 </div>
@@ -166,14 +166,14 @@ const DeliveryPolicy = () => {
             <div className="policies-content-section">
                 <h2 className="policies-section-title">
                     <AccessTimeIcon style={{ marginRight: '10px' }} />
-                    Thời Gian Giao Hàng
+                    Delivery Time
                 </h2>
                 <div className="policies-section-content">
                     <div style={{ display: 'grid', gap: '15px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <div>
-                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>🌅 Sáng (7:00 - 11:00)</h4>
-                                <p style={{ color: '#666' }}>Giao hàng trong vòng 30-45 phút</p>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>🌅 Morning (7:00 - 11:00)</h4>
+                                <p style={{ color: '#666' }}>Delivered within 30-45 minutes</p>
                             </div>
                             <div style={{ background: '#232f54', color: 'white', padding: '8px 15px', borderRadius: '20px', fontSize: '0.9rem' }}>
                                 Nhanh
@@ -182,8 +182,8 @@ const DeliveryPolicy = () => {
                         
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <div>
-                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>☀️ Trưa (11:00 - 14:00)</h4>
-                                <p style={{ color: '#666' }}>Giao hàng trong vòng 45-60 phút</p>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>☀️ Noon (11:00 - 14:00)</h4>
+                                <p style={{ color: '#666' }}>Delivered within 45-60 minutes</p>
                             </div>
                             <div style={{ background: '#f39c12', color: 'white', padding: '8px 15px', borderRadius: '20px', fontSize: '0.9rem' }}>
                                 Bình thường
@@ -192,8 +192,8 @@ const DeliveryPolicy = () => {
                         
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <div>
-                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>🌆 Chiều (14:00 - 18:00)</h4>
-                                <p style={{ color: '#666' }}>Giao hàng trong vòng 45-60 phút</p>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>🌆 Afternoon (14:00 - 18:00)</h4>
+                                <p style={{ color: '#666' }}>Delivered within 45-60 minutes</p>
                             </div>
                             <div style={{ background: '#f39c12', color: 'white', padding: '8px 15px', borderRadius: '20px', fontSize: '0.9rem' }}>
                                 Bình thường
@@ -202,8 +202,8 @@ const DeliveryPolicy = () => {
                         
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <div>
-                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>🌙 Tối (18:00 - 22:00)</h4>
-                                <p style={{ color: '#666' }}>Giao hàng trong vòng 60-90 phút</p>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>🌙 Evening (18:00 - 22:00)</h4>
+                                <p style={{ color: '#666' }}>Delivered within 60-90 minutes</p>
                             </div>
                             <div style={{ background: '#e74c3c', color: 'white', padding: '8px 15px', borderRadius: '20px', fontSize: '0.9rem' }}>
                                 Chậm
@@ -217,25 +217,25 @@ const DeliveryPolicy = () => {
             <div className="policies-highlight-section">
                 <h2 className="policies-highlight-title">
                     <PaymentIcon style={{ marginRight: '10px' }} />
-                    Phí Giao Hàng & Khuyến Mãi
+                    Delivery Fees & Promotions
                 </h2>
                 <div className="policies-highlight-content">
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', marginBottom: '30px' }}>
                         <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '25px', borderRadius: '15px' }}>
                             <h3 style={{ color: '#ffd700', marginBottom: '20px', fontSize: '1.3rem' }}>
-                                💰 Phí Giao Hàng Cơ Bản
+                                💰 Base Delivery Fees
                             </h3>
                             <div style={{ display: 'grid', gap: '15px' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span>Nội thành (≤5km):</span>
+                                    <span>Downtown (≤5km):</span>
                                     <span style={{ fontWeight: 'bold' }}>15,000đ</span>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span>Ngoại thành (5-10km):</span>
+                                    <span>Suburban (5-10km):</span>
                                     <span style={{ fontWeight: 'bold' }}>25,000đ</span>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span>Xa hơn (10-15km):</span>
+                                    <span>Further (10-15km):</span>
                                     <span style={{ fontWeight: 'bold' }}>35,000đ</span>
                                 </div>
                             </div>
@@ -243,20 +243,20 @@ const DeliveryPolicy = () => {
                         
                         <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '25px', borderRadius: '15px' }}>
                             <h3 style={{ color: '#ffd700', marginBottom: '20px', fontSize: '1.3rem' }}>
-                                🎉 Khuyến Mãi Giao Hàng
+                                🎉 Delivery Promotions
                             </h3>
                             <div style={{ display: 'grid', gap: '15px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <span style={{ color: '#ffd700', fontSize: '1.2rem' }}>🎁</span>
-                                    <span>Miễn phí giao hàng cho đơn từ 500,000đ</span>
+                                    <span>Free delivery for orders from 500,000đ</span>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <span style={{ color: '#ffd700', fontSize: '1.2rem' }}>🎁</span>
-                                    <span>Giảm 50% phí giao cho khách VIP</span>
+                                    <span>50% off delivery fee for VIP customers</span>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <span style={{ color: '#ffd700', fontSize: '1.2rem' }}>🎁</span>
-                                    <span>Giao hàng miễn phí vào thứ 2 hàng tuần</span>
+                                    <span>Free delivery every Monday</span>
                                 </div>
                             </div>
                         </div>
@@ -268,32 +268,32 @@ const DeliveryPolicy = () => {
             <div className="policies-content-section">
                 <h2 className="policies-section-title">
                     <SecurityIcon style={{ marginRight: '10px' }} />
-                    An Toàn Giao Hàng
+                    Delivery Safety
                 </h2>
                 <div className="policies-section-content">
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
                         <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px', textAlign: 'center' }}>
                             <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>🛡️</div>
-                            <h3 style={{ color: '#232f54', marginBottom: '10px' }}>Shipper Được Kiểm Tra</h3>
-                            <p style={{ color: '#666' }}>Tất cả shipper đều được xác minh danh tính và đào tạo an toàn</p>
+                            <h3 style={{ color: '#232f54', marginBottom: '10px' }}>Verified Couriers</h3>
+                            <p style={{ color: '#666' }}>All couriers are identity-verified and trained</p>
                         </div>
                         
                         <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px', textAlign: 'center' }}>
                             <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>📦</div>
-                            <h3 style={{ color: '#232f54', marginBottom: '10px' }}>Đóng Gói An Toàn</h3>
-                            <p style={{ color: '#666' }}>Thực phẩm được đóng gói kỹ lưỡng để đảm bảo vệ sinh</p>
+                            <h3 style={{ color: '#232f54', marginBottom: '10px' }}>Safe Packaging</h3>
+                            <p style={{ color: '#666' }}>Food is carefully packed to ensure hygiene</p>
                         </div>
                         
                         <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px', textAlign: 'center' }}>
                             <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>🌡️</div>
-                            <h3 style={{ color: '#232f54', marginBottom: '10px' }}>Bảo Quản Nhiệt</h3>
-                            <p style={{ color: '#666' }}>Sử dụng túi giữ nhiệt để đảm bảo nhiệt độ thực phẩm</p>
+                            <h3 style={{ color: '#232f54', marginBottom: '10px' }}>Temperature Control</h3>
+                            <p style={{ color: '#666' }}>Insulated bags keep food at proper temperature</p>
                         </div>
                         
                         <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '10px', textAlign: 'center' }}>
                             <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>📱</div>
-                            <h3 style={{ color: '#232f54', marginBottom: '10px' }}>Theo Dõi Real-time</h3>
-                            <p style={{ color: '#666' }}>Theo dõi vị trí shipper và trạng thái giao hàng</p>
+                            <h3 style={{ color: '#232f54', marginBottom: '10px' }}>Real-time Tracking</h3>
+                            <p style={{ color: '#666' }}>Track courier location and delivery status</p>
                         </div>
                     </div>
                 </div>
@@ -303,14 +303,14 @@ const DeliveryPolicy = () => {
             <div className="policies-content-section">
                 <h2 className="policies-section-title">
                     <SupportIcon style={{ marginRight: '10px' }} />
-                    Hỗ Trợ Giao Hàng
+                    Delivery Support
                 </h2>
                 <div className="policies-section-content">
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <PhoneIcon style={{ color: '#e74c3c', fontSize: '2rem' }} />
                             <div>
-                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>Hotline Giao Hàng</h4>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>Delivery Hotline</h4>
                                 <p style={{ color: '#666' }}>1900-DOLCE</p>
                             </div>
                         </div>
@@ -318,15 +318,15 @@ const DeliveryPolicy = () => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <SupportIcon style={{ color: '#3498db', fontSize: '2rem' }} />
                             <div>
-                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>Chat Hỗ Trợ</h4>
-                                <p style={{ color: '#666' }}>24/7 qua ứng dụng</p>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>Support Chat</h4>
+                                <p style={{ color: '#666' }}>24/7 via app</p>
                             </div>
                         </div>
                         
                         <div style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <InfoIcon style={{ color: '#f39c12', fontSize: '2rem' }} />
                             <div>
-                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>Email Hỗ Trợ</h4>
+                                <h4 style={{ color: '#232f54', marginBottom: '5px' }}>Support Email</h4>
                                 <p style={{ color: '#666' }}>delivery@dolce.com</p>
                             </div>
                         </div>
@@ -337,10 +337,10 @@ const DeliveryPolicy = () => {
             {/* Footer Section */}
             <div className="policies-footer-section">
                 <p className="policies-footer-text">
-                    DOLCE cam kết mang đến trải nghiệm giao hàng nhanh chóng và an toàn!
+                    DOLCE is committed to fast and safe deliveries!
                 </p>
                 <p className="policies-copyright">
-                    © 2025 DOLCE. Tất cả quyền được bảo lưu.
+                    © 2025 DOLCE. All rights reserved.
                 </p>
             </div>
         </div>
