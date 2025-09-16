@@ -34,17 +34,9 @@ const SignUp = () => {
 
   const navigate = useNavigate();
 
-  // Initialize Google Login
+  // Initialize Google Login (no iframe logout to avoid X-Frame-Options errors)
   useEffect(() => {
-    // Clear any potential Google auth cookies/state
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = 'https://accounts.google.com/logout';
-    document.body.appendChild(iframe);
-    setTimeout(() => {
-      document.body.removeChild(iframe);
-      setIsGoogleInitialized(true);
-    }, 1000);
+    setIsGoogleInitialized(true);
   }, []);
 
   // Countdown 30s each time resend code

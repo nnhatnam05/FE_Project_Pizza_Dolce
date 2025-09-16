@@ -19,17 +19,9 @@ const LoginCustomer = () => {
 
   const navigate = useNavigate();
 
-  // Clear previous Google login state on component mount
+  // Initialize Google Login (avoid iframe logout to prevent X-Frame-Options errors)
   useEffect(() => {
-    // Clear any potential Google auth cookies/state that might be causing issues
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = 'https://accounts.google.com/logout';
-    document.body.appendChild(iframe);
-    setTimeout(() => {
-      document.body.removeChild(iframe);
-      setIsGoogleInitialized(true);
-    }, 1000);
+    setIsGoogleInitialized(true);
   }, []);
 
   // Prefill saved email and remember flag
