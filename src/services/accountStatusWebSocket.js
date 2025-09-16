@@ -4,7 +4,7 @@ import { Stomp } from '@stomp/stompjs';
 class AccountStatusWebSocketService {
     constructor() {
         this.stompClient = null;
-        this.isConnected = false;
+        this.connected = false;
         this.subscriptions = new Map();
         this.onAccountDeactivated = null;
         this.onAccountActivated = null;
@@ -13,13 +13,13 @@ class AccountStatusWebSocketService {
 
     // Connect to WebSocket
     connect(userId, onAccountDeactivated, onAccountActivated) {
-        if (this.isConnected && this.currentUserId === userId) {
+        if (this.connected && this.currentUserId === userId) {
             console.log('[WebSocket] Already connected for user:', userId);
             return;
         }
 
         // Disconnect previous connection if different user
-        if (this.isConnected && this.currentUserId !== userId) {
+        if (this.connected && this.currentUserId !== userId) {
             console.log('[WebSocket] Disconnecting previous user:', this.currentUserId);
             this.disconnect();
         }
@@ -42,12 +42,12 @@ class AccountStatusWebSocketService {
             {},
             (frame) => {
                 console.log('[WebSocket] Connected to account status service:', frame);
-                this.isConnected = true;
+                this.connected = true;
                 this.subscribeToAccountStatus(userId);
             },
             (error) => {
                 console.error('[WebSocket] Connection error:', error);
-                this.isConnected = false;
+                this.connected = false;
                 this.currentUserId = null;
                 // Retry connection after 5 seconds
                 setTimeout(() => {
@@ -60,7 +60,7 @@ class AccountStatusWebSocketService {
 
     // Subscribe to account status notifications
     subscribeToAccountStatus(userId) {
-        if (!this.isConnected || !this.stompClient) {
+        if (!this.connected || !this.stompClient) {
             console.error('[WebSocket] Not connected');
             return;
         }
@@ -133,7 +133,7 @@ class AccountStatusWebSocketService {
             // Disconnect
             this.stompClient.disconnect(() => {
                 console.log('[WebSocket] Disconnected from account status service');
-                this.isConnected = false;
+                this.connected = false;
                 this.stompClient = null;
                 this.currentUserId = null;
             });
@@ -151,7 +151,7 @@ class AccountStatusWebSocketService {
 
     // Check if connected
     isConnected() {
-        return this.isConnected;
+        return this.connected;
     }
 }
 
